@@ -1,0 +1,31 @@
+.logo {
+  height: 32px;
+  margin: 16px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.site-layout .site-layout-background {
+  background: #fff;
+}
+
+.ant-layout {
+  background-color: #fff;
+}
+
+.upload-file-admin {
+  opacity: 0;
+  z-index: 1000;
+  position: absolute;
+  width: 150px;
+  top: -16px;
+  cursor: pointer;
+}
+::-webkit-file-upload-button {
+  cursor:pointer;
+}
+
+/* IE11 (if it doesn't work, try maybe also on the parent/wrapper) */
+input[type=file] {
+  cursor:pointer;
+}
+

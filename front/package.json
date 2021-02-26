@@ -1,0 +1,59 @@
+{
+  "name": "greff",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@ant-design/icons": "^4.0.0",
+    "@hookform/error-message": "0.0.4",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "antd": "^4.10.2",
+    "axios": "^0.21.0",
+    "js-cookie": "^2.2.1",
+    "node-sass": "^4.14.1",
+    "query-string": "^6.13.7",
+    "react": "^17.0.1",
+    "react-csv": "^2.0.3",
+    "react-dom": "^17.0.1",
+    "react-helmet-async": "^1.0.7",
+    "react-hook-form": "^6.11.3",
+    "react-paginate": "^6.5.0",
+    "react-pagination": "^1.0.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.0",
+    "react-select": "^3.1.1",
+    "react-slick": "^0.27.13",
+    "react-toastify": "^6.1.0",
+    "react-toasts": "^3.0.6",
+    "sass": "^1.29.0",
+    "slick-carousel": "^1.8.1",
+    "styled-components": "^5.2.1",
+    "web-vitals": "^0.2.4",
+    "yarn": "^1.22.10"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
