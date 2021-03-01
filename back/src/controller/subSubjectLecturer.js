@@ -4,10 +4,65 @@ const sequelize = db.sequelize
 const Lecturer = db.lecturer;
 const Thesis = db.thesis;
 const subSubjectLecturer = {}
-
 const { Op } = require("sequelize");
 
 const readXlsxFile = require('read-excel-file/node');
+const dcm = require("./doccumentHour");
+const report = require('./report');
+const  caculHour= dcm.caculHourLT 
+function getHourItemLythuyet(item) {
+  let caculIndex 
+  let score = 0
+  if (item.total_student>120) {
+    caculIndex = 5 
+  } else if (item.total_student>100) {
+    caculIndex = 4 
+  } else if (item.total_student>80) {
+    caculIndex = 3 
+  } else if (item.total_student>60) {
+    caculIndex = 2 
+  } else if (item.total_student>40) {
+    caculIndex = 1
+  } else {
+    caculIndex = 0
+  }
+
+  switch (item.job) {
+    case "clc":
+      // language: 1 => tieng anh 
+      if (item.language) {
+        score = caculHour[caculIndex].clcEng * item.total_student 
+        // nhan voi so h cua hoc phan do
+      } else {
+        score = caculHour[caculIndex].clcViet * item.total_student 
+      }
+      break;
+
+    case "nvcl":
+      if (item.language) {
+        score = caculHour[caculIndex].english * item.total_student 
+        // nhan voi so h cua hoc phan do
+      } else {
+        score = caculHour[caculIndex].vietnames * item.total_student 
+      }
+      break;
+
+    case "thuong":
+      if (item.language) {
+        score = caculHour[caculIndex].english * item.total_student 
+        // nhan voi so h cua hoc phan do
+      } else {
+        score = caculHour[caculIndex].vietnames * item.total_student 
+      }
+      break;
+  
+    default:
+      break;
+  }
+
+  return score
+  
+}
 
 subSubjectLecturer.list = async (req, res) => {
   const year = req.query.year;
@@ -23,24 +78,8 @@ subSubjectLecturer.list = async (req, res) => {
         ]
       }
     })
-    .then(function(data){
-      const res = { success: true, data: data }
-      return res;
-    })
-    .catch(error =>{
-      const res = { success: false, error: error }
-      return res;
-    })
   } else {
     response = await SubSubjectLecturer.findAll()
-    .then(function(data){
-      const res = { success: true, data: data }
-      return res;
-    })
-    .catch(error =>{
-      const res = { success: false, error: error }
-      return res;
-    })
   }
   res.json(response);
 
@@ -48,13 +87,9 @@ subSubjectLecturer.list = async (req, res) => {
 
 subSubjectLecturer.create = async ( req, res) =>{
   try {
+    req.body.hour = getHourItemLythuyet(req.body)
     const response = await SubSubjectLecturer.create(req.body)
-    .then(data =>{
-     res.send({success : true, content: data});
-    })
-    .catch(error=>{
-       res.status(500).send({message: error})
-    })
+    report.updateHour(req.body.year, req.body.semester, 'tkb')
     res.json(response);
   } catch (err) {
     console.log(err);
@@ -98,80 +133,89 @@ subSubjectLecturer.creates = async (req, res) => {
       const tkbs = [];
       const fetchApi = async () => {
         for (let i = 0; i < rows.length; i++) {
-          const tempTeacher = rows[i][6].split('\n');
-              if (tempTeacher.length===1) {
-                const res = await Lecturer.findAll({where: {name: rows[i][6]} })
-                let subSubjectLecturer = {
+            const tempTeacher = rows[i][6].split('\n');
+            if (tempTeacher.length===1) {
+              const res = await Lecturer.findAll({where: {name: rows[i][6]} })
+              if(res.length<1) {
+                res.json({message: `Lecturer ${rows[i][6]} not exit.`});
+              }
+              let subSubjectLecturer = {
+                type: rows[i][2],
+                day: rows[i][3],
+                time: rows[i][4],
+                total_student: rows[i][5],
+                total_tc: rows[i][7],
+                lecturerId: res[0].dataValues.id,
+                classSubjectCode: rows[i][1],
+                teacherNumber:  1,
+                semester: Number(semester),
+                year: year,
+                subjectCode: rows[i][0],
+                job: rows[i][8],
+              }
+              subSubjectLecturer.hour = getHourItemLythuyet(subSubjectLecturer)
+              tkbs.push(subSubjectLecturer);
+            } else {
+              await Promise.all(
+                tempTeacher.map(async (item) => {
+                  try{
+                    return await Lecturer.findAll({where: {name: item} })
+                  }
+                  catch(err) {
+                    console.log(err)
+                  }
+                })
+              ).then(res02 => {
+                if(res02.length<2) {
+                  res.json({message: `Name lecturer not exit.`});
+                }
+                let subSubjectLecturer1 = {
                   type: rows[i][2],
                   day: rows[i][3],
                   time: rows[i][4],
                   total_student: rows[i][5],
                   total_tc: rows[i][7],
-                  lecturerId: res[0].dataValues.id,
+                  lecturerId: res02[0][0].dataValues.id,
                   classSubjectCode: rows[i][1],
-                  teacherNumber:  1,
+                  teacherNumber:  2,
                   semester: Number(semester),
                   year: year,
                   subjectCode: rows[i][0],
                   job: rows[i][8],
                 }
-                tkbs.push(subSubjectLecturer);
-              } else {
-                await Promise.all(
-                  tempTeacher.map(async (item) => {
-                    try{
-                      return await Lecturer.findAll({where: {name: item} })
-                    }
-                    catch(err) {
-                      console.log(err)
-                    }
-                  })
-                ).then(res02 => {
-                  let subSubjectLecturer1 = {
-                    type: rows[i][2],
-                    day: rows[i][3],
-                    time: rows[i][4],
-                    total_student: rows[i][5],
-                    total_tc: rows[i][7],
-                    lecturerId: res02[0][0].dataValues.id,
-                    classSubjectCode: rows[i][1],
-                    teacherNumber:  2,
-                    semester: Number(semester),
-                    year: year,
-                    subjectCode: rows[i][0],
-                    job: rows[i][8],
-                  }
 
-                  let subSubjectLecturer2 = {
-                    type: rows[i][2],
-                    day: rows[i][3],
-                    time: rows[i][4],
-                    total_student: rows[i][5],
-                    total_tc: rows[i][7],
-                    lecturerId: res02[1][0].dataValues.id,
-                    classSubjectCode: rows[i][1],
-                    teacherNumber:  2,
-                    semester: Number(semester),
-                    year: year,
-                    subjectCode: rows[i][0],
-                    job: rows[i][8],
-                  }
-                  tkbs.push(subSubjectLecturer1);
-                  tkbs.push(subSubjectLecturer2);
-                })
-              }
+                let subSubjectLecturer2 = {
+                  type: rows[i][2],
+                  day: rows[i][3],
+                  time: rows[i][4],
+                  total_student: rows[i][5],
+                  total_tc: rows[i][7],
+                  lecturerId: res02[1][0].dataValues.id,
+                  classSubjectCode: rows[i][1],
+                  teacherNumber:  2,
+                  semester: Number(semester),
+                  year: year,
+                  subjectCode: rows[i][0],
+                  job: rows[i][8],
+                }
+                subSubjectLecturer1.hour = getHourItemLythuyet(subSubjectLecturer1)
+                subSubjectLecturer2.hour = getHourItemLythuyet(subSubjectLecturer2)
+                tkbs.push(subSubjectLecturer1);
+                tkbs.push(subSubjectLecturer2);
+              })
             }
+        }
       }
       fetchApi().then(() => {
-        SubSubjectLecturer.bulkCreate(tkbs).then( resData =>{
-          const result = {
-            status: "ok",
-            data: tkbs,
-            data2: resData,
-            message: "Upload Successfully!",
-          }
-        res.json(result);
+
+        SubSubjectLecturer.bulkCreate(tkbs).then( () =>{
+          res.json(tkbs);
         })
+        const lecturerIdTkb = Array.from(new Set(tkbs.map(item => item.lecturerId)))
+        lecturerIdTkb.forEach(element => {
+          report.updateHour(year, semester, 'tkb', element)
+        });
+
       })
     });
   }
@@ -183,76 +227,5 @@ subSubjectLecturer.creates = async (req, res) => {
     res.json(result);
   }
 }
-
-subSubjectLecturer.report = ( req, res) => {
-  const huhu = async () => {
-  try {
-    return await Lecturer.findAll({where: {status: 1}})
-    .catch(error=>{
-       res.status(500).send({message: error})
-    })
-  } catch (err) {
-    console.log(err);
-  }
-  }
-  huhu().then(data =>{
-    const arr = []
-    data.forEach(item => {
-      arr.push({
-        year: req.body.year,
-        semester: req.body.semester,
-        ...item.dataValues
-      })
-    })
-    return arr;
-  }).then(arr => {
-    let arrTemp = []
-    Promise.all(arr.map(async (item) => {
-        try{
-          const res1 = await SubSubjectLecturer.findOne({
-            where: {
-              [Op.and]: [
-                { year: item.year },
-                { semester: item.semester },
-                { lecturerId: item.id}
-              ]
-            },
-            attributes: ['lecturerId', [sequelize.fn('sum', sequelize.col('id')), 'totalTkb']],
-            group : ['year', 'semester', 'lecturerId'],
-          })
-
-          const res2 = await Thesis.findOne({
-            where: {
-              [Op.and]: [
-                { year: item.year },
-                { semester: item.semester },
-                { lecturerId: item.id}
-              ]
-            },
-            attributes: ['lecturerId', [sequelize.fn('sum', sequelize.col('id')), 'totalKltn']],
-            group : ['year', 'semester', 'lecturerId'],
-          })
-
-          if (res1 && res2) {
-            arrTemp.push({lecturerId: res1.dataValues.lecturerId, totalTkb: res1.dataValues.totalTkb, totalKltn: res2.dataValues.totalKltn})
-          } else if(res1) {
-            arrTemp.push(res1)
-          } else if(res2){
-            arrTemp.push(res2)
-          }
-
-        } catch(err) {
-          console.log(err)
-        }
-      }))
-   .then( ()=> {
-      console.log(arrTemp)
-      // const result = arrTemp.filter(element => element!==null)
-
-      res.json(arrTemp)
-    })
-  })
-}
-
 
 module.exports = subSubjectLecturer;

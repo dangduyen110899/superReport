@@ -1,19 +1,13 @@
 // import controller
-const classSubject = require('../controller/classSubject');
 const student = require('../controller/student');
 const thesis = require('../controller/thesis');
-const subject = require('../controller/subject');
-const uploads = require('../controller/upload');
 const lecturer = require('../controller/lecturer');
-const tempExcel = require('../controller/tempExcel');
 const subSubjectLecturer = require('../controller/subSubjectLecturer');
-
 let upload = require('../config/multer');
-
+const report = require('../controller/report');
 
 function route(app) {
 
-// route lecturer
 //  app.get('/api/lecturer/hehe',function(res,req) {lecturer.hehe});
 app.get('/api/admin/lecturer',lecturer.list);
 app.post('/api/admin/lecturer/create',lecturer.create);
@@ -37,9 +31,8 @@ app.post('/api/admin/tkb/create',subSubjectLecturer.create);
 app.post('/api/admin/tkb/creates',upload.single("file"),subSubjectLecturer.creates);
 app.post('/api/admin/tkb/checkYear',subSubjectLecturer.checkYear);
 //app.get('/api/admin/tkb/update',subSubjectLecturer.update);
- app.post('/api/admin/report',subSubjectLecturer.report);
 
-  app.get('/api/admin/thesis/getHour',thesis.getHour);
+app.get('/api/admin/report',report.list);
 
 
 

@@ -12,6 +12,8 @@ module.exports = (sequelize, Sequelize) => {
     year: Sequelize.STRING,
     classCode: Sequelize.STRING,
     nvcl: Sequelize.INTEGER,
+    hour: Sequelize.FLOAT,
+    language: Sequelize.INTEGER,
   },{
     timestamps: false
   });

@@ -4,14 +4,13 @@ const lecturer = {}
 const readXlsxFile = require('read-excel-file/node');
 
 lecturer.list = async (req, res) => {
-  const response = await Lecturer.findAll({where: {status: 1}})
-  .then(function(data){
-    res.send({success : true, data: data});
-  })
-  .catch(error =>{
-    res.status(400).send({message: error})
-  })
-  res.json(response);
+  try {
+    const response = await Lecturer.findAll({where: {status: 1}})
+    res.json(response);
+  }
+  catch (e) {
+    console.log(e);
+  }
 
 }
 
@@ -19,14 +18,7 @@ lecturer.create = async ( req, res) =>{
   try {
     const request = req.body
     const response = await Lecturer.create(request)
-    .then(function(data){
-      res.send({success : true, data: data});
-    })
-    .catch(error=>{
-      res.status(400).send({message: error});
-    })
     res.json(response);
-
   } catch (e) {
     console.log(e);
   }
@@ -52,12 +44,7 @@ lecturer.creates = async (req, res) => {
       }
 
       Lecturer.bulkCreate(lecturers).then(data => {
-        const result = {
-          status: "ok",
-          data: data,
-          message: "Upload Successfully!",
-        }
-        res.json(result);
+        res.json(data);
       })
     });
   }
@@ -78,15 +65,8 @@ lecturer.update = async ( req, res) =>{
     status: req.body.status
   }
   try {
-
     const response = await Lecturer.update( request,{
       where: { id: req.body.id}
-    })
-    .then(function(data){
-      res.send({success : true, data: data});
-    })
-    .catch(error=>{
-      res.status(400).send({message: error});
     })
     res.json(response);
 

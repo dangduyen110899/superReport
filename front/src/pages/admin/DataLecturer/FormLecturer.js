@@ -42,18 +42,20 @@ const FormLecturer = ({handleOk, handleCancel, itemEdit}) => {
             rules={{ required: true }}/>
             </Space>
         </Row>
+        
         <Row>
-        <Space>
-          <label >Program</label>
-          <Controller
-            as={
-              <InputNumber/>
-            }
-            name="programs"
-            control={control}
-            rules={{ required: true }}/>
+          <Space>
+            <label >Program</label>
+            <Controller
+              as={
+                <InputNumber/>
+              }
+              name="programs"
+              control={control}
+              rules={{ required: true }}/>
           </Space>
         </Row>
+
         <Row direction="vertical">
           <Space>
             <Button type="primary" htmlType="submit">Save</Button>

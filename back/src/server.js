@@ -20,7 +20,7 @@ app.get('/',(req,res)=>{
   res.send("Hello World form NodeJS express.");
 });
 // {force: true}
-db.sequelize.sync().then(() => {
+db.sequelize.sync({alter: true}).then(() => {
     console.log("Sequelize is Running");
 }).catch(err => {
     console.log(err.message);

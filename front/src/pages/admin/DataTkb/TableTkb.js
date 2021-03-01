@@ -140,7 +140,7 @@ export default function TableTkb({match}) {
     const getData = async () => {
       try {
         await callAdmin.tkb(year,semester).then(res =>
-          setData(res.data.data)
+          setData(res.data)
         )
       } catch (error) {
         console.log("failed to request API: ", error)
@@ -159,7 +159,7 @@ export default function TableTkb({match}) {
     };
     getData().then(res =>
       {
-        let arrString = res.data.data.map(item => item.semester + ' ' + item.year)
+        let arrString = res.data.map(item => item.semester + ' ' + item.year)
         const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
         setYearShow(['All',...arr])
       }
@@ -173,12 +173,14 @@ export default function TableTkb({match}) {
     formData.append('semester', semester)
     const adds = async () => {
       try {
-        await callAdmin.addTkbs(formData).then(res =>
-         {
-          setData([...data, ...res.data.data])
+        const res = await callAdmin.addTkbs(formData)
+        if (res.data.length) {
+          setData([...data, ...res.data])
           toast.success("Add Tkbs success!");
-         }
-        )
+        }
+        else {
+          toast.error(res.data.message)
+        }
       } catch (error) {
         console.log("failed to request API: ", error)
       }

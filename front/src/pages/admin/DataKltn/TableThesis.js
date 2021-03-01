@@ -48,12 +48,10 @@ export default function TableThesic({match}) {
     itemEdit.status = 0;
     const remove = async () => {
       try {
-        await callAdmin.editThesis(itemEdit).then(res =>
-         {
-          const dataNew = data.filter(item => item.id!==itemEdit.id)
-          setData(dataNew)
-         }
-        )
+        await callAdmin.editThesis(itemEdit)
+        const res = await callAdmin.thesis(year,semester)
+        setData(res.data)
+        toast.success("Delete thesic success")
       } catch (error) {
         console.log("failed to request API: ", error)
       }
@@ -117,9 +115,8 @@ export default function TableThesic({match}) {
   useEffect(() => {
     const getData = async () => {
       try {
-        await callAdmin.thesis(year,semester).then(res =>
-          setData(res.data.data)
-        )
+        const res = await callAdmin.thesis(year,semester)
+        setData(res.data)
       } catch (error) {
         console.log("failed to request API: ", error)
       }
@@ -137,7 +134,7 @@ export default function TableThesic({match}) {
     };
     getData().then(res =>
       {
-        let arrString = res.data.data.map(item => item.semester + ' ' + item.year)
+        let arrString = res.data.map(item => item.semester + ' ' + item.year)
         const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
         setYearShow(['All',...arr])
       }
@@ -151,12 +148,13 @@ export default function TableThesic({match}) {
     formData.append('semester', semester)
     const adds = async () => {
       try {
-        await callAdmin.addThesiss(formData).then(res =>
-         {
-          setData([...data, ...res.data.data])
+        const res = await callAdmin.addThesiss(formData)
+        if(res.data.length) {
+          setData([...data, ...res.data])
           toast.success("Add thesiss success!");
-         }
-        )
+        } else {
+          toast.error(res.data.message);
+        }
       } catch (error) {
         console.log("failed to request API: ", error)
       }

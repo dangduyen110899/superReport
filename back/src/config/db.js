@@ -26,7 +26,7 @@ db.class = require('../models/Class')(sequelize, Sequelize);
 db.subject = require('../models/Subject')(sequelize, Sequelize);
 // db.classSubject = require('../models/ClassSubject')(sequelize, Sequelize);
 db.subSubjectLecturer = require('../models/SubSubjectLecturer')(sequelize, Sequelize);
-db.tempExcel = require('../models/TempExcel')(sequelize, Sequelize);
+db.reportHour = require('../models/ReportHour')(sequelize, Sequelize);
 
 // db.subject.hasMany(db.classSubject);
 // db.classSubject.belongsTo(db.subject);

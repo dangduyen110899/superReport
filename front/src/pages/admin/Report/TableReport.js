@@ -31,39 +31,29 @@ export default function TableReport({match}) {
       key: 'lecturerId',
     },
     {
-      title: 'teaching hours',
-      dataIndex: 'teachingHours',
-      key: 'teachingHours',
+      title: 'Hour schedule',
+      dataIndex: 'hourSchedule',
+      key: 'hourSchedule',
     },
     {
-      title: 'Kltn hours',
-      dataIndex: 'thesisHours',
-      key: 'thesisHours',
+      title: 'Hour thesis',
+      dataIndex: 'hourThesis',
+      key: 'hourThesis',
     },
     {
-      title: 'Datn hours',
-      dataIndex: 'datnHours',
-      key: 'datnHours',
+      title: 'Hour project',
+      dataIndex: 'hourProject',
+      key: 'hourProject',
     },
     {
-      title: 'Latn hours',
-      dataIndex: 'latnHours',
-      key: 'latnHours',
+      title: 'Hour intern',
+      dataIndex: 'hourTTCN',
+      key: 'hourTTCN',
     },
     {
-      title: 'Lvts hours',
-      dataIndex: 'lvtsHours',
-      key: 'lvtsHours',
-    },
-    {
-      title: 'Tt hours',
-      dataIndex: 'TtHours',
-      key: 'TtHours',
-    },
-    {
-      title: '... hours',
-      dataIndex: 'vHours',
-      key: 'vHours',
+      title: 'Total hours',
+      dataIndex: 'total',
+      key: 'total',
     },
   ];
 
@@ -77,7 +67,7 @@ export default function TableReport({match}) {
     const getData = async () => {
       try {
         await callAdmin.report(year,semester).then(res =>
-          setData(res.data.data)
+          setData(res.data)
         )
       } catch (error) {
         console.log("failed to request API: ", error)
@@ -89,14 +79,14 @@ export default function TableReport({match}) {
   useEffect(() => {
     const getData = async () => {
       try {
-        return await callAdmin.tkb('','')
+        return await callAdmin.report('','')
       } catch (error) {
         console.log("failed to request API: ", error)
       }
     };
     getData().then(res =>
       {
-        let arrString = res.data.data.map(item => item.semester + ' ' + item.year)
+        let arrString = res.data.map(item => item.semester + ' ' + item.year)
         const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
         setYearShow(['All',...arr])
       }

@@ -24,28 +24,19 @@ export default function TableStudent({match}) {
     item.status = 1;
     const add = async () => {
       try {
-       if (itemId) {
-        item.id = itemId;
-        await callAdmin.editStudent(item).then(res => {
-          const dataNew = [...data]
-          dataNew.forEach(element => {
-            if (element.id === item.id) {
-              element.name = item.name;
-              element.code = item.code;
-              element.classCode = item.classCode;
-            }
-          });
-          setData([...dataNew])
+        if (itemId) {
+          item.id = itemId;
+          await callAdmin.editStudent(item)
+          const res = await callAdmin.student()
+          setData(res.data)
           setIsModalVisible(false);
           toast.success("Edit student success!");
-        })
-       } else {
-        await callAdmin.addStudent(item).then(res => {
-          setData([...data, res.data.data])
+        } else {
+          const res = await callAdmin.addStudent(item)
+          setData([...data, res.data])
           setIsModalVisible(false);
           toast.success("Add student success!");
-        })
-       }
+        }
       } catch (error) {
         toast.warning(error?.response?.data?.message);
       }
@@ -62,13 +53,10 @@ export default function TableStudent({match}) {
     itemEdit.status = 0;
     const remove = async () => {
       try {
-        await callAdmin.editStudent(itemEdit).then(res =>
-         {
-          const dataNew = data.filter(item => item.id!==itemEdit.id)
-          setData(dataNew)
-          toast.success('Delete student success.')
-         }
-        )
+        await callAdmin.editStudent(itemEdit)
+        const res = await callAdmin.student()
+        setData(res.data)
+        toast.success('Delete student success.')
       } catch (error) {
         console.log("failed to request API: ", error)
       }
@@ -112,9 +100,8 @@ export default function TableStudent({match}) {
   useEffect(() => {
     const getData = async () => {
       try {
-        await callAdmin.student().then(res =>
-          setData(res.data.data)
-        )
+        const res = await callAdmin.student()
+        setData(res.data)
       } catch (error) {
         console.log("failed to request API: ", error)
       }
@@ -127,12 +114,10 @@ export default function TableStudent({match}) {
     formData.append("file", file)
     const adds = async () => {
       try {
-        await callAdmin.addStudents(formData).then(res =>
-         {
-          setData([...data, ...res.data.data])
-          toast.success("Add students success!");
-         }
-        )
+        const res = await callAdmin.addStudents(formData)
+        console.log(res)
+        setData([...data, ...res.data])
+        toast.success("Add students success!");
       } catch (error) {
         console.log("failed to request API: ", error)
       }

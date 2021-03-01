@@ -16,6 +16,8 @@ module.exports = (sequelize, Sequelize) => {
     job: Sequelize.STRING,
     classSubjectCode: Sequelize.STRING,
     teacherNumber: Sequelize.INTEGER,
+    language: Sequelize.INTEGER,
+    hour: Sequelize.FLOAT
   },{
     timestamps: false
   });

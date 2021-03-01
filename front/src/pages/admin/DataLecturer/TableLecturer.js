@@ -26,22 +26,15 @@ export default function TableLecturer({match}) {
       try {
        if (itemId) {
         item.id = itemId;
-        await callAdmin.editLecturer(item).then(res => {
-          const dataNew = [...data]
-          dataNew.forEach(element => {
-            if (element.id === item.id) {
-              element.name = item.name;
-              element.email = item.email;
-              element.programs = item.programs;
-            }
-          });
-          setData([...dataNew])
+        await callAdmin.editLecturer(item).then(async() => {
+          const res = await callAdmin.lecturer()
+          setData(res.data)
           setIsModalVisible(false);
           toast.success("Edit lecturer success!");
         })
        } else {
         await callAdmin.addLecturer(item).then(res => {
-          setData([...data, res.data.data])
+          setData([...data, res.data])
           setIsModalVisible(false);
           toast.success("Add lecturer success!");
         })
@@ -62,10 +55,10 @@ export default function TableLecturer({match}) {
     itemEdit.status = 0;
     const remove = async () => {
       try {
-        await callAdmin.editLecturer(itemEdit).then(res =>
+        await callAdmin.editLecturer(itemEdit).then(async() =>
          {
-          const dataNew = data.filter(item => item.id!==itemEdit.id)
-          setData(dataNew)
+          const res = await callAdmin.lecturer()
+          setData(res.data)
          }
         )
       } catch (error) {
@@ -111,9 +104,8 @@ export default function TableLecturer({match}) {
   useEffect(() => {
     const getData = async () => {
       try {
-        await callAdmin.lecturer().then(res =>
-          setData(res.data.data)
-        )
+        const res = await callAdmin.lecturer()
+        setData(res.data)
       } catch (error) {
         console.log("failed to request API: ", error)
       }
@@ -128,12 +120,12 @@ export default function TableLecturer({match}) {
       try {
         await callAdmin.addLecturers(formData).then(res =>
          {
-          setData([...data, ...res.data.data])
+          setData([...data, ...res.data])
           toast.success("Add lecturers success!");
          }
         )
       } catch (error) {
-        console.log("failed to request API: ", error)
+        toast.error(error)
       }
     };
     adds();
