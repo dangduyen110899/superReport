@@ -5,11 +5,14 @@ const lecturer = require('../controller/lecturer');
 const subSubjectLecturer = require('../controller/subSubjectLecturer');
 let upload = require('../config/multer');
 const report = require('../controller/report');
+const controller = require('../controller/controller');
+const authJwt = require('../router/verifyJwtToken');
+const verifySignUp = require('../router/verifySignUp');
 
 function route(app) {
 
 //  app.get('/api/lecturer/hehe',function(res,req) {lecturer.hehe});
-app.get('/api/admin/lecturer',lecturer.list);
+app.get('/api/admin/lecturer', [authJwt.verifyToken, authJwt.isAdmin],lecturer.list);
 app.post('/api/admin/lecturer/create',lecturer.create);
 app.post('/api/admin/lecturer/creates',upload.single("file"),lecturer.creates);
 app.put('/api/admin/lecturer/update',lecturer.update);
@@ -34,6 +37,15 @@ app.post('/api/admin/tkb/checkYear',subSubjectLecturer.checkYear);
 
 app.get('/api/admin/report',report.list);
 
+app.post('/api/auth/signup', [verifySignUp.checkDuplicateUserNameOrEmail, verifySignUp.checkRolesExisted], controller.signup);
+	
+app.post('/api/auth/signin', controller.signin);
+
+app.get('/api/test/user', [authJwt.verifyToken], controller.userContent);
+
+app.get('/api/test/pm', [authJwt.verifyToken, authJwt.isPmOrAdmin], controller.managementBoard);
+
+app.get('/api/test/admin', [authJwt.verifyToken, authJwt.isAdmin], controller.adminBoard);
 
 
 }

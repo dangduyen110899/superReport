@@ -1,12 +1,12 @@
 const db = require('../config/db');
 const Thesis = db.thesis;
 const Lecturer = db.lecturer;
-const TempExcel = db.tempExcel;
 const Student = db.student;
 const { Op } = require("sequelize");
 
 const readXlsxFile = require('read-excel-file/node');
-
+const report = require('./report');
+const getHourItem = require('./getHourItem');
 const thesis = {}
 
 thesis.list = async (req, res) => {
@@ -56,27 +56,6 @@ thesis.list = async (req, res) => {
 //   }
 // }
 
-thesis.table = async ( req, res) => {
-  try {
-    const response = await Lecturer.findAll({
-      include: [
-        {
-          model: TempExcel,
-        }
-      ]
-    })
-    .then(data =>{
-     res.send({success : true, content: data});
-    })
-    .catch(error=>{
-       res.status(500).send({message: error})
-    })
-    res.json(response);
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 thesis.creates = async (req, res) => {
   const year = req.body.year;
   const semester = req.body.semester;
@@ -87,37 +66,89 @@ thesis.creates = async (req, res) => {
     readXlsxFile(filePath).then(rows => {
       rows.shift();
       const theses = [];
-      async function huhu(res1, res2,item) {
-        let thesis = {
-          type: item[0],
-          classCode: item[3],
-          lecturerId: res1[0].dataValues.id,
-          lecturerName: res1[0].dataValues.name,
-          studentName: res2[0].dataValues.name,
-          studentId	: res2[0].dataValues.id,
-          nvcl: item[4],
-          year: year,
-          semester: semester
-        }
-        theses.push(thesis);
-        return theses
-      }
       const fetchApi = async () => {
         for (let i = 0; i < rows.length; i++) {
-          try {
-            const res1 = await Lecturer.findAll({where: {name: rows[i][1]} })
+            const tempTeacher = rows[i][1].split('\n');
+
             const res2 = await Student.findAll({where: {name: rows[i][2]} })
-            if (res1.length<1 || res2.length<1) {
-              res.json({message: `Lecturer ${rows[i][1]} or student ${rows[i][2]} not exit.`});
+            if (res2.length<1) {
+              res.json({message: `Student ${rows[i][2]} not exit.`});
             }
-            await huhu(res1, res2, rows[i]);
-          } catch(err) { console.log(err) }
+
+            if (tempTeacher.length===1) {
+              
+              const res1 = await Lecturer.findAll({where: {name: rows[i][1]} })
+              if (res1.length<1) {
+                res.json({message: `Lecturer ${rows[i][1]} not exit.`});
+              }
+              
+              let thesis = {
+                language: rows[i][0],
+                classCode: rows[i][3],
+                lecturerId: res1[0].dataValues.id,
+                lecturerName: res1[0].dataValues.name,
+                studentName: res2[0].dataValues.name,
+                studentId	: res2[0].dataValues.id,
+                nvcl: rows[i][4],
+                year: year,
+                semester: semester
+              }
+              thesis.hour = getHourItem(thesis, null , 'kltn')
+              theses.push(thesis);
+            } else {
+
+              await Promise.all(
+                tempTeacher.map(async (item) => {
+                  try{
+                    return await Lecturer.findAll({where: {name: item} })
+                  }
+                  catch(err) {
+                    console.log(err)
+                  }
+                })
+              ).then(res3 => {
+                if(res3.length<2) {
+                  res.json({message: `Name lecturer not exit.`});
+                }
+
+                let thesis1 = {
+                  language: rows[i][0],
+                  classCode: rows[i][3],
+                  lecturerId: res3[0][0].dataValues.id,
+                  lecturerName: res3[0][0].dataValues.name,
+                  studentName: res2[0].dataValues.name,
+                  studentId	: res2[0].dataValues.id,
+                  nvcl: rows[i][4],
+                  year: year,
+                  semester: semester,
+                }
+                let thesis2 = {
+                  language: rows[i][0],
+                  classCode: rows[i][3],
+                  lecturerId: res3[1][0].dataValues.id,
+                  lecturerName: res3[1][0].dataValues.name,
+                  studentName: res2[0].dataValues.name,
+                  studentId	: res2[0].dataValues.id,
+                  nvcl: rows[i][4],
+                  year: year,
+                  semester: semester,
+                }
+                thesis1.hour = getHourItem(thesis1, null , 'kltn')
+                thesis2.hour = getHourItem(thesis2, null , 'kltn')
+                theses.push(thesis1);
+                theses.push(thesis2);
+              })
+            }
         }
       }
       fetchApi().then(() => {
         Thesis.bulkCreate(theses).then(() =>{
          res.json(theses);
         })
+        const lecturerIdKltn = Array.from(new Set(theses.map(item => item.lecturerId)))
+        lecturerIdKltn.forEach(element => {
+          report.updateHour(year, semester, 'kltn', element)
+        });
       })
     });
   }

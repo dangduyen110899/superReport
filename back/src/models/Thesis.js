@@ -7,13 +7,14 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true,
       autoIncrement: true,
     },
-    type: Sequelize.INTEGER,
     semester: Sequelize.INTEGER,
     year: Sequelize.STRING,
     classCode: Sequelize.STRING,
     nvcl: Sequelize.INTEGER,
     hour: Sequelize.FLOAT,
     language: Sequelize.INTEGER,
+    lecturerName: Sequelize.STRING,
+    studentName: Sequelize.STRING,
   },{
     timestamps: false
   });

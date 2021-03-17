@@ -44,4 +44,36 @@ dcm.caculHourLT =  [
     }
 ]
 
+dcm.caculHourTH =  [
+    {
+        totalStudent: "<=30",
+        numberLecturer: 1,
+        hourTh: 0.75,
+    },
+    {
+        totalStudent: "<=30",
+        numberLecturer: 2,
+        hourTh: 0.5,
+    },
+    {
+        totalStudent: ">30",
+        numberLecturer: 1,
+        hourTh: 0.8,
+    },
+    {
+        totalStudent: ">30",
+        numberLecturer: 2,
+        hourTh: 0.55,
+    }
+]
+
+dcm.caculHourThesic =  [
+    {
+       hourKltn: 12,
+        nvcl: 2,
+        english: 2,
+        vietnames: 1.5
+    }
+]
+
 module.exports =  dcm

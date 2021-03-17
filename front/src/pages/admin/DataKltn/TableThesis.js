@@ -61,40 +61,41 @@ export default function TableThesic({match}) {
 
   let columns = [
     {
-      title: 'year',
+      title: 'Year',
       dataIndex: 'year',
       key: 'year',
     },
     {
-      title: 'semester',
+      title: 'Semester',
       dataIndex: 'semester',
       key: 'semester',
     },
     {
-      title: 'Name thesis',
-      dataIndex: 'name',
-      key: 'name',
+      title: 'Name lecturer',
+      dataIndex: 'lecturerName',
+      key: 'lecturerName',
     },
     {
-      title: 'lecturerId',
-      dataIndex: 'lecturerId',
-      key: 'lecturerId',
+      title: 'Name student',
+      dataIndex: 'studentName',
+      key: 'studentName',
     },
     {
-      title: 'studentId',
-      dataIndex: 'studentId',
-      key: 'studentId',
+      title: 'Code class',
+      dataIndex: 'classCode',
+      key: 'classCode',
     },
     {
-      title: 'type',
-      dataIndex: 'type',
-      key: 'type',
+      title: 'Language',
+      dataIndex: 'language',
+      key: 'language',
     },
     {
-      title: 'nvcl',
+      title: 'Nvcl',
       dataIndex: 'nvcl',
       key: 'nvcl',
     },
+
     {
       title: 'Action',
       dataIndex: 'operation',
@@ -163,7 +164,6 @@ export default function TableThesic({match}) {
   }
 
   const onChangeYear = (item1, item2) => {
-    console.log(item1, item2)
     setYear(item1);
     setSemester(item2);
   }

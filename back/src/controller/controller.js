@@ -1,164 +1,137 @@
-// //import sequelize
-// var Sequelize = require('sequelize');
-// const controller = {}
-// // import model
-// const { Op } = require("sequelize");
-// const ClassSubject = require('../models/ClassSubjects');
-// const Subject = require('../models/Subject');
-// const Teacher = require('../models/Teacher');
-// const Study = require('../models/Study');
+const db = require('../config/db.js');
+const config = require('../config/config.js');
+const User = db.user;
+const Role = db.role;
 
-// controller.index = (req,res) => {
+const Op = db.Sequelize.Op;
 
-//   const data = {
-//     name: "Jhon Smith",
-//     email: "dangthiduyen@gmail.com",
-//     address: "dd ff",
-//     phone: 0961963493,
-//   }
+var jwt = require('jsonwebtoken');
+var bcrypt = require('bcryptjs');
 
-//   res.json(data);
-// };
+exports.signup = (req, res) => {
+	// Save User to Database
+	console.log("Processing func -> SignUp");
+	
+	User.create({
+		name: req.body.name,
+		username: req.body.username,
+		email: req.body.email,
+		password: bcrypt.hashSync(req.body.password, 8)
+	}).then(user => {
+		Role.findAll({
+		  where: {
+			name: {
+			  [Op.or]: req.body.roles
+			}
+		  }
+		}).then(roles => {
+			user.setRoles(roles).then(() => {
+				res.send("User registered successfully!");
+            });
+		}).catch(err => {
+			res.status(500).send("Error -> " + err);
+		});
+	}).catch(err => {
+		res.status(500).send("Fail! Error -> " + err);
+	})
+}
 
-// controller.list = async (req, res) => {
+exports.signin = (req, res) => {
+	console.log("Sign-In");
+	
+	User.findOne({
+		where: {
+			username: req.body.username
+		}
+	}).then(user => {
+		if (!user) {
+			return res.status(404).send('User Not Found.');
+		}
 
-//   const response = await Teacher.findAll()
-//   .then(function(data){
-//     const res = { success: true, data: data }
-//     return res;
-//   })
-//   .catch(error =>{
-//     const res = { success: false, error: error }
-//     return res;
-//   })
-//   res.json(response);
+		var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+		if (!passwordIsValid) {
+			return res.status(401).send({ auth: false, accessToken: null, reason: "Invalid Password!" });
+		}
+		
+		var token = jwt.sign({ id: user.id }, config.secret, {
+		  expiresIn: 86400 // expires in 24 hours
+		});
+		
+		res.status(200).send({ auth: true, accessToken: token });
+		
+	}).catch(err => {
+		res.status(500).send('Error -> ' + err);
+	});
+}
 
-// }
+exports.userContent = (req, res) => {
+	User.findOne({
+		where: {id: req.userId},
+		attributes: ['name', 'username', 'email'],
+		include: [{
+			model: Role,
+			attributes: ['id', 'name'],
+			through: {
+				attributes: ['userId', 'roleId'],
+			}
+		}]
+	}).then(user => {
+		res.status(200).json({
+			"description": "User Content Page",
+			"user": user
+		});
+	}).catch(err => {
+		res.status(500).json({
+			"description": "Can not access User Page",
+			"error": err
+		});
+	})
+}
 
-// //
+exports.adminBoard = (req, res) => {
+	User.findOne({
+		where: {id: req.userId},
+		attributes: ['name', 'username', 'email'],
+		include: [{
+			model: Role,
+			attributes: ['id', 'name'],
+			through: {
+				attributes: ['userId', 'roleId'],
+			}
+		}]
+	}).then(user => {
+		res.status(200).json({
+			"description": "Admin Board",
+			"user": user
+		});
+	}).catch(err => {
+		res.status(500).json({
+			"description": "Can not access Admin Board",
+			"error": err
+		});
+	})
+}
 
-// // controller.list = async (req, res) => {
-
-// //   const response = await Customers.findAll()
-// //   .then(function(data){
-// //     const res = { success: true, data: data }
-// //     return res;
-// //   })
-// //   .catch(error =>{
-// //     const res = { success: false, error: error }
-// //     return res;
-// //   })
-// //   res.json(response);
-
-// // }
-
-// // controller.create = async ( req, res) =>{
-// //   try {
-// //     const request = {
-// //       name:"John Smith 1",
-// //       email:"john1@smith.com",
-// //       address:"Cll 100 Malibu",
-// //       phone:"123456780"
-// //     }
-// //     const response = await Customers.create(request)
-// //     .then(function(data){
-// //       const res = { success: true, data: data, message:"created successful" }
-// //       return res;
-// //     })
-// //     .catch(error=>{
-// //       const res = { success: false, error: error }
-// //       return res;
-// //     })
-// //     res.json(response);
-
-// //   } catch (e) {
-// //     console.log(e);
-// //   }
-// // }
-
-// // controller.update = async ( req, res) =>{
-
-// //   try {
-
-// //     const id = 19;
-
-// //     const response = await Customers.update({
-// //       name:"Jhon Milan",
-// //       email:"milan@milo.com",
-// //       address:"Cll 100 California",
-// //       phone:"123456789"
-// //     },{
-// //       where: { id: id}
-// //     })
-// //     .then(function(data){
-// //       const res = { success: true, data: data, message:"updated successful" }
-// //       return res;
-// //     })
-// //     .catch(error=>{
-// //       const res = { success: false, error: error }
-// //       return res;
-// //     })
-// //     res.json(response);
-
-// //   } catch (e) {
-// //     console.log(e);
-// //   }
-// // }
-
-// // controller.get = async ( req, res) =>{
-
-// //   try {
-
-// //     const { id } = req.params;
-
-// //     const response = await Customers.findAll({
-// //       where: { id: id}
-// //       // where: { id: [ 1, 2, 4 ] }
-// //       // like: { name: "Milan" }
-// //       // where: {
-// //       //   name: {
-// //       //     [Op.like]: '%Milan%'
-// //       //   }
-// //       // }
-// //     })
-// //     .then( function(data){
-// //       const res = { success: true, data: data }
-// //       return res;
-// //     })
-// //     .catch(error => {
-// //       const res = { success: false, error: error }
-// //       return res;
-// //     })
-// //     res.json(response);
-
-// //   } catch (e) {
-// //     console.log(e);
-// //   }
-// // }
-
-
-// // controller.delete = async ( req, res) =>{
-
-// //   try {
-
-// //     const { id } = req.params;
-
-// //     const response = await Customers.destroy({
-// //       where: { id: id }
-// //     })
-// //     .then( function(data){
-// //       const res = { success: true, data: data, message:"Deleted successful" }
-// //       return res;
-// //     })
-// //     .catch(error => {
-// //       const res = { success: false, error: error }
-// //       return res;
-// //     })
-// //     res.json(response);
-
-// //   } catch (e) {
-// //     console.log(e);
-// //   }
-// // }
-
-// module.exports = controller;
+exports.managementBoard = (req, res) => {
+	User.findOne({
+		where: {id: req.userId},
+		attributes: ['name', 'username', 'email'],
+		include: [{
+			model: Role,
+			attributes: ['id', 'name'],
+			through: {
+				attributes: ['userId', 'roleId'],
+			}
+		}]
+	}).then(user => {
+		res.status(200).json({
+			"description": "Management Board",
+			"user": user
+		});
+	}).catch(err => {
+		res.status(500).json({
+			"description": "Can not access Management Board",
+			"error": err
+		});
+	})
+}

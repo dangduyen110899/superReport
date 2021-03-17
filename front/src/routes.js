@@ -1,3 +1,4 @@
+import SignIn from "pages/account/SignIn";
 import TableThesic from "pages/admin/DataKltn/TableThesis";
 import TableLecturer from "pages/admin/DataLecturer/TableLecturer";
 import TableStudent from "pages/admin/DataStudent/TableStudent";
@@ -15,6 +16,11 @@ export const routesAdmin = [
   //   exact: true,
   //   components: match => <TableDataExcel match={match}/>,
   // },
+  {
+    path: "/",
+    exact: true,
+    components: SignIn,
+  },
   {
     path: "/admin/lecturer",
     exact: false,
