@@ -10,28 +10,26 @@ const { Op } = require("sequelize");
 report.updateHour = async ( year, semester, name, gvId) => {
   switch (name) {
     case "tkb":
-      const updateHourSchedule = async () => {
-        return await SubSubjectLecturer.findAll({
-          where: {
-            [Op.and]: [
-              { year: year },
-              { semester: Number(semester) },
-              { lecturerId: gvId }
-            ]
-          },
-          attributes: ['lecturerId', 'year', 'semester',[sequelize.fn('sum', sequelize.col('hour')), 'hourSchedule']],
-        })}
-      updateHourSchedule().then(async (response1) => {
+
+      SubSubjectLecturer.findAll({
+        where: {
+          [Op.and]: [
+            { year: year },
+            { semester: Number(semester) },
+            { lecturerId: gvId }
+          ]
+        },
+        attributes: ['lecturerId','lecturerName', 'year', 'semester',[sequelize.fn('sum', sequelize.col('hour')), 'hourSchedule']],
+      }).then( async (response1) => {
         const response2 = await ReportHour.findAll({
-          where: {
-            [Op.and]: [
-              { year: year },
-              { semester: Number(semester) },
-              { lecturerId: gvId }
-            ]
-          }
-        })
-        console.log(response1,response2)
+              where: {
+                [Op.and]: [
+                  { year: year },
+                  { semester: Number(semester) },
+                  { lecturerId: gvId }
+                ]
+              }
+            })
         if (response2.length>0) {
           // update report hour
           await ReportHour.update({...response2[0].dataValues, ...response1[0].dataValues},{
@@ -42,6 +40,38 @@ report.updateHour = async ( year, semester, name, gvId) => {
           await ReportHour.create(response1[0].dataValues)
         }
       })
+      // const updateHourSchedule = async () => {
+      //   return await SubSubjectLecturer.findAll({
+      //     where: {
+      //       [Op.and]: [
+      //         { year: year },
+      //         { semester: Number(semester) },
+      //         { lecturerId: gvId }
+      //       ]
+      //     },
+      //     attributes: ['lecturerId', 'year', 'semester',[sequelize.fn('sum', sequelize.col('hour')), 'hourSchedule']],
+      //   })}
+      // updateHourSchedule().then(async (response1) => {
+      //   const response2 = await ReportHour.findAll({
+      //     where: {
+      //       [Op.and]: [
+      //         { year: year },
+      //         { semester: Number(semester) },
+      //         { lecturerId: gvId }
+      //       ]
+      //     }
+      //   })
+      //   console.log(response1,response2)
+      //   if (response2.length>0) {
+      //     // update report hour
+      //     await ReportHour.update({...response2[0].dataValues, ...response1[0].dataValues},{
+      //       where: { id: response2[0].dataValues.id}
+      //       })
+      //   } else {
+      //     // create report hour
+      //     await ReportHour.create(response1[0].dataValues)
+      //   }
+      // })
 
       break;
 
@@ -55,7 +85,7 @@ report.updateHour = async ( year, semester, name, gvId) => {
               { lecturerId: gvId }
             ]
           },
-          attributes: ['lecturerId', 'year', 'semester',[sequelize.fn('sum', sequelize.col('hour')), 'hourThesis']],
+          attributes: ['lecturerId', 'lecturerName','year', 'semester',[sequelize.fn('sum', sequelize.col('hour')), 'hourThesis']],
         })
         const response2 = await ReportHour.findAll({
           where: {

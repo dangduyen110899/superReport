@@ -7,15 +7,15 @@ const lecturer=()=>{
 }
 
 const addLecturer=(data)=>{
-  return http.post(`${dbName}/lecturer/create`, data)
+  return http.post(`${dbName}/lecturer/create`, data, { headers: authHeader() })
 }
 
 const addLecturers=(data)=>{
-  return http.post(`${dbName}/lecturer/creates`, data)
+  return http.post(`${dbName}/lecturer/creates`, data, { headers: authHeader() })
 }
 
 const editLecturer=(data)=>{
-  return http.put(`${dbName}/lecturer/update`, data)
+  return http.put(`${dbName}/lecturer/update`, data, { headers: authHeader() })
 }
 
 // eslint-disable-next-line

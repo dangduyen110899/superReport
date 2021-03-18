@@ -16,6 +16,7 @@ module.exports = (sequelize, Sequelize) => {
     job: Sequelize.STRING,
     classSubjectCode: Sequelize.STRING,
     teacherNumber: Sequelize.INTEGER,
+    lecturerName: Sequelize.STRING,
     language: Sequelize.INTEGER,
     hour: Sequelize.FLOAT
   },{

@@ -90,6 +90,11 @@ export default function TableTkb({match}) {
       key: 'lecturerId',
     },
     {
+      title: 'lecturerName',
+      dataIndex: 'lecturerName',
+      key: 'lecturerName',
+    },
+    {
       title: 'day',
       dataIndex: 'day',
       key: 'day',

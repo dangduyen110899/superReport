@@ -10,11 +10,11 @@ module.exports = (sequelize, Sequelize) => {
     semester: Sequelize.INTEGER,
     lecturerId: Sequelize.INTEGER,
     lecturerName: Sequelize.STRING,
-    hourSchedule: Sequelize.FLOAT,
-    hourThesis: Sequelize.FLOAT,
-    hourProject: Sequelize.FLOAT,
-    hourTTCN: Sequelize.FLOAT,
-    total: Sequelize.FLOAT,
+    hourSchedule: { type: Sequelize.FLOAT, defaultValue: 0},
+    hourThesis: { type: Sequelize.FLOAT, defaultValue: 0},
+    hourProject: { type: Sequelize.FLOAT, defaultValue: 0},
+    hourTTCN: { type: Sequelize.FLOAT, defaultValue: 0},
+    total: { type: Sequelize.FLOAT, defaultValue: 0},
   },{
     timestamps: false
   });

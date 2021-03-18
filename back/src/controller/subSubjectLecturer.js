@@ -94,6 +94,7 @@ subSubjectLecturer.creates = async (req, res) => {
                 lecturerId: res1[0].dataValues.id,
                 classSubjectCode: rows[i][1],
                 teacherNumber:  1,
+                lecturerName: rows[i][6].trim(),
                 semester: Number(semester),
                 year: year,
                 subjectCode: rows[i][0],
@@ -124,6 +125,7 @@ subSubjectLecturer.creates = async (req, res) => {
                   lecturerId: res02[0][0].dataValues.id,
                   classSubjectCode: rows[i][1],
                   teacherNumber:  2,
+                  lecturerName: tempTeacher[0].trim(),
                   semester: Number(semester),
                   year: year,
                   subjectCode: rows[i][0],
@@ -139,6 +141,7 @@ subSubjectLecturer.creates = async (req, res) => {
                   lecturerId: res02[1][0].dataValues.id,
                   classSubjectCode: rows[i][1],
                   teacherNumber:  2,
+                  lecturerName: tempTeacher[1].trim(),
                   semester: Number(semester),
                   year: year,
                   subjectCode: rows[i][0],
@@ -158,9 +161,10 @@ subSubjectLecturer.creates = async (req, res) => {
           res.json(tkbs);
         })
         const lecturerIdTkb = Array.from(new Set(tkbs.map(item => item.lecturerId)))
-        lecturerIdTkb.map( async (element) => {
-          await report.updateHour(year, semester, 'tkb', element)
-        });
+
+        for (let i = 0; i < lecturerIdTkb.length; i++) {
+          report.updateHour(year, semester, 'tkb', lecturerIdTkb[i])
+        }
 
       })
     });

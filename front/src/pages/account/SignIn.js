@@ -1,23 +1,24 @@
-import React from 'react';
+import React, {useState} from 'react';
+import { useHistory } from "react-router-dom";
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from "@hookform/error-message";
 import account from 'api/account/sign';
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 const SignIn = () => {
+  const history = useHistory()
   const { handleSubmit, register, errors } = useForm();
+  const [errorSignin, setErrorSignin] = useState(null)
   const onSubmit = data => {
     const signinAcc = async () => {
       try {
         await account.signIn(data).then( response => {
-          console.log(response)
-          if (response.data.token) {
-            Cookies.set("user", JSON.stringify(response.data)) 
-            console.log(response.data);
-          }
+          Cookies.set("user", JSON.stringify(response.data)) 
+          history.push('/admin/student')
         })
       } catch (error) {
-        console.log("failed to request API: ", error)
+        setErrorSignin(error.response.data.message)
       }
     };
     signinAcc()
@@ -39,6 +40,9 @@ const SignIn = () => {
         ref={register({ required: "This is required message" })}
       />
       <ErrorMessage errors={errors} name="password" as="p" className="form_email-validate"/>
+      {
+        errorSignin && <p className="form_email-validate">{errorSignin}</p>
+      }
     </div>
     <button type="submit">Sign in</button>
   </form>

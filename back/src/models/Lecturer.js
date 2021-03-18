@@ -7,7 +7,7 @@ module.exports = (sequelize, Sequelize) => {
       autoIncrement: true,
     },
     name: Sequelize.STRING,
-    email: Sequelize.STRING,
+    email: {type: Sequelize.STRING, unique: true},
     programs: Sequelize.INTEGER,
     status: Sequelize.INTEGER
   },{

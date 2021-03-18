@@ -31,6 +31,11 @@ export default function TableReport({match}) {
       key: 'lecturerId',
     },
     {
+      title: 'lecturerName',
+      dataIndex: 'lecturerName',
+      key: 'lecturerName',
+    },
+    {
       title: 'Hour schedule',
       dataIndex: 'hourSchedule',
       key: 'hourSchedule',
@@ -58,7 +63,6 @@ export default function TableReport({match}) {
   ];
 
   const onChangeYear = (item1, item2) => {
-    console.log(item1, item2)
     setYear(item1);
     setSemester(item2);
   }

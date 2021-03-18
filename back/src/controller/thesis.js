@@ -33,14 +33,13 @@ thesis.list = async (req, res) => {
 // thesis.hehe = async ( req, res) => {
 //   try {
 //     const response = await Thesis.findAll({
-//       group: ['teacherCode'],
-//       attributes: ["id", "type","teacherCode", "studentCode"],
+//       attributes: ["id","lecturerId", "studentId"],
 //       raw: true,
 //       include: [
 //         {
-//           model: Student,
-//           require: true,
-//           attributes: [[db.sequelize.fn('count', db.sequelize.col('teacherCode')), 'total']]
+//           model: Student
+//           // require: true,
+//           attributes: [['']]
 //         }
 //       ]
 //     })
@@ -145,10 +144,13 @@ thesis.creates = async (req, res) => {
         Thesis.bulkCreate(theses).then(() =>{
          res.json(theses);
         })
+
         const lecturerIdKltn = Array.from(new Set(theses.map(item => item.lecturerId)))
-        lecturerIdKltn.forEach(element => {
-          report.updateHour(year, semester, 'kltn', element)
-        });
+
+        for (let i = 0; i < lecturerIdKltn.length; i++) {
+          report.updateHour(year, semester, 'kltn', lecturerIdKltn[i])
+        }
+
       })
     });
   }
