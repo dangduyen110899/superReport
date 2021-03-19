@@ -36,7 +36,6 @@ app.post('/api/admin/tkb/checkYear',subSubjectLecturer.checkYear);
 //app.get('/api/admin/tkb/update',subSubjectLecturer.update);
 
 app.get('/api/admin/report',report.list);
-app.get('/api/admin/hehe',thesis.hehe);
 
 app.post('/api/auth/signup', [verifySignUp.checkDuplicateUserNameOrEmail, verifySignUp.checkRolesExisted], controller.signup);
 	

@@ -1,0 +1,91 @@
+
+.form-login {
+    padding: 5rem 2rem 2rem 2rem;
+    background-color: #edf1f7;
+    &__image {
+      background-color: #0099ff;
+      padding: 3.438rem 0.625rem;
+      &-img {
+        width: 100%;
+        height: auto;
+      }
+    }
+    &__content {
+      background-color: #ffffff;
+      box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+      padding: 2.5rem 3.75rem 2rem;
+    }
+    &__header-description {
+      font-size: 0.875rem;
+      font-weight: 400;
+      line-height: 1.36;
+      color: #707070;
+      opacity: 0.9;
+      margin-bottom: 1.875rem;
+    }
+    .remenber {
+        color: #6c757d;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        line-height: 1.5rem;
+        margin-left: 5px;
+    }
+  }
+  .form-login__form-group {
+    margin-bottom: 1.75rem;
+    .form-label {
+      color: #707070;
+      opacity: 0.8;
+      line-height: 1.36;
+      font-size: 0.875rem;
+    }
+    .form-input {
+      height: 50px;
+      border-radius: 0.5rem;
+      border: solid 1px #cccccc;
+      background-color: #f2f9ff !important;
+      padding: 0.625rem 1.25rem;
+      width: 100%;
+      outline: none;
+    }
+    .form-remember {
+      color: #707070;
+      opacity: 0.8;
+      line-height: 1.36;
+      font-size: 0.875rem;
+      font-weight: 400 !important;
+      .custom-checkbox {
+        border-radius: 50%;
+      }
+    }
+  }
+  .form-login__form-submit {
+    height: 44px;
+    color: #fff !important;
+    background-color: #3366ff !important;
+    border-radius: 1.375rem !important;
+    border: solid 1px transparent;
+    text-transform: none !important;
+    width: 100%;
+    font-size: 16px;
+  }
+  .form-login__form-help {
+    margin-top: 0.625rem;
+    a {
+      line-height: 1.36;
+      font-size: 0.875rem;
+      color: #3366ff;
+      text-decoration: underline !important;
+    }
+    a:hover {
+      color: #598bff;
+    }
+}
+
+  @media screen and (min-width: 576px) {
+    .nb-theme-default {
+      .form-login {
+        padding: 4rem 2rem 2rem 2rem;
+      }
+    }
+  }
