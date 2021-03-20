@@ -1,0 +1,170 @@
+"id","name","code","duration","type","theoriticalHour","practicalHour","selfstudyHour","prerequisiteCode"
+"1","Những nguyên lý cơ bản của chủ nghĩa Mác - Lênin 1","PHI1004","2","Khối kiến thức chung","24","6",NULL,NULL
+"2","Những nguyên lý cơ bản của chủ nghĩa Mác - Lênin 2","PHI1005","3","Khối kiến thức chung","36","9",NULL,"PHI1004"
+"3","Tư tưởng Hồ Chí Minh","POL1001","2","Khối kiến thức chung","20","10",NULL,"PHI1005"
+"4","Đường lối cách mạng của Đảng cộng sản Việt Nam","HIS1002","3","Khối kiến thức chung","42","3",NULL,"POL1001"
+"5","Tin học cơ sở 1","INT1003","2","Khối kiến thức chung","10","20",NULL,NULL
+"6","Tin học cơ sở 4","INT1006","3","Khối kiến thức chung","20","23","2","INT1003"
+"7","Tiếng Anh cơ sở 1","FLF2101","4","Khối kiến thức chung","16","40","4",
+"8","Tiếng Anh cơ sở 2","FLF2102","5","Khối kiến thức chung","20","50","5","FLF2101"
+"9","Tiếng Anh cơ sở 3","FLF2103","5","Khối kiến thức chung","20","50","5","FLF2102"
+"10","Giáo dục thể chất",NULL,"4","Khối kiến thức chung",NULL,NULL,NULL,NULL
+"11","Giáo dục quốc phòng - an ninh",NULL,"8","Khối kiến thức chung",NULL,NULL,NULL,NULL
+"12","Kỹ năng bổ trợ",NULL,"3","Khối kiến thức chung",NULL,NULL,NULL,NULL
+"13","Đại số","MAT1093","4","Khối kiến thức theo lĩnh vực","30","30",,NULL
+"14","Giải tích 1","MAT1041","4","Khối kiến thức theo lĩnh vực","30","30",NULL,NULL
+"15","Giải tích 2","MAT1402","4","Khối kiến thức theo lĩnh vực","30","30",NULL,"MAT1041"
+"16","Cơ - Nhiệt","PHY1100","3","Khối kiến thức theo lĩnh vực","32","10","3",NULL
+"17","Điện và Quang","PHY1103","3","Khối kiến thức theo lĩnh vực","32","10","3","PHY1100"
+"18","Tín hiệu và hệ thống","ELT2035","3","Khối kiến thức theo khối ngành","42","3",NULL,"MAT1042"
+"19","Cấu trúc dữ liệu và giải thuật","INT2203","3","Khối kiến thức theo khối ngành","30","15",NULL,"INT1006"
+"20","Xác suất thống kê","MAT1101","3","Khối kiến thức theo khối ngành","30","15",NULL,"MAT1041"
+"21","Toán học rời rạc","INT1050","4","Khối kiến thức theo nhóm ngành","45","15",NULL,NULL
+"22","Lập trình hướng đối tượng","INT2204","3","Khối kiến thức theo nhóm ngành","30","15",NULL,"INT1106"
+"23","Kiến trúc máy tính","INT2205","3","Khối kiến thức theo nhóm ngành","45",,NULL,"INT1003"
+"24","Nguyên lý hệ điều hành","INT2206","3","Khối kiến thức theo nhóm ngành","45",,NULL,"INT1006"
+"25","Mạng máy tính","INT2209","3","Khối kiến thức theo nhóm ngành","30","15",NULL,"INT1006"
+"26","Cơ sở dữ liệu","INT2207","3","Khối kiến thức theo nhóm ngành","30","15",NULL,"INT1006"
+"27","Công nghệ phần mềm","INT2208","3","Khối kiến thức theo nhóm ngành","45",NULL,NULL,"INT1006"
+"28","Lập trình nâng cao","INT2202","3","Khối kiến thức ngành","30","15",NULL,"INT1006"
+"29","Hệ quản trị cơ sở dữ liệu","INT3202","3","Khối kiến thức ngành","30","15",NULL,"INT2207"
+"30","Phân tích và thiết kế hướng đối tượng","INT3110","3","Khối kiến thức ngành","45",NULL,NULL,"INT2204"
+"31","Phát triển ứng dụng web","INT3306","3","Khối kiến thức ngành","30","15",NULL,"INT2204, INT2207 "
+"32","Trí tuệ nhân tạo","INT3401","3","Khối kiến thức ngành","45",,NULL,"INT2203"
+"33","Các vấn đề hiện đại Công nghệ thông tin","INT3507","3","Khối kiến thức ngành","21","24",NULL,"INT1003"
+"34","Thực tập chuyên ngành","INT3508","3","Khối kiến thức ngành","15","30",NULL,"INT1003"
+"35","Phương pháp tính","MAT1099","2","Khối kiến thức ngành bổ trợ","30",NULL,NULL,"MAT1093, MAT1042"
+"36","Tối ưu hóa","MAT1100","2","Khối kiến thức ngành bổ trợ","30",NULL,NULL,"MAT1093, MAT1042"
+"37","Chuyên nghiệp trong công nghệ","ELT2028","2","Khối kiến thức ngành bổ trợ","30",NULL,NULL,NULL
+"38","Mô hình hóa và mô phỏng","ELT2031","2","Khối kiến thức ngành bổ trợ","20","10",NULL,"INT1006"
+"39","Xử lý tín hiệu số","ELT3144","4","Khối kiến thức ngành bổ trợ","45","15",NULL,"MAT1093"
+"40","Nguyên lý marketing","BSA2022","3","Khối kiến thức ngành bổ trợ","21","23","1",NULL
+"41","Kinh tế vi mô 1","INE1150","3","Khối kiến thức ngành bổ trợ","30","10","5",NULL
+"42","Kinh tế vĩ mô 1","INE1151","3","Khối kiến thức ngành bổ trợ","30","10","5",NULL
+"43","Đất nước học Nhật Bản 1","JAP2003","3","Khối kiến thức ngành bổ trợ","30","9","6",NULL
+"44","Kiểm thử và đảm bảo chất lượng phần mềm","INT3117","3","Khối kiến thức ngành","45",NULL,NULL,"INT2204"
+"45","Kiến trúc phần mềm","INT3105","3","Khối kiến thức ngành","45",NULL,NULL,"INT2204"
+"46","Phương pháp hình thức","INT3106","3","Khối kiến thức ngành","30","15",NULL,"INT1050"
+"47","Lập trình nhúng và thời gian thực","INT3108","3","Khối kiến thức ngành","30","15",NULL,"INT2205, INT2202"
+"48","Thu thập và phân tích yêu cầu","INT3109","3","Khối kiến thức ngành","45",NULL,NULL,"INT2208"
+"49","Quản lý dự án phần mềm","INT3111","3","Khối kiến thức ngành","45",NULL,NULL,"INT2208"
+"50","Thiết kế giao diện người dùng","INT3115","3","Khối kiến thức ngành","45",NULL,NULL,"INT2204"
+"51","Phát triển ứng dụng di động","INT3120","3","Khối kiến thức ngành","30","15",NULL,"INT1006"
+"52","Cơ sở dữ liệu phân tán","INT3206","3","Khối kiến thức ngành","45",NULL,NULL,"INT2207"
+"53","Kho dữ liệu","INT3207","3","Khối kiến thức ngành","45",NULL,NULL,"INT2207"
+"54","Khai phá dữ liệu","INT3209","3","Khối kiến thức ngành","45",NULL,NULL,"INT2207"
+"55","Nhập môn an toàn thông tin","INT3213","3","Khối kiến thức ngành","45",NULL,NULL,"INT3201"
+"56","Phân tích, đánh giá hiệu năng hệ thống","INT3216","3","Khối kiến thức ngành","45",NULL,NULL,"INT2207"
+"57","Lập trình hệ thống","INT3217","3","Khối kiến thức ngành","36","9",NULL,"INT2207"
+"58","Phân tích thiết kế các HTTT","INT2020","3","Khối kiến thức ngành","45",,NULL,"INT2207"
+"59","Thực hành hệ điều hành mạng","INT3301","3","Khối kiến thức ngành","15","30",NULL,"INT1006"
+"60","Mạng không dây","INT3303","3","Khối kiến thức ngành","36","9",NULL,"INT2209"
+"61","Lập trình mạng","INT3304","3","Khối kiến thức ngành","30","15",NULL,"INT2209"
+"62","Truyền thông đa phương tiện","INT3305","3","Khối kiến thức ngành","45",,NULL,"INT2209"
+"63","An toàn và an ninh mạng","INT3307","3","Khối kiến thức ngành","39","6",NULL,"INT2209"
+"64","Phân tích và thiết kế mạng máy tính","INT3309","3","Khối kiến thức ngành","24","6","15","INT2209"
+"65","Quản trị mạng","INT3310","3","Khối kiến thức ngành","30","15",,"INT2209"
+"66","Khoa học dịch vụ","INT3501","3","Khối kiến thức ngành","45",NULL,NULL,"INT1003"
+"67","Kiến trúc hướng dịch vụ","INT3505","3","Khối kiến thức ngành","45",NULL,NULL,"INT2204"
+"68","Các hệ thống thương mại điện tử","INT3506","3","Khối kiến thức ngành","45",NULL,NULL,"INT1003"
+"69","Xử lý ảnh","INT3404","3","Khối kiến thức ngành","45",NULL,NULL,"INT2203"
+"70","Tin sinh học","INT3407","3","Khối kiến thức ngành","45",NULL,NULL,"INT2202"
+"71","Khóa luận tốt nghiệp","INT4050","7","Khóa luận tốt nghiệp",NULL,NULL,NULL,NULL
+"72","Dự án","INT3509","4","Khóa luận tốt nghiệp","21",NULL,"39",NULL
+"73","3 tín tự chọn từ danh sách các học phần tự chọn theo các định hướng mà sinh viên chưa học",,"3","Khóa luận tốt nghiệp",,NULL,,NULL
+"74","Triết học Mác - Lênin","PHI1006","3","Khối kiến thức chung","30","15",NULL,NULL
+"75","Kinh tế chính trị Mác - Lênin","PEC1008","2","Khối kiến thức chung","20","10",NULL,"PHI1006"
+"76","Chủ nghĩa xã hội khoa học","PHI1002","2","Khối kiến thức chung","30",,NULL,
+"77","Lịch sử Đảng Cộng sản Việt Nam","HIS1001","2","Khối kiến thức chung","20","10",NULL,
+"78","Tư tưởng Hồ Chí Minh","POL1001","2","Khối kiến thức chung","20","10",NULL,
+"79","Tiếng Anh B1","FLF1107","5","Khối kiến thức chung","20","35","20",
+"80","Vật lý đại cương 1","EPN1095","2","Khối kiến thức theo lĩnh vực","30",NULL,NULL,NULL
+"81","Vật lý đại cương 2","EPN1096","2","Khối kiến thức theo lĩnh vực","30",NULL,NULL,"EPN1095"
+"82","Giới thiệu về Công nghệ thông tin","INT1007","3","Khối kiến thức theo lĩnh vực","15","30",NULL,
+"83","Nhập môn lập trình","INT1008","3","Khối kiến thức theo lĩnh vực","20","25",NULL,
+"84","Tín hiệu và hệ thống","ELT2035","3","Khối kiến thức theo khối ngành","45",NULL,NULL,"MAT1042"
+"85","Cấu trúc dữ liệu và giải thuật","INT2210","4","Khối kiến thức theo khối ngành","30","30",NULL,"INT1008"
+"86","Toán trong công nghệ","ELT2029","3","Khối kiến thức theo khối ngành","45",,NULL,"MAT1041"
+"87","Lập trình nâng cao","INT2215","4","Khối kiến thức theo nhóm ngành","30","30",NULL,"INT1008"
+"88","Kiến trúc máy tính","INT2212","4","Khối kiến thức theo nhóm ngành","45","15",NULL,"INT1007"
+"89","Nguyên lý hệ điều hành","INT2214","4","Khối kiến thức theo nhóm ngành","45","15",NULL,"INT1008"
+"90","Cơ sở dữ liệu","INT2211","4","Khối kiến thức theo nhóm ngành","30","30",NULL,"INT1008"
+"91","Mạng máy tính","INT2213","4","Khối kiến thức theo nhóm ngành","30","30",NULL,"INT1008"
+"92","Công nghệ phần mềm","INT2008","3","Khối kiến thức theo nhóm ngành","45",,NULL,"INT1008"
+"93","Lập trình hướng đối tượng","INT2204","3","Khối kiến thức theo nhóm ngành","30","15",NULL,"INT1008"
+"94","Hệ quản trị cơ sở dữ liệu","INT3202","3","Khối kiến thức ngành","30","15",NULL,"INT2211"
+"95","Phát triển ứng dụng web","INT3306","3","Khối kiến thức ngành","30","15",NULL,"INT2204, INT2211"
+"96","Trí tuệ nhân tạo","INT3401","3","Khối kiến thức ngành","45",,NULL,"INT2210"
+"97","Các vấn đề hiện đại Công nghệ thông tin","INT3507","3","Khối kiến thức ngành","21","24",NULL,"INT1007"
+"98","Thực tập chuyên ngành","INT3508","3","Khối kiến thức ngành","15","30",NULL,"INT1007"
+"99","Lập trình nhúng và thời gian thực","INT3108","3","Khối kiến thức ngành","30","15",NULL,"INT2212, INT2215"
+"100","Phát triển ứng dụng di động","INT3120","3","Khối kiến thức ngành","30","15",NULL,"INT1008"
+"101","Phát triển ứng dụng di động nâng cao","INT3415","3","Khối kiến thức ngành","30","15",NULL,"INT1008"
+"102","Cơ sở dữ liệu phân tán","INT3206","3","Khối kiến thức ngành","45",NULL,NULL,"INT2211"
+"103","Kho dữ liệu","INT3207","3","Khối kiến thức ngành","45",NULL,NULL,"INT2211"
+"104","Khai phá dữ liệu","INT3209","3","Khối kiến thức ngành","45",NULL,NULL,"INT2211"
+"105","Nhập môn an toàn thông tin","INT3213","3","Khối kiến thức ngành","45",NULL,NULL,
+"106","Phân tích, đánh giá hiệu năng hệ thống","INT3216","3","Khối kiến thức ngành","45",NULL,NULL,"INT2211"
+"107","Tích hợp hệ thống","INT3211","3","Khối kiến thức ngành","45",NULL,NULL,
+"108","Phân tích thiết kế các HTTT","INT2020","3","Khối kiến thức ngành","45",NULL,NULL,"INT2211"
+"109","Thực hành hệ điều hành mạng","INT3301","3","Khối kiến thức ngành","15","30",NULL,"INT1008"
+"110","Mạng không dây","INT3303","3","Khối kiến thức ngành","36","9",NULL,"INT2213"
+"111","Lập trình mạng","INT3304","3","Khối kiến thức ngành","30","15",NULL,"INT2213"
+"112","Truyền thông đa phương tiện","INT3305","3","Khối kiến thức ngành","45",,NULL,"INT2213"
+"113","An toàn và an ninh mạng","INT3307","3","Khối kiến thức ngành","39","6",NULL,"INT2213"
+"114","Khoa học dịch vụ","INT3501","3","Khối kiến thức ngành","45",NULL,NULL,"INT1107"
+"115","Các hệ thống thương mại điện tử","INT3506","3","Khối kiến thức ngành","45",NULL,NULL,"INT1007"
+"116","Xử lý ảnh","INT3404","3","Khối kiến thức ngành","45",NULL,NULL,"INT2210"
+"117","Lập trình thi đấu","INT3512","3","Khối kiến thức ngành","30","15",NULL,
+"118","Tin sinh học","INT3407","3","Khối kiến thức ngành","45",,NULL,"INT2215"
+"119","Dự án công nghệ","INT3132","3","Khối kiến thức ngành","21","24",NULL,"INT2215"
+"120","Pháp luật và đạo đức nghề nghiệp trong CNTT","INT3514","2","Khối kiến thức ngành bổ trợ","30",NULL,NULL,NULL
+"121","Phương pháp tính","INT3102","3","Khối kiến thức ngành bổ trợ","30","15",NULL,"MAT1093, MAT1042"
+"122","Tối ưu hóa","INT3103","3","Khối kiến thức ngành bổ trợ","30","15",NULL,"MAT1093, MAT1042"
+"123","Tiếng Anh bổ trợ","UET1001","4","Khối kiến thức ngành bổ trợ","45","15",NULL,
+"124","Linh kiện điện tử","ELT2032","3","Khối kiến thức ngành bổ trợ","45",,NULL,
+"125","Kỹ thuật điện","ELT2030","3","Khối kiến thức ngành bổ trợ","45",,NULL,
+"126","Điện tử tương tự","ELT2040","3","Khối kiến thức ngành bổ trợ","45",,NULL,
+"127","Điện tử số","ELT2041","3","Khối kiến thức ngành bổ trợ","45",,NULL,
+"128","Kinh tế vi mô","INE1050","3","Khối kiến thức ngành bổ trợ","30","10","5",
+"129","Nguyên lý quản trị kinh doanh","BSA2103","3","Khối kiến thức ngành bổ trợ","27","18",,
+"130","Nguyên lý marketing","BSA2002","3","Khối kiến thức ngành bổ trợ","21","23","1",
+"131","Khởi sự và tạo lập doanh nghiệp","BSA3020","3","Khối kiến thức ngành bổ trợ","35","10",,
+"132","Lý luận về nhà nước và pháp luật","THL1054","3","Khối kiến thức ngành bổ trợ","27","12","6",
+"133","Lịch sử nhà nước và pháp luật","THL1058","3","Khối kiến thức ngành bổ trợ","24","15","6",
+"134","Luật hiến pháp","CAL1007","3","Khối kiến thức ngành bổ trợ","36",,"9",
+"135","Luật hành chính","CAL1008","3","Khối kiến thức ngành bổ trợ","30","6","9",
+"136","Tiếng Nhật 1A","JAP4021","4","Khối kiến thức chung","16","40","4",NULL
+"137","Tiếng Nhật 1B","JAP4022","4","Khối kiến thức chung","16","40","4",NULL
+"138","Tiếng Nhật 2A","JAP4023","4","Khối kiến thức chung","16","40","4","JAP4021, JAP4022"
+"139","Tiếng Nhật 2B","JAP4024","4","Khối kiến thức chung","16","40","4","JAP4021, JAP4022"
+"140","Tiếng Nhật 3A","JAP4025","4","Khối kiến thức chung","16","40","4","JAP4023, JAP4024"
+"141","Tiếng Nhật 3B","JAP4026","4","Khối kiến thức chung","16","40","4","JAP4023, JAP4024"
+"142","Nhập môn kỹ thuật điện tử","ELT1005","3","Khối kiến thức theo lĩnh vực","45",NULL,NULL,NULL
+"143","Chuẩn kỹ năng của CNTT","INT3510","2","Khối kiến thức ngành","10",NULL,"20",NULL
+"144","Phát triển ứng dụng di động","INT3120","3","Khối kiến thức ngành","30","15",,"INT2204, INT1006"
+"145","Chuyên đề Công nghệ Nhật Bản ","INT3138","3","Khối kiến thức ngành","30",,"15","INT1006"
+"146","Thực hành phát triển phần mềm","INT3139","3","Khối kiến thức ngành","6",,"39","INT1006"
+"147","Tiếng Nhật trong Công nghệ thông tin 1","INT3140","3","Khối kiến thức ngành","15","30",,"INT1006, JAP4024"
+"148","Tiếng Nhật trong Công nghệ thông tin 2","INT3141","3","Khối kiến thức ngành","15","30",NULL,"INT3140"
+"149","Thực hành phát triển ứng dụng web","INT3320","3","Khối kiến thức ngành","24","21",NULL,"INT3306"
+"150","Thực hành phát triển ứng dụng di động","INT3321","3","Khối kiến thức ngành","15","30",NULL,"INT3120"
+"151","Văn hóa kinh doanh Nhật Bản","JAP3047","3","Khối kiến thức ngành bổ trợ","30","9","6",NULL
+"152","Xử lý tiếng nói","INT3411","3","Khối kiến thức ngành","30","15",NULL,"INT2203"
+"153","Xử lý ngôn ngữ tự nhiên","INT3406","3","Khối kiến thức ngành","45",NULL,NULL,"INT2203"
+"154","Chương trình dịch","INT3402","3","Khối kiến thức ngành","45",NULL,NULL,"INT2203"
+"155","Tích hợp dịch vụ","INT3223","3","Khối kiến thức ngành","30","15",NULL,"INT3202"
+"156","Thông minh kinh doanh","INT3224","3","Khối kiến thức ngành","45",,NULL,"INT2207"
+"157","Thực tập doanh nghiệp Nhật Bản","INT4003","3","Khối kiến thức ngành","3","42",NULL,"INT1003"
+"158","Quản trị mạng","INT3310","3","Khối kiến thức ngành","30","15",NULL,"INT2213"
+"159","Điện toán đám mây","INT3319","3","Khối kiến thức ngành","30","15",NULL,"INT1008"
+"160","Đồ họa máy tính","INT3403","3","Khối kiến thức ngành","30","15",NULL,"INT2203"
+"161","Lý thuyết thông tin","INT2044","3","Khối kiến thức ngành","45",NULL,NULL,"MAT1101"
+"162","Chuyên đề Công nghệ","INT3141","3","Khối kiến thức ngành","30","15",NULL,"INT1003"
+"163","Học máy","INT3405","3","Khối kiến thức ngành","45",NULL,NULL,"MAT1101"
+"164","Rô-bốt","INT3409","3","Khối kiến thức ngành","30","15",NULL,"INT2203"
+"165","Thị giác máy","INT3412","3","Khối kiến thức ngành","45",,NULL,"INT2203"
+"166","Các vấn đề hiện đại trong KHMT","INT3011","3","Khối kiến thức ngành","21",,"24","INT1003"
+"167","Ứng dụng di động cho điện toán đám mây","INT3122","3","Khối kiến thức ngành","45",,NULL,"INT2204"
+"168","Cơ sở dữ liệu đa phương tiện","INT3222","3","Khối kiến thức ngành","45",,NULL,"INT2207"
+"169","Các chuyên đề trong KHMT","INT3121","3","Khối kiến thức ngành","21",,"24","INT2203, INT1101"

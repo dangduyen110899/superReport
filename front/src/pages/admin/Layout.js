@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Dropdown } from 'antd';
+import Cookies from "js-cookie";
 import {
   DatabaseOutlined,
   MenuUnfoldOutlined,
@@ -9,15 +10,29 @@ import {
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import  logo from '../../assets/images/logo.f0355d39.svg'
+import { useHistory } from "react-router-dom";
 
 const { Header, Content, Sider } = Layout;
 
 export default function LayoutAdmin({children, match}) {
 
+  const history = useHistory()
   const [collapsed, setCollapsed] = useState(false)
   const toggle = () => {
     setCollapsed(!collapsed)
   };
+
+  const logout = () => {
+    Cookies.remove("user");
+    history.push('/')
+  }
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="7">Profile</Menu.Item>
+      <Menu.Item key="8" onClick={() => logout()}>Logout</Menu.Item>
+    </Menu>
+  );
 
   return (
     <Layout>
@@ -62,7 +77,9 @@ export default function LayoutAdmin({children, match}) {
             <BellTwoTone />
          </span>
          <span className="user">
-         <UserOutlined />
+         <Dropdown overlay={menu}>
+          <UserOutlined />
+        </Dropdown>
          </span>
       </div>
     </Header>
