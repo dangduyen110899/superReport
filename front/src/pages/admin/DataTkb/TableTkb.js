@@ -62,84 +62,156 @@ export default function TableTkb({match}) {
     };
     remove();
   }
-
-  let columns = [
-    {
-      title: 'year',
-      dataIndex: 'year',
-      key: 'year',
-    },
-    {
-      title: 'semester',
-      dataIndex: 'semester',
-      key: 'semester',
-    },
-    {
-      title: 'subjectCode',
-      dataIndex: 'subjectCode',
-      key: 'subjectCode',
-    },
-    {
-      title: 'classSubjectCode',
-      dataIndex: 'classSubjectCode',
-      key: 'classSubjectCode',
-    },
-    {
-      title: 'lecturerId',
-      dataIndex: 'lecturerId',
-      key: 'lecturerId',
-    },
-    {
-      title: 'lecturerName',
-      dataIndex: 'lecturerName',
-      key: 'lecturerName',
-    },
-    {
-      title: 'day',
-      dataIndex: 'day',
-      key: 'day',
-    },
-    {
-      title: 'time',
-      dataIndex: 'time',
-      key: 'time',
-    },
-    {
-      title: 'total_student',
-      dataIndex: 'total_student',
-      key: 'total_student',
-    },
-    {
-      title: 'total_tc',
-      dataIndex: 'total_tc',
-      key: 'total_tc',
-    },
-    {
-      title: 'job',
-      dataIndex: 'job',
-      key: 'job',
-    },
-    {
-      title: 'type',
-      dataIndex: 'type',
-      key: 'type',
-    },
-    {
-      title: 'Action',
-      dataIndex: 'operation',
-      render: (_, record) =>
-        data.length >= 1 ? (
-          <Space>
-          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-            <span><DeleteOutlined /></span>
-          </Popconfirm>
-          <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
-          <EditOutlined />
-          </span>
-          </Space>
-        ) : null,
-    },
-  ];
+  let columns
+  if(!year && !semester) {
+    columns = [
+      {
+        title: 'Năm học',
+        dataIndex: 'year',
+        key: 'year',
+      },
+      {
+        title: 'Học kỳ',
+        dataIndex: 'semester',
+        key: 'semester',
+      },
+      {
+        title: 'Mã học phần',
+        dataIndex: 'subjectCode',
+        key: 'subjectCode',
+      },
+      {
+        title: 'Học phần',
+        dataIndex: 'nameSubject',
+        key: 'nameSubject',
+      },
+      {
+        title: 'TC',
+        dataIndex: 'total_tc',
+        key: 'total_tc',
+      },
+      {
+        title: 'Mã lớp học phần',
+        dataIndex: 'classSubjectCode',
+        key: 'classSubjectCode',
+      },
+      {
+        title: 'Số SV',
+        dataIndex: 'total_student',
+        key: 'total_student',
+      },
+      {
+        title: 'Giảng viên',
+        dataIndex: 'lecturerName',
+        key: 'lecturerName',
+      },
+      {
+        title: 'Thứ',
+        dataIndex: 'day',
+        key: 'day',
+      },
+      {
+        title: 'Tiết',
+        dataIndex: 'time',
+        key: 'time',
+      },
+     
+      {
+        title: 'Giảng đường',
+        dataIndex: 'address',
+        key: 'address',
+      },
+      {
+        title: 'Ghi chú',
+        dataIndex: 'note',
+        key: 'note',
+      },
+      {
+        title: 'Action',
+        dataIndex: 'operation',
+        render: (_, record) =>
+          data.length >= 1 ? (
+            <Space>
+            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
+              <span><DeleteOutlined /></span>
+            </Popconfirm>
+            <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
+            <EditOutlined />
+            </span>
+            </Space>
+          ) : null,
+      },
+    ];
+  } else {
+    columns = [
+      {
+        title: 'Mã học phần',
+        dataIndex: 'subjectCode',
+        key: 'subjectCode',
+      },
+      {
+        title: 'Học phần',
+        dataIndex: 'nameSubject',
+        key: 'nameSubject',
+      },
+      {
+        title: 'TC',
+        dataIndex: 'total_tc',
+        key: 'total_tc',
+      },
+      {
+        title: 'Mã lớp học phần',
+        dataIndex: 'classSubjectCode',
+        key: 'classSubjectCode',
+      },
+      {
+        title: 'Số SV',
+        dataIndex: 'total_student',
+        key: 'total_student',
+      },
+      {
+        title: 'Giảng viên',
+        dataIndex: 'lecturerName',
+        key: 'lecturerName',
+      },
+      {
+        title: 'Thứ',
+        dataIndex: 'day',
+        key: 'day',
+      },
+      {
+        title: 'Tiết',
+        dataIndex: 'time',
+        key: 'time',
+      },
+     
+      {
+        title: 'Giảng đường',
+        dataIndex: 'address',
+        key: 'address',
+      },
+      {
+        title: 'Ghi chú',
+        dataIndex: 'note',
+        key: 'note',
+      },
+      {
+        title: 'Action',
+        dataIndex: 'operation',
+        render: (_, record) =>
+          data.length >= 1 ? (
+            <Space>
+            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
+              <span><DeleteOutlined /></span>
+            </Popconfirm>
+            <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
+            <EditOutlined />
+            </span>
+            </Space>
+          ) : null,
+      },
+    ];
+  }
 
   useEffect(() => {
     const getData = async () => {
@@ -194,7 +266,6 @@ export default function TableTkb({match}) {
   }
 
   const onChangeYear = (item1, item2) => {
-    console.log(item1, item2)
     setYear(item1);
     setSemester(item2);
   }

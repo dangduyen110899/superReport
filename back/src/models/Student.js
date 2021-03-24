@@ -6,13 +6,17 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true,
       autoIncrement: true,
     },
-    code: Sequelize.STRING,
+    code: {type: Sequelize.STRING, unique: true},
     name: Sequelize.STRING,
-    status: Sequelize.INTEGER
+    birthday: Sequelize.STRING,
+    status: Sequelize.INTEGER,
+    address: Sequelize.STRING,
+    gender: Sequelize.STRING,
   },{
     timestamps: false
   });
 
   return Student;
 }
+
 

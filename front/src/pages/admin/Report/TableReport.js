@@ -14,53 +14,114 @@ export default function TableReport({match}) {
   const [year, setYear] = useState('');
   const [semester, setSemester] = useState('')
 
-  let columns = [
-    {
-      title: 'year',
-      dataIndex: 'year',
-      key: 'year',
-    },
-    {
-      title: 'semester',
-      dataIndex: 'semester',
-      key: 'semester',
-    },
-    {
-      title: 'lecturerId',
-      dataIndex: 'lecturerId',
-      key: 'lecturerId',
-    },
-    {
-      title: 'lecturerName',
-      dataIndex: 'lecturerName',
-      key: 'lecturerName',
-    },
-    {
-      title: 'Hour schedule',
-      dataIndex: 'hourSchedule',
-      key: 'hourSchedule',
-    },
-    {
-      title: 'Hour thesis',
-      dataIndex: 'hourThesis',
-      key: 'hourThesis',
-    },
-    {
-      title: 'Hour project',
-      dataIndex: 'hourProject',
-      key: 'hourProject',
-    },
-    {
-      title: 'Hour intern',
-      dataIndex: 'hourTTCN',
-      key: 'hourTTCN',
-    },
-    {
-      title: 'Total hours',
-      dataIndex: 'total',
-      key: 'total',
-    },
-  ];
+  let columns
+  if(!year && !semester) {
+    columns = [
+      {
+        title: 'Năm học',
+        dataIndex: 'year',
+        key: 'year',
+      },
+      {
+        title: 'Học kỳ',
+        dataIndex: 'semester',
+        key: 'semester',
+      },
+      {
+        title: 'Giảng viên',
+        dataIndex: 'lecturerName',
+        key: 'lecturerName',
+      },
+      {
+        title: 'Khoa',
+        dataIndex: 'department',
+        key: 'department',
+      },
+      {
+        title: 'Bộ môn',
+        dataIndex: 'subject',
+        key: 'subject',
+      },
+      {
+        title: 'Chương trình dạy',
+        dataIndex: 'programs',
+        key: 'programs',
+      },
+      {
+        title: 'Giờ dạy trên lớp',
+        dataIndex: 'hourSchedule',
+        key: 'hourSchedule',
+      },
+      {
+        title: 'Giờ hd khóa luận',
+        dataIndex: 'hourThesis',
+        key: 'hourThesis',
+      },
+      {
+        title: 'Giờ hd đồ án',
+        dataIndex: 'hourProject',
+        key: 'hourProject',
+      },
+      {
+        title: 'Giờ hd thực tập',
+        dataIndex: 'hourTTCN',
+        key: 'hourTTCN',
+      },
+      {
+        title: 'Tổng số giờ',
+        dataIndex: 'total',
+        key: 'total',
+      },
+    ];
+  } else {
+    columns = [
+      {
+        title: 'Giảng viên',
+        dataIndex: 'lecturerName',
+        key: 'lecturerName',
+      },
+      {
+        title: 'Khoa',
+        dataIndex: 'department',
+        key: 'department',
+      },
+      {
+        title: 'Bộ môn',
+        dataIndex: 'subject',
+        key: 'subject',
+      },
+      {
+        title: 'Chương trình dạy',
+        dataIndex: 'programs',
+        key: 'programs',
+      },
+      {
+        title: 'Giờ dạy trên lớp',
+        dataIndex: 'hourSchedule',
+        key: 'hourSchedule',
+      },
+      {
+        title: 'Giờ hd khóa luận',
+        dataIndex: 'hourThesis',
+        key: 'hourThesis',
+      },
+      {
+        title: 'Giờ hd đồ án',
+        dataIndex: 'hourProject',
+        key: 'hourProject',
+      },
+      {
+        title: 'Giờ hd thực tập',
+        dataIndex: 'hourTTCN',
+        key: 'hourTTCN',
+      },
+      {
+        title: 'Tổng số giờ',
+        dataIndex: 'total',
+        key: 'total',
+      },
+    ];
+  }
 
   const onChangeYear = (item1, item2) => {
     setYear(item1);

@@ -78,29 +78,38 @@ subSubjectLecturer.creates = async (req, res) => {
       rows.shift();
       const tkbs = [];
       const fetchApi = async () => {
+        let jobTkb = "thuong"
         for (let i = 0; i < rows.length; i++) {
-            const tempTeacher = rows[i][6].split('\n');
+          if (rows[i][0] == 'Chương trình đào tạo chat luong cao') {
+            jobTkb = "clc"
+          }
+          if ((rows[i][0] ? !rows[i][0].includes("Các học phần") : true) && rows[i][1] && rows[i][2] && rows[i][3] && rows[i][4]) {
+            const tempTeacher = rows[i][5].split('\n');
             if (tempTeacher.length===1) {
-              const res1 = await Lecturer.findAll({where: {name: rows[i][6].trim()} })
+              const res1 = await Lecturer.findAll({where: {name: rows[i][5].trim()} })
               if(res1.length<1) {
-                res.json({message: `Lecturer ${rows[i][6]} not exit.`});
+                res.json({message: `Lecturer ${rows[i][5]} not exit.`});
               }
               let subSubjectLecturer = {
-                type: rows[i][2],
-                day: rows[i][3],
-                time: rows[i][4],
-                total_student: rows[i][5],
-                total_tc: rows[i][7],
+                day: rows[i][6],
+                time: rows[i][7],
+                total_student: rows[i][4],
+                total_tc: rows[i][2],
                 lecturerId: res1[0].dataValues.id,
-                classSubjectCode: rows[i][1],
+                classSubjectCode: rows[i][3],
                 teacherNumber:  1,
-                lecturerName: rows[i][6].trim(),
+                lecturerName: rows[i][5].trim(),
                 semester: Number(semester),
                 year: year,
+                address: rows[i][8],
+                note: rows[i][9],
+                type: rows[i][9] === "CL" ? 0 : 1,
+                language: rows[i][9] === "TA" ? 1 : 0,
                 subjectCode: rows[i][0],
-                job: rows[i][8],
+                job: jobTkb,
+                nameSubject: rows[i][1],
               }
-              subSubjectLecturer.hour = getHourItem(subSubjectLecturer, rows[i][2], 'tkb',1)
+              subSubjectLecturer.hour = getHourItem(subSubjectLecturer, (rows[i][9] === "CL" || rows[i][9]==="TA") ? 0 : 1, 'tkb',1)
               tkbs.push(subSubjectLecturer);
             } else {
               await Promise.all(
@@ -113,57 +122,47 @@ subSubjectLecturer.creates = async (req, res) => {
                   }
                 })
               ).then(res02 => {
-                if(res02[0].length<1 || res02[1].length<1) {
-                  res.json({message: `Name lecturer not exit.`});
-                }
-                let subSubjectLecturer1 = {
-                  type: rows[i][2],
-                  day: rows[i][3],
-                  time: rows[i][4],
-                  total_student: rows[i][5],
-                  total_tc: rows[i][7],
-                  lecturerId: res02[0][0].dataValues.id,
-                  classSubjectCode: rows[i][1],
-                  teacherNumber:  2,
-                  lecturerName: tempTeacher[0].trim(),
-                  semester: Number(semester),
-                  year: year,
-                  subjectCode: rows[i][0],
-                  job: rows[i][8],
-                }
 
-                let subSubjectLecturer2 = {
-                  type: rows[i][2],
-                  day: rows[i][3],
-                  time: rows[i][4],
-                  total_student: rows[i][5],
-                  total_tc: rows[i][7],
-                  lecturerId: res02[1][0].dataValues.id,
-                  classSubjectCode: rows[i][1],
-                  teacherNumber:  2,
-                  lecturerName: tempTeacher[1].trim(),
-                  semester: Number(semester),
-                  year: year,
-                  subjectCode: rows[i][0],
-                  job: rows[i][8],
+                for (let j = 0; j < res02.length; j++) {
+                  if(res02[j].length<1) {
+                    res.json({message: `Name lecturer ${tempTeacher[j].trim()} not exit.`});
+                  }
+                  let subSubjectLecturer1 = {
+                    day: rows[i][6],
+                    time: rows[i][7],
+                    total_student: rows[i][4],
+                    total_tc: rows[i][2],
+                    lecturerId: res02[j][0].dataValues.id,
+                    classSubjectCode: rows[i][3],
+                    teacherNumber:  res02.length,
+                    lecturerName: res02[j][0].dataValues.name,
+                    semester: Number(semester),
+                    year: year,
+                    address: rows[i][8],
+                    note: rows[i][9],
+                    type: (rows[i][9] === "CL") ? 0 : 1,
+                    language: rows[i][9] === "TA" ? 1 : 0,
+                    subjectCode: rows[i][0],
+                    job: jobTkb,
+                    nameSubject: rows[i][1],
+                  }
+                  subSubjectLecturer1.hour = getHourItem(subSubjectLecturer1, (rows[i][9] === "CL" || rows[i][9]==="TA") ? 0 : 1, 'tkb', 2)
+                  tkbs.push(subSubjectLecturer1);
                 }
-                subSubjectLecturer1.hour = getHourItem(subSubjectLecturer1, rows[i][2], 'tkb', 2)
-                subSubjectLecturer2.hour = getHourItem(subSubjectLecturer2, rows[i][2], 'tkb', 2)
-                tkbs.push(subSubjectLecturer1);
-                tkbs.push(subSubjectLecturer2);
               })
             }
+          }
         }
       }
-      fetchApi().then(() => {
+      fetchApi().then( async() => {
 
-        SubSubjectLecturer.bulkCreate(tkbs).then( () =>{
+        await SubSubjectLecturer.bulkCreate(tkbs).then( () =>{
           res.json(tkbs);
         })
         const lecturerIdTkb = Array.from(new Set(tkbs.map(item => item.lecturerId)))
 
         for (let i = 0; i < lecturerIdTkb.length; i++) {
-          report.updateHour(year, semester, 'tkb', lecturerIdTkb[i])
+          await report.updateHour(year, semester, 'tkb', lecturerIdTkb[i])
         }
 
       })

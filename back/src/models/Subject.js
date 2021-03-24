@@ -2,15 +2,19 @@
 module.exports = (sequelize, Sequelize) => {
 
   const Subject = sequelize.define('subject', {
-    code: {
-      type: Sequelize.STRING,
+    id: {
+      type: Sequelize.INTEGER,
       primaryKey: true,
-      autoIncrement: false,
+      autoIncrement: true,
     },
+    code: Sequelize.STRING,
     name: Sequelize.STRING,
-    timeLt: Sequelize.INTEGER,
-    timeTh: Sequelize.INTEGER,
-    timeThoc: Sequelize.INTEGER,
+    duration: Sequelize.INTEGER,
+    type: Sequelize.STRING,
+    theoriticalHour: Sequelize.STRING,
+    practicalHour: Sequelize.STRING,
+    selfstudyHour: Sequelize.STRING,
+    prerequisiteCode: Sequelize.STRING,
   },{
     timestamps: false
   });

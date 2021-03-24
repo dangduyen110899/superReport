@@ -70,7 +70,7 @@ export default function TableLecturer({match}) {
 
   let columns = [
     {
-      title: 'Name lecturer',
+      title: 'Tên giảng viên',
       dataIndex: 'name',
       key: 'name',
     },
@@ -80,10 +80,20 @@ export default function TableLecturer({match}) {
       key: 'email',
     },
     {
-      title: 'Programs',
-      dataIndex: 'programs',
-      key: 'programs',
+      title: 'Khoa',
+      dataIndex: 'department',
+      key: 'department',
     },
+    {
+      title: 'Bộ môn',
+      dataIndex: 'subject',
+      key: 'subject',
+    },
+    // {
+    //   title: 'Programs',
+    //   dataIndex: 'programs',
+    //   key: 'programs',
+    // },
     {
       title: 'Action',
       dataIndex: 'operation',
@@ -141,16 +151,16 @@ export default function TableLecturer({match}) {
         <Col>
           <input type="file" onChange={e => handleAddLecturers(e.target.files[0])}/>
           <Button type="primary" onClick={() => setIsModalVisible(true)}>
-            + Add lecturer
+            + Thêm giảng viên
           </Button>
           <Modal
-            title="Select time"
+            title="THÊM GIẢNG VIÊN"
             footer={null}
             destroyOnClose
             onCancel={handleCancel}
             visible={isModalVisible}
           >
-            <FormLecturer handleOk={handleOk} handleCancel={handleCancel} itemEdit={itemEdit}/>
+            <FormLecturer handleOk={handleOk} handleCancel={handleCancel} itemEdit={itemEdit} dataLecturer={data}/>
           </Modal>
         </Col>
       </Row>

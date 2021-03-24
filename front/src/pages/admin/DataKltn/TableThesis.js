@@ -59,59 +59,148 @@ export default function TableThesic({match}) {
     remove();
   }
 
-  let columns = [
-    {
-      title: 'Year',
-      dataIndex: 'year',
-      key: 'year',
-    },
-    {
-      title: 'Semester',
-      dataIndex: 'semester',
-      key: 'semester',
-    },
-    {
-      title: 'Name lecturer',
-      dataIndex: 'lecturerName',
-      key: 'lecturerName',
-    },
-    {
-      title: 'Name student',
-      dataIndex: 'studentName',
-      key: 'studentName',
-    },
-    {
-      title: 'Code class',
-      dataIndex: 'classCode',
-      key: 'classCode',
-    },
-    {
-      title: 'Language',
-      dataIndex: 'language',
-      key: 'language',
-    },
-    {
-      title: 'Nvcl',
-      dataIndex: 'nvcl',
-      key: 'nvcl',
-    },
-
-    {
-      title: 'Action',
-      dataIndex: 'operation',
-      render: (_, record) =>
-        data.length >= 1 ? (
-          <Space>
-          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-            <span><DeleteOutlined /></span>
-          </Popconfirm>
-          <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
-          <EditOutlined />
-          </span>
-          </Space>
-        ) : null,
-    },
-  ];
+  let columns
+  if(!year && !semester) {
+    columns = [
+      {
+        title: 'Năm học',
+        dataIndex: 'year',
+        key: 'year',
+      },
+      {
+        title: 'Học kỳ',
+        dataIndex: 'semester',
+        key: 'semester',
+      },
+      {
+        title: 'Mã SV',
+        dataIndex: 'studentCode',
+        key: 'studentCode',
+      },
+      {
+        title: 'Sinh viên',
+        dataIndex: 'studentName',
+        key: 'studentName',
+      },
+      {
+        title: 'Ngày sinh',
+        dataIndex: 'birthday',
+        key: 'birthday',
+      },
+      {
+        title: 'Lớp',
+        dataIndex: 'classCode',
+        key: 'classCode',
+      },
+      {
+        title: 'Tên đề tài',
+        dataIndex: 'nameThesis',
+        key: 'nameThesis',
+      },
+      {
+        title: 'Giảng viên',
+        dataIndex: 'lecturerName',
+        key: 'lecturerName',
+      },
+      {
+        title: 'Ngôn ngữ',
+        dataIndex: 'language',
+        key: 'language',
+        render: (text) => <span>{text===0 ? 'Tiếng việt' : 'Tiếng anh'}</span>,
+      },
+      {
+        title: 'Nhiệm vụ chiến lược',
+        dataIndex: 'nvcl',
+        key: 'nvcl',
+        render: (text) => <span>{text===0 ? 'Không' : 'Có'}</span>,
+      },
+      {
+        title: 'Ghi chú',
+        dataIndex: 'note',
+        key: 'note',
+      },
+      {
+        title: 'Action',
+        dataIndex: 'operation',
+        render: (_, record) =>
+          data.length >= 1 ? (
+            <Space>
+            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
+              <span><DeleteOutlined /></span>
+            </Popconfirm>
+            <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
+            <EditOutlined />
+            </span>
+            </Space>
+          ) : null,
+      },
+    ];
+  } else {
+    columns = [
+      {
+        title: 'Mã SV',
+        dataIndex: 'studentCode',
+        key: 'studentCode',
+      },
+      {
+        title: 'Sinh viên',
+        dataIndex: 'studentName',
+        key: 'studentName',
+      },
+      {
+        title: 'Ngày sinh',
+        dataIndex: 'birthday',
+        key: 'birthday',
+      },
+      {
+        title: 'Lớp',
+        dataIndex: 'classCode',
+        key: 'classCode',
+      },
+      {
+        title: 'Tên đề tài',
+        dataIndex: 'nameThesis',
+        key: 'nameThesis',
+      },
+      {
+        title: 'Giảng viên',
+        dataIndex: 'lecturerName',
+        key: 'lecturerName',
+      },
+      {
+        title: 'Ngôn ngữ',
+        dataIndex: 'language',
+        key: 'language',
+        render: (text) => <span>{text===0 ? 'Tiếng việt' : 'Tiếng anh'}</span>,
+      },
+      {
+        title: 'Nhiệm vụ chiến lược',
+        dataIndex: 'nvcl',
+        key: 'nvcl',
+        render: (text) => <span>{text===0 ? 'Không' : 'Có'}</span>,
+      },
+      {
+        title: 'Ghi chú',
+        dataIndex: 'note',
+        key: 'note',
+      },
+      {
+        title: 'Action',
+        dataIndex: 'operation',
+        render: (_, record) =>
+          data.length >= 1 ? (
+            <Space>
+            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
+              <span><DeleteOutlined /></span>
+            </Popconfirm>
+            <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
+            <EditOutlined />
+            </span>
+            </Space>
+          ) : null,
+      },
+    ];
+  }
 
   useEffect(() => {
     const getData = async () => {

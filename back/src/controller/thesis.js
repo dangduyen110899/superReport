@@ -67,28 +67,31 @@ thesis.creates = async (req, res) => {
       const theses = [];
       const fetchApi = async () => {
         for (let i = 0; i < rows.length; i++) {
-            const tempTeacher = rows[i][1].split('\n');
+            const tempTeacher = rows[i][5].split('\n');
 
-            const res2 = await Student.findAll({where: {name: rows[i][2]} })
+            const res2 = await Student.findAll({where: {code: rows[i][0]} })
             if (res2.length<1) {
-              res.json({message: `Student ${rows[i][2]} not exit.`});
+              res.json({message: `Student ${rows[i][1]} not exit.`});
             }
 
             if (tempTeacher.length===1) {
-              
-              const res1 = await Lecturer.findAll({where: {name: rows[i][1]} })
+              const res1 = await Lecturer.findAll({where: {name: rows[i][5].trim()}})
               if (res1.length<1) {
-                res.json({message: `Lecturer ${rows[i][1]} not exit.`});
+                res.json({message: `Lecturer ${rows[i][5]} not exit.`});
               }
               
               let thesis = {
-                language: rows[i][0],
+                studentCode: rows[i][0],
+                studentName: rows[i][1],
+                birthday: rows[i][2],
                 classCode: rows[i][3],
+                nameThesis: rows[i][4],
+                note: rows[i][6],
+                language: rows[i][7],
                 lecturerId: res1[0].dataValues.id,
-                lecturerName: res1[0].dataValues.name,
-                studentName: res2[0].dataValues.name,
+                lecturerName: rows[i][5].trim(),
                 studentId	: res2[0].dataValues.id,
-                nvcl: rows[i][4],
+                nvcl: rows[i][8],
                 year: year,
                 semester: semester
               }
@@ -106,49 +109,43 @@ thesis.creates = async (req, res) => {
                   }
                 })
               ).then(res3 => {
-                if(res3.length<2) {
-                  res.json({message: `Name lecturer not exit.`});
-                }
 
-                let thesis1 = {
-                  language: rows[i][0],
-                  classCode: rows[i][3],
-                  lecturerId: res3[0][0].dataValues.id,
-                  lecturerName: res3[0][0].dataValues.name,
-                  studentName: res2[0].dataValues.name,
-                  studentId	: res2[0].dataValues.id,
-                  nvcl: rows[i][4],
-                  year: year,
-                  semester: semester,
+                for (let j = 0; j < res3.length; j++) {
+                  if(res3[j].length<1) {
+                    res.json({message: `Name lecturer ${tempTeacher[j].trim()} not exit.`});
+                  }
+                  let thesis1 = {           
+                    studentCode: rows[i][0],
+                    studentName: rows[i][1],
+                    birthday: rows[i][2],
+                    classCode: rows[i][3],
+                    nameThesis: rows[i][4],
+                    note: rows[i][6],
+                    language: rows[i][7],
+                    lecturerId: res3[j][0].dataValues.id,
+                    lecturerName: res3[j][0].dataValues.name,
+                    studentId	: res2[0].dataValues.id,
+                    nvcl: rows[i][8],
+                    year: year,
+                    semester: semester,
+                    teacherNumber: res3.length
+                  }
+                  thesis1.hour = getHourItem(thesis1, null , 'kltn')
+                  theses.push(thesis1);
                 }
-                let thesis2 = {
-                  language: rows[i][0],
-                  classCode: rows[i][3],
-                  lecturerId: res3[1][0].dataValues.id,
-                  lecturerName: res3[1][0].dataValues.name,
-                  studentName: res2[0].dataValues.name,
-                  studentId	: res2[0].dataValues.id,
-                  nvcl: rows[i][4],
-                  year: year,
-                  semester: semester,
-                }
-                thesis1.hour = getHourItem(thesis1, null , 'kltn')
-                thesis2.hour = getHourItem(thesis2, null , 'kltn')
-                theses.push(thesis1);
-                theses.push(thesis2);
               })
             }
         }
       }
-      fetchApi().then(() => {
-        Thesis.bulkCreate(theses).then(() =>{
+      fetchApi().then( async () => {
+        await Thesis.bulkCreate(theses).then(() =>{
          res.json(theses);
         })
 
         const lecturerIdKltn = Array.from(new Set(theses.map(item => item.lecturerId)))
 
         for (let i = 0; i < lecturerIdKltn.length; i++) {
-          report.updateHour(year, semester, 'kltn', lecturerIdKltn[i])
+          await report.updateHour(year, semester, 'kltn', lecturerIdKltn[i])
         }
 
       })

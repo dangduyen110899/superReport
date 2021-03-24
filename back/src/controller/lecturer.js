@@ -19,8 +19,8 @@ lecturer.create = async ( req, res) =>{
     const request = req.body
     const response = await Lecturer.create(request)
     res.json(response);
-  } catch (e) {
-    console.log(e);
+  } catch (er) {
+    res.json(er)
   }
 }
 
@@ -37,15 +37,17 @@ lecturer.creates = async (req, res) => {
         let lecturer = {
           name: rows[i][0],
           email: rows[i][1],
-          programs: rows[i][2],
-          status: 1
+          programs: rows[i][4],
+          status: 1,
+          department: rows[i][2],
+          subject: rows[i][3],
         }
         lecturers.push(lecturer);
       }
 
       Lecturer.bulkCreate(lecturers).then(data => {
         res.json(data);
-      })
+      }).catch(er => res.json(er))
     });
   }
   catch(error){
@@ -62,7 +64,9 @@ lecturer.update = async ( req, res) =>{
     name: req.body.name,
     email: req.body.email,
     programs: req.body.programs,
-    status: req.body.status
+    status: req.body.status,
+    department: req.body.department,
+    subject: req.body.subject,
   }
   try {
     const response = await Lecturer.update( request,{
@@ -70,8 +74,8 @@ lecturer.update = async ( req, res) =>{
     })
     res.json(response);
 
-  } catch (e) {
-    console.log(e);
+  } catch (er) {
+    res.json(er)
   }
 }
 

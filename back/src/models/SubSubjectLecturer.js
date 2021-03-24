@@ -7,7 +7,9 @@ module.exports = (sequelize, Sequelize) => {
       autoIncrement: true,
     },
     type: Sequelize.INTEGER,
-    day: Sequelize.INTEGER,
+    address: Sequelize.STRING,
+    note: Sequelize.STRING,
+    day: Sequelize.STRING,
     time: Sequelize.STRING,
     total_student: Sequelize.INTEGER,
     total_tc: Sequelize.INTEGER,
@@ -18,7 +20,9 @@ module.exports = (sequelize, Sequelize) => {
     teacherNumber: Sequelize.INTEGER,
     lecturerName: Sequelize.STRING,
     language: Sequelize.INTEGER,
-    hour: Sequelize.FLOAT
+    hour: Sequelize.FLOAT,
+    nameSubject: Sequelize.STRING,
+    subjectCode: Sequelize.STRING,
   },{
     timestamps: false
   });

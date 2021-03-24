@@ -6,10 +6,12 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true,
       autoIncrement: true,
     },
-    name: Sequelize.STRING,
-    email: {type: Sequelize.STRING, unique: true},
+    name: {type: Sequelize.STRING, unique: true},
+    email: {type: Sequelize.STRING},
     programs: Sequelize.INTEGER,
-    status: Sequelize.INTEGER
+    status: Sequelize.INTEGER,
+    department: Sequelize.STRING,
+    subject: Sequelize.STRING,
   },{
     timestamps: false
   });

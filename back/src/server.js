@@ -23,7 +23,7 @@ app.get('/',(req,res)=>{
 // {force: true}
 db.sequelize.sync({alter: true}).then(() => {
     console.log("Sequelize is Running");
-    initial();
+	// initial();
 }).catch(err => {
     console.log(err.message);
 });

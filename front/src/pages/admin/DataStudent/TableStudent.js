@@ -66,17 +66,32 @@ export default function TableStudent({match}) {
 
   let columns = [
     {
-      title: 'Code student',
+      title: 'Mã sinh viên',
       dataIndex: 'code',
       key: 'code',
     },
     {
-      title: 'Name',
+      title: 'Họ tên',
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'Code Class',
+      title: 'Giới tính',
+      dataIndex: 'gender',
+      key: 'gender',
+    },
+    {
+      title: 'Ngày sinh',
+      dataIndex: 'birthday',
+      key: 'birthday',
+    },
+    {
+      title: 'Quê quán',
+      dataIndex: 'address',
+      key: 'address',
+    },
+    {
+      title: 'Mã lớp học',
       dataIndex: 'classCode',
       key: 'classCode',
     },
