@@ -9,7 +9,7 @@ import {
   Popconfirm,
   Button,
   Modal,
-  Space
+  Space, Pagination
 } from 'antd';
 import callAdmin from 'api/admin/Lecturer';
 import FormLecturer from './FormLecturer';
@@ -19,6 +19,9 @@ export default function TableLecturer({match}) {
   const [data, setData] = useState([])
   const [itemEdit, setItemEdit] = useState(null)
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [pageCurren, setPageCurren] = useState(1)
+  const [pagesize, setPagesize] = useState(20)
+  const [totalData, setTotalData] = useState(0)
 
   const handleOk = (item, itemId) => {
     item.status = 1;
@@ -27,17 +30,18 @@ export default function TableLecturer({match}) {
        if (itemId) {
         item.id = itemId;
         await callAdmin.editLecturer(item).then(async() => {
-          const res = await callAdmin.lecturer()
-          setData(res.data)
+          const res = await callAdmin.lecturer(pageCurren,pagesize)
+          setData(res.data.data)
           setIsModalVisible(false);
           toast.success("Edit lecturer success!");
         })
        } else {
-        await callAdmin.addLecturer(item).then(res => {
-          setData([...data, res.data])
+          await callAdmin.addLecturer(item)
+          const res = await callAdmin.lecturer(pageCurren,pagesize)
+          setData(res.data.data)
+          setTotalData(res.data.total)
           setIsModalVisible(false);
           toast.success("Add lecturer success!");
-        })
        }
       } catch (error) {
         toast.warning(error?.response?.data?.message);
@@ -57,8 +61,9 @@ export default function TableLecturer({match}) {
       try {
         await callAdmin.editLecturer(itemEdit).then(async() =>
          {
-          const res = await callAdmin.lecturer()
-          setData(res.data)
+          const res = await callAdmin.lecturer(pageCurren,pagesize)
+          setData(res.data.data)
+          setTotalData(res.data.total)
          }
         )
       } catch (error) {
@@ -114,26 +119,31 @@ export default function TableLecturer({match}) {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await callAdmin.lecturer()
-        setData(res.data)
+        const res = await callAdmin.lecturer(pageCurren,pagesize)
+        setData(res.data.data)
+        setTotalData(res.data.total)
       } catch (error) {
         console.log("failed to request API: ", error)
       }
     };
     getData();
-  }, []);
+  }, [pageCurren, pagesize]);
+
+  
+  function onChange(page, pageSize) {
+    setPageCurren(page)
+    setPagesize(pageSize)
+  }
 
   const handleAddLecturers = (file) => {
     const formData = new FormData()
     formData.append("file", file)
     const adds = async () => {
       try {
-        await callAdmin.addLecturers(formData).then(res =>
-         {
-          setData([...data, ...res.data])
-          toast.success("Add lecturers success!");
-         }
-        )
+        await callAdmin.addLecturers(formData)
+        const res = await callAdmin.lecturer(pageCurren,pagesize)
+        setData(res.data.data)
+        setTotalData(res.data.total)
       } catch (error) {
         toast.error(error)
       }
@@ -170,8 +180,14 @@ export default function TableLecturer({match}) {
         columns={columns}
         dataSource={data}
         bordered
-        pagination={{ defaultPageSize: 10}}
+        pagination={false}
          />
+
+      <br/>
+      {
+        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
+        defaultCurrent={pageCurren}/>
+      }
     </LayoutAdmin>
   )
 }

@@ -9,7 +9,7 @@ import {
   Popconfirm,
   Button,
   Modal,
-  Space
+  Space, Pagination
 } from 'antd';
 import callAdmin from 'api/admin/Student';
 import FormStudent from './FormStudent';
@@ -19,6 +19,9 @@ export default function TableStudent({match}) {
   const [data, setData] = useState([])
   const [itemEdit, setItemEdit] = useState(null)
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [pageCurren, setPageCurren] = useState(1)
+  const [pagesize, setPagesize] = useState(20)
+  const [totalData, setTotalData] = useState(0)
 
   const handleOk = (item, itemId) => {
     item.status = 1;
@@ -27,13 +30,15 @@ export default function TableStudent({match}) {
         if (itemId) {
           item.id = itemId;
           await callAdmin.editStudent(item)
-          const res = await callAdmin.student()
-          setData(res.data)
+          const res = await callAdmin.student(pageCurren,pagesize)
+          setData(res.data.data)
           setIsModalVisible(false);
           toast.success("Edit student success!");
         } else {
-          const res = await callAdmin.addStudent(item)
-          setData([...data, res.data])
+          await callAdmin.addStudent(item)
+          const res = await callAdmin.student(pageCurren,pagesize)
+          setData(res.data.data)
+          setTotalData(res.data.total)
           setIsModalVisible(false);
           toast.success("Add student success!");
         }
@@ -54,8 +59,9 @@ export default function TableStudent({match}) {
     const remove = async () => {
       try {
         await callAdmin.editStudent(itemEdit)
-        const res = await callAdmin.student()
-        setData(res.data)
+        const res = await callAdmin.student(pageCurren,pagesize)
+        setData(res.data.data)
+        setTotalData(res.data.total)
         toast.success('Delete student success.')
       } catch (error) {
         console.log("failed to request API: ", error)
@@ -115,29 +121,36 @@ export default function TableStudent({match}) {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await callAdmin.student()
-        setData(res.data)
+        const res = await callAdmin.student(pageCurren,pagesize)
+        setData(res.data.data)
+        setTotalData(res.data.total)
       } catch (error) {
         console.log("failed to request API: ", error)
       }
     };
     getData();
-  }, []);
+  }, [pageCurren, pagesize]);
 
   const handleAddStudents = (file) => {
     const formData = new FormData()
     formData.append("file", file)
     const adds = async () => {
       try {
-        const res = await callAdmin.addStudents(formData)
-        console.log(res)
-        setData([...data, ...res.data])
+        await callAdmin.addStudents(formData)
+        const res = await callAdmin.lecturer(pageCurren,pagesize)
+        setData(res.data.data)
+        setTotalData(res.data.total)
         toast.success("Add students success!");
       } catch (error) {
         console.log("failed to request API: ", error)
       }
     };
     adds();
+  }
+
+  function onChange(page, pageSize) {
+    setPageCurren(page)
+    setPagesize(pageSize)
   }
 
   return (
@@ -169,8 +182,13 @@ export default function TableStudent({match}) {
         columns={columns}
         dataSource={data}
         bordered
-        pagination={{ defaultPageSize: 10}}
+        pagination={false}
          />
+      <br/>
+      {
+        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
+        defaultCurrent={pageCurren}/>
+      }
     </LayoutAdmin>
   )
 }

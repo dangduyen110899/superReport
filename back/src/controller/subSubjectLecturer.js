@@ -22,10 +22,15 @@ subSubjectLecturer.list = async (req, res) => {
           { year: year },
           { semester: Number(semester) }
         ]
-      }
+      },
+      limit: 30,
+      offset: 2
     })
   } else {
-    response = await SubSubjectLecturer.findAll()
+    response = await SubSubjectLecturer.findAll({
+      limit: 30,
+      offset: 2
+    })
   }
   res.json(response);
 

@@ -2,8 +2,8 @@ import http from '../httpReques';
 import authHeader from '../../utils/auth-header'
 const dbName='admin'
 
-const lecturer=()=>{
-  return http.get(`${dbName}/lecturer`, { headers: authHeader() })
+const lecturer=(page, size)=>{
+  return http.post(`${dbName}/lecturer`,{page: page, size: size}, { headers: authHeader() })
 }
 
 const addLecturer=(data)=>{

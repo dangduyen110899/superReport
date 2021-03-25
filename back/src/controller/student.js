@@ -6,8 +6,15 @@ const readXlsxFile = require('read-excel-file/node');
 const student = {}
 
 student.list = async (req, res) => {
-  const response = await Student.findAll({where: {status: 1}})
-  res.json(response);
+  const page = req.body.page
+  const size = req.body.size
+  console.log(page, size)
+  const { count, rows: response } = await Student.findAndCountAll({
+    where: {status: 1}, 
+    offset: (page-1)*size, 
+    limit: size
+  })
+  res.json({data: response, total: count});
 }
 
 student.create = async ( req, res) =>{

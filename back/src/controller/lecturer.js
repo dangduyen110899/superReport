@@ -4,9 +4,15 @@ const lecturer = {}
 const readXlsxFile = require('read-excel-file/node');
 
 lecturer.list = async (req, res) => {
+  const page = req.body.page
+  const size = req.body.size
   try {
-    const response = await Lecturer.findAll({where: {status: 1}})
-    res.json(response);
+    const { count, rows: response } = await Lecturer.findAndCountAll({
+      where: {status: 1},
+      offset: (page-1)*size, 
+      limit: size
+    })
+    res.json({data: response, total: count});
   }
   catch (e) {
     console.log(e);

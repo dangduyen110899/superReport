@@ -12,12 +12,12 @@ const verifySignUp = require('../router/verifySignUp');
 function route(app) {
 
 //  app.get('/api/lecturer/hehe',function(res,req) {lecturer.hehe});
-app.get('/api/admin/lecturer', [authJwt.verifyToken, authJwt.isAdmin],lecturer.list);
+app.post('/api/admin/lecturer', [authJwt.verifyToken, authJwt.isAdmin],lecturer.list);
 app.post('/api/admin/lecturer/create',[authJwt.verifyToken, authJwt.isAdmin],lecturer.create);
 app.post('/api/admin/lecturer/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),lecturer.creates);
 app.put('/api/admin/lecturer/update',[authJwt.verifyToken, authJwt.isAdmin],lecturer.update);
 
-app.get('/api/admin/student', [authJwt.verifyToken, authJwt.isAdmin],student.list);
+app.post('/api/admin/student', [authJwt.verifyToken, authJwt.isAdmin],student.list);
 app.post('/api/admin/student/create', [authJwt.verifyToken, authJwt.isAdmin],student.create);
 app.post('/api/admin/student/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),student.creates);
 app.put('/api/admin/student/update', [authJwt.verifyToken, authJwt.isAdmin],student.update);

@@ -3,7 +3,7 @@ import LayoutAdmin from '../Layout';
 import {
   Table,
   Row,
-  Col
+  Col, Pagination
 } from 'antd';
 import callAdmin from 'api/admin/Report';
 import Select from '../component/Select';
@@ -13,6 +13,9 @@ export default function TableReport({match}) {
   const [yearShow, setYearShow] = useState(['All'])
   const [year, setYear] = useState('');
   const [semester, setSemester] = useState('')
+  const [pageCurren, setPageCurren] = useState(1)
+  const [pagesize, setPagesize] = useState(20)
+  const [totalData, setTotalData] = useState(0)
 
   let columns
   if(!year && !semester) {
@@ -131,33 +134,40 @@ export default function TableReport({match}) {
   useEffect(() => {
     const getData = async () => {
       try {
-        await callAdmin.report(year,semester).then(res =>
-          setData(res.data)
-        )
+        await callAdmin.report(year,semester, pageCurren,pagesize).then(res =>{
+          setData(res.data.data)
+          setTotalData(res.data.total)
+        })
       } catch (error) {
         console.log("failed to request API: ", error)
       }
     };
     getData();
-  }, [year, semester]);
+  }, [year, semester,pageCurren, pagesize]);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        return await callAdmin.report('','')
+        return await callAdmin.report('','', pageCurren,pagesize)
       } catch (error) {
         console.log("failed to request API: ", error)
       }
     };
     getData().then(res =>
       {
-        let arrString = res.data.map(item => item.semester + ' ' + item.year)
+        setData(res.data.data)
+        setTotalData(res.data.total)
+        let arrString = res.data.data.map(item => item.semester + ' ' + item.year)
         const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
         setYearShow(['All',...arr])
       }
     )
   }, []);
 
+  function onChange(page, pageSize) {
+    setPageCurren(page)
+    setPagesize(pageSize)
+  }
 
   return (
     <LayoutAdmin match={match}>
@@ -172,8 +182,13 @@ export default function TableReport({match}) {
         columns={columns}
         dataSource={data}
         bordered
-        pagination={{ defaultPageSize: 10}}
+        pagination={false}
          />
+      <br/>
+      {
+        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
+        defaultCurrent={pageCurren}/>
+      }
     </LayoutAdmin>
   )
 }
