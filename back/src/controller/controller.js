@@ -1,7 +1,6 @@
 const db = require('../config/db.js');
 const config = require('../config/config.js');
 const User = db.user;
-const Role = db.role;
 
 const Op = db.Sequelize.Op;
 
@@ -16,31 +15,19 @@ exports.signup = (req, res) => {
 		name: req.body.name,
 		username: req.body.username,
 		email: req.body.email,
-		password: bcrypt.hashSync(req.body.password, 8)
-	}).then(user => {
-		Role.findAll({
-		  where: {
-			name: {
-			  [Op.or]: req.body.roles
-			}
-		  }
-		}).then(roles => {
-			user.setRoles(roles).then(() => {
-				res.send("User registered successfully!");
-            });
-		}).catch(err => {
+		password: bcrypt.hashSync(req.body.password, 8),
+		role: req.body.roles[0]
+	}).then( () => res.send("User registered successfully!"))
+	.catch(err => {
 			res.status(500).send("Error -> " + err);
 		});
-	}).catch(err => {
-		res.status(500).send("Fail! Error -> " + err);
-	})
-}
+	}
 
 exports.signin = (req, res) => {
 
 	User.findOne({
 		where: {
-			username: req.body.username
+			email: req.body.email
 		}
 	}).then(user => {
 		if (!user) {
@@ -56,81 +43,34 @@ exports.signin = (req, res) => {
 		  expiresIn: 86400 // expires in 24 hours
 		});
 		
-		res.status(200).send({ auth: true, accessToken: token});
+		res.status(200).send({ auth: true, accessToken: token, roles: user.role});
 		
 	}).catch(err => {
 		res.status(500).send('Error -> ' + err);
 	});
 }
 
-exports.userContent = (req, res) => {
-	User.findOne({
-		where: {id: req.userId},
-		attributes: ['name', 'username', 'email'],
-		include: [{
-			model: Role,
-			attributes: ['id', 'name'],
-			through: {
-				attributes: ['userId', 'roleId'],
-			}
-		}]
-	}).then(user => {
-		res.status(200).json({
-			"description": "User Content Page",
-			"user": user
-		});
-	}).catch(err => {
-		res.status(500).json({
-			"description": "Can not access User Page",
-			"error": err
-		});
-	})
-}
+// exports.userContent = (req, res) => {
+// 	User.findOne({
+// 		where: {id: req.userId},
+// 		attributes: ['name', 'username', 'email'],
+// 		include: [{
+// 			model: Role,
+// 			attributes: ['id', 'name'],
+// 			through: {
+// 				attributes: ['userId', 'roleId'],
+// 			}
+// 		}]
+// 	}).then(user => {
+// 		res.status(200).json({
+// 			"description": "User Content Page",
+// 			"user": user
+// 		});
+// 	}).catch(err => {
+// 		res.status(500).json({
+// 			"description": "Can not access User Page",
+// 			"error": err
+// 		});
+// 	})
+// }
 
-exports.adminBoard = (req, res) => {
-	User.findOne({
-		where: {id: req.userId},
-		attributes: ['name', 'username', 'email'],
-		include: [{
-			model: Role,
-			attributes: ['id', 'name'],
-			through: {
-				attributes: ['userId', 'roleId'],
-			}
-		}]
-	}).then(user => {
-		res.status(200).json({
-			"description": "Admin Board",
-			"user": user
-		});
-	}).catch(err => {
-		res.status(500).json({
-			"description": "Can not access Admin Board",
-			"error": err
-		});
-	})
-}
-
-exports.managementBoard = (req, res) => {
-	User.findOne({
-		where: {id: req.userId},
-		attributes: ['name', 'username', 'email'],
-		include: [{
-			model: Role,
-			attributes: ['id', 'name'],
-			through: {
-				attributes: ['userId', 'roleId'],
-			}
-		}]
-	}).then(user => {
-		res.status(200).json({
-			"description": "Management Board",
-			"user": user
-		});
-	}).catch(err => {
-		res.status(500).json({
-			"description": "Can not access Management Board",
-			"error": err
-		});
-	})
-}

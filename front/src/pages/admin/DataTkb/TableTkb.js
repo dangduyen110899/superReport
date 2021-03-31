@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import FormAddYear from '../component/FormAddYear';
 import Select from '../component/Select';
 import FormTkb from './FormTkb';
+import Cookies from "js-cookie";
 
 export default function TableTkb({match}) {
   const [data, setData] = useState([])
@@ -25,6 +26,8 @@ export default function TableTkb({match}) {
   const [year, setYear] = useState('');
   const [semester, setSemester] = useState('')
   const [showFormCheckyear, setShowFormCheckyear] = useState(true)
+  const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
+
 
   const handleOkAddYear = (yearItem, semesterItem) => {
     const add = async () => {
@@ -62,9 +65,61 @@ export default function TableTkb({match}) {
     };
     remove();
   }
-  let columns
+  let  columns = [
+    {
+      title: 'Mã học phần',
+      dataIndex: 'subjectCode',
+      key: 'subjectCode',
+    },
+    {
+      title: 'Học phần',
+      dataIndex: 'nameSubject',
+      key: 'nameSubject',
+    },
+    {
+      title: 'TC',
+      dataIndex: 'total_tc',
+      key: 'total_tc',
+    },
+    {
+      title: 'Mã lớp học phần',
+      dataIndex: 'classSubjectCode',
+      key: 'classSubjectCode',
+    },
+    {
+      title: 'Số SV',
+      dataIndex: 'total_student',
+      key: 'total_student',
+    },
+    {
+      title: 'Giảng viên',
+      dataIndex: 'lecturerName',
+      key: 'lecturerName',
+    },
+    {
+      title: 'Thứ',
+      dataIndex: 'day',
+      key: 'day',
+    },
+    {
+      title: 'Tiết',
+      dataIndex: 'time',
+      key: 'time',
+    },
+   
+    {
+      title: 'Giảng đường',
+      dataIndex: 'address',
+      key: 'address',
+    },
+    {
+      title: 'Ghi chú',
+      dataIndex: 'note',
+      key: 'note',
+    }
+  ];
   if(!year && !semester) {
-    columns = [
+    columns.unshift(
       {
         title: 'Năm học',
         dataIndex: 'year',
@@ -74,145 +129,27 @@ export default function TableTkb({match}) {
         title: 'Học kỳ',
         dataIndex: 'semester',
         key: 'semester',
-      },
-      {
-        title: 'Mã học phần',
-        dataIndex: 'subjectCode',
-        key: 'subjectCode',
-      },
-      {
-        title: 'Học phần',
-        dataIndex: 'nameSubject',
-        key: 'nameSubject',
-      },
-      {
-        title: 'TC',
-        dataIndex: 'total_tc',
-        key: 'total_tc',
-      },
-      {
-        title: 'Mã lớp học phần',
-        dataIndex: 'classSubjectCode',
-        key: 'classSubjectCode',
-      },
-      {
-        title: 'Số SV',
-        dataIndex: 'total_student',
-        key: 'total_student',
-      },
-      {
-        title: 'Giảng viên',
-        dataIndex: 'lecturerName',
-        key: 'lecturerName',
-      },
-      {
-        title: 'Thứ',
-        dataIndex: 'day',
-        key: 'day',
-      },
-      {
-        title: 'Tiết',
-        dataIndex: 'time',
-        key: 'time',
-      },
-     
-      {
-        title: 'Giảng đường',
-        dataIndex: 'address',
-        key: 'address',
-      },
-      {
-        title: 'Ghi chú',
-        dataIndex: 'note',
-        key: 'note',
-      },
-      {
-        title: 'Action',
-        dataIndex: 'operation',
-        render: (_, record) =>
-          data.length >= 1 ? (
-            <Space>
-            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-              <span><DeleteOutlined /></span>
-            </Popconfirm>
-            <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
-            <EditOutlined />
-            </span>
-            </Space>
-          ) : null,
-      },
-    ];
-  } else {
-    columns = [
-      {
-        title: 'Mã học phần',
-        dataIndex: 'subjectCode',
-        key: 'subjectCode',
-      },
-      {
-        title: 'Học phần',
-        dataIndex: 'nameSubject',
-        key: 'nameSubject',
-      },
-      {
-        title: 'TC',
-        dataIndex: 'total_tc',
-        key: 'total_tc',
-      },
-      {
-        title: 'Mã lớp học phần',
-        dataIndex: 'classSubjectCode',
-        key: 'classSubjectCode',
-      },
-      {
-        title: 'Số SV',
-        dataIndex: 'total_student',
-        key: 'total_student',
-      },
-      {
-        title: 'Giảng viên',
-        dataIndex: 'lecturerName',
-        key: 'lecturerName',
-      },
-      {
-        title: 'Thứ',
-        dataIndex: 'day',
-        key: 'day',
-      },
-      {
-        title: 'Tiết',
-        dataIndex: 'time',
-        key: 'time',
-      },
-     
-      {
-        title: 'Giảng đường',
-        dataIndex: 'address',
-        key: 'address',
-      },
-      {
-        title: 'Ghi chú',
-        dataIndex: 'note',
-        key: 'note',
-      },
-      {
-        title: 'Action',
-        dataIndex: 'operation',
-        render: (_, record) =>
-          data.length >= 1 ? (
-            <Space>
-            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-              <span><DeleteOutlined /></span>
-            </Popconfirm>
-            <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
-            <EditOutlined />
-            </span>
-            </Space>
-          ) : null,
-      },
-    ];
-  }
+      }) }
 
+  if(user && (user.roles === 'ADMIN')) { 
+    columns.push(
+      {
+        title: 'Action',
+        dataIndex: 'operation',
+        render: (_, record) =>
+          data.length >= 1 ? (
+            <Space>
+            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
+              <span><DeleteOutlined /></span>
+            </Popconfirm>
+            <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
+            <EditOutlined />
+            </span>
+            </Space>
+          ) : null,
+      }
+    )
+  }
   useEffect(() => {
     const getData = async () => {
       try {
@@ -280,7 +217,9 @@ export default function TableTkb({match}) {
         <Col>
           <Select options={yearShow} defaultVl={'All'} onChangeYear={onChangeYear}></Select>
         </Col>
-        <Col>
+        {
+          user && (user.roles === 'ADMIN') && 
+          <Col>
           <input type="file" onChange={e => handleAddTkbs(e.target.files[0])}/>
           <Space>
             <Button type="primary" onClick={() => {setShowFormCheckyear(false); setIsModalVisible(true)}}>
@@ -300,6 +239,7 @@ export default function TableTkb({match}) {
             {showFormCheckyear ? <FormAddYear handleOkAddYear={handleOkAddYear} handleCancel={handleCancel} /> : <FormTkb handleOkAddTkb={handleOkAddTkb} handleCancel={handleCancel} />}
           </Modal>
         </Col>
+        }
       </Row>
       <br/>
 
