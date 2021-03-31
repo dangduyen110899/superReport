@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useMemo} from 'react';
 import LayoutAdmin from '../Layout';
+import Cookies from "js-cookie";
 import {   DeleteOutlined,
   EditOutlined } from '@ant-design/icons';
 import {
@@ -23,6 +24,7 @@ export default function TableThesic({match}) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [year, setYear] = useState('');
   const [semester, setSemester] = useState('')
+  const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
 
   const handleOkAddYear = (yearItem, semesterItem) => {
     const add = async () => {
@@ -59,9 +61,57 @@ export default function TableThesic({match}) {
     remove();
   }
 
-  let columns
+  let  columns = [
+    {
+      title: 'Mã SV',
+      dataIndex: 'studentCode',
+      key: 'studentCode',
+    },
+    {
+      title: 'Sinh viên',
+      dataIndex: 'studentName',
+      key: 'studentName',
+    },
+    {
+      title: 'Ngày sinh',
+      dataIndex: 'birthday',
+      key: 'birthday',
+    },
+    {
+      title: 'Lớp',
+      dataIndex: 'classCode',
+      key: 'classCode',
+    },
+    {
+      title: 'Tên đề tài',
+      dataIndex: 'nameThesis',
+      key: 'nameThesis',
+    },
+    {
+      title: 'Giảng viên',
+      dataIndex: 'lecturerName',
+      key: 'lecturerName',
+    },
+    {
+      title: 'Ngôn ngữ',
+      dataIndex: 'language',
+      key: 'language',
+      render: (text) => <span>{text===0 ? 'Tiếng việt' : 'Tiếng anh'}</span>,
+    },
+    {
+      title: 'Nhiệm vụ chiến lược',
+      dataIndex: 'nvcl',
+      key: 'nvcl',
+      render: (text) => <span>{text===0 ? 'Không' : 'Có'}</span>,
+    },
+    {
+      title: 'Ghi chú',
+      dataIndex: 'note',
+      key: 'note',
+    }
+  ];
   if(!year && !semester) {
-    columns = [
+    columns.unshift(
       {
         title: 'Năm học',
         dataIndex: 'year',
@@ -71,135 +121,26 @@ export default function TableThesic({match}) {
         title: 'Học kỳ',
         dataIndex: 'semester',
         key: 'semester',
-      },
-      {
-        title: 'Mã SV',
-        dataIndex: 'studentCode',
-        key: 'studentCode',
-      },
-      {
-        title: 'Sinh viên',
-        dataIndex: 'studentName',
-        key: 'studentName',
-      },
-      {
-        title: 'Ngày sinh',
-        dataIndex: 'birthday',
-        key: 'birthday',
-      },
-      {
-        title: 'Lớp',
-        dataIndex: 'classCode',
-        key: 'classCode',
-      },
-      {
-        title: 'Tên đề tài',
-        dataIndex: 'nameThesis',
-        key: 'nameThesis',
-      },
-      {
-        title: 'Giảng viên',
-        dataIndex: 'lecturerName',
-        key: 'lecturerName',
-      },
-      {
-        title: 'Ngôn ngữ',
-        dataIndex: 'language',
-        key: 'language',
-        render: (text) => <span>{text===0 ? 'Tiếng việt' : 'Tiếng anh'}</span>,
-      },
-      {
-        title: 'Nhiệm vụ chiến lược',
-        dataIndex: 'nvcl',
-        key: 'nvcl',
-        render: (text) => <span>{text===0 ? 'Không' : 'Có'}</span>,
-      },
-      {
-        title: 'Ghi chú',
-        dataIndex: 'note',
-        key: 'note',
-      },
-      {
-        title: 'Action',
-        dataIndex: 'operation',
-        render: (_, record) =>
-          data.length >= 1 ? (
-            <Space>
-            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-              <span><DeleteOutlined /></span>
-            </Popconfirm>
-            <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
-            <EditOutlined />
-            </span>
-            </Space>
-          ) : null,
-      },
-    ];
-  } else {
-    columns = [
-      {
-        title: 'Mã SV',
-        dataIndex: 'studentCode',
-        key: 'studentCode',
-      },
-      {
-        title: 'Sinh viên',
-        dataIndex: 'studentName',
-        key: 'studentName',
-      },
-      {
-        title: 'Ngày sinh',
-        dataIndex: 'birthday',
-        key: 'birthday',
-      },
-      {
-        title: 'Lớp',
-        dataIndex: 'classCode',
-        key: 'classCode',
-      },
-      {
-        title: 'Tên đề tài',
-        dataIndex: 'nameThesis',
-        key: 'nameThesis',
-      },
-      {
-        title: 'Giảng viên',
-        dataIndex: 'lecturerName',
-        key: 'lecturerName',
-      },
-      {
-        title: 'Ngôn ngữ',
-        dataIndex: 'language',
-        key: 'language',
-        render: (text) => <span>{text===0 ? 'Tiếng việt' : 'Tiếng anh'}</span>,
-      },
-      {
-        title: 'Nhiệm vụ chiến lược',
-        dataIndex: 'nvcl',
-        key: 'nvcl',
-        render: (text) => <span>{text===0 ? 'Không' : 'Có'}</span>,
-      },
-      {
-        title: 'Ghi chú',
-        dataIndex: 'note',
-        key: 'note',
-      },
-      {
-        title: 'Action',
-        dataIndex: 'operation',
-        render: (_, record) =>
-          data.length >= 1 ? (
-            <Space>
-            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-              <span><DeleteOutlined /></span>
-            </Popconfirm>
-            <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
-            <EditOutlined />
-            </span>
-            </Space>
-          ) : null,
-      },
-    ];
+      }
+    )
+  }
+
+  if(user && (user.roles === 'ADMIN')) { 
+    columns.push({
+      title: 'Action',
+      dataIndex: 'operation',
+      render: (_, record) =>
+        data.length >= 1 ? (
+          <Space>
+          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
+            <span><DeleteOutlined /></span>
+          </Popconfirm>
+          <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
+          <EditOutlined />
+          </span>
+          </Space>
+        ) : null,
+    })
   }
 
   useEffect(() => {
@@ -269,26 +210,29 @@ export default function TableThesic({match}) {
             }, [yearShow])
           }
         </Col>
-        <Col>
-          <input type="file" onChange={e => handleAddThesiss(e.target.files[0])}/>
-          <Space>
-            <Button type="primary" onClick={() => setIsModalVisible(true)}>
-              + Add thesis
-            </Button>
-            <Button type="primary" onClick={() => setIsModalVisible(true)}>
-              + Add year semester
-            </Button>
-          </Space>
-          <Modal
-            title="Select time"
-            footer={null}
-            destroyOnClose
-            onCancel={handleCancel}
-            visible={isModalVisible}
-          >
-            <FormAddYear handleOkAddYear={handleOkAddYear} handleCancel={handleCancel} />
-          </Modal>
-        </Col>
+       {
+         user && user.roles === 'ADMIN' &&
+         <Col>
+         <input type="file" onChange={e => handleAddThesiss(e.target.files[0])}/>
+         <Space>
+           <Button type="primary" onClick={() => setIsModalVisible(true)}>
+             + Add thesis
+           </Button>
+           <Button type="primary" onClick={() => setIsModalVisible(true)}>
+             + Add year semester
+           </Button>
+         </Space>
+         <Modal
+           title="Select time"
+           footer={null}
+           destroyOnClose
+           onCancel={handleCancel}
+           visible={isModalVisible}
+         >
+           <FormAddYear handleOkAddYear={handleOkAddYear} handleCancel={handleCancel} />
+         </Modal>
+       </Col>
+       }
       </Row>
       <br/>
 

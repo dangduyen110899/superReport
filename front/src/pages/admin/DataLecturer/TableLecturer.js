@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import LayoutAdmin from '../Layout';
+import Cookies from "js-cookie";
 import {   DeleteOutlined,
   EditOutlined } from '@ant-design/icons';
 import {
@@ -19,6 +20,7 @@ export default function TableLecturer({match}) {
   const [data, setData] = useState([])
   const [itemEdit, setItemEdit] = useState(null)
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
 
   const handleOk = (item, itemId) => {
     item.status = 1;
@@ -94,22 +96,29 @@ export default function TableLecturer({match}) {
     //   dataIndex: 'programs',
     //   key: 'programs',
     // },
-    {
-      title: 'Action',
-      dataIndex: 'operation',
-      render: (_, record) =>
-        data.length >= 1 ? (
-          <Space>
-          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-            <span><DeleteOutlined /></span>
-          </Popconfirm>
-          <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
-          <EditOutlined />
-          </span>
-          </Space>
-        ) : null,
-    },
   ];
+
+  if(user && (user.roles === 'ADMIN')) {
+    columns.push(
+      {
+        title: 'Action',
+        dataIndex: 'operation',
+        render: (_, record) =>
+          data.length >= 1 ? (
+            <Space>
+            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
+              <span><DeleteOutlined /></span>
+            </Popconfirm>
+            <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
+            <EditOutlined />
+            </span>
+            </Space>
+          ) : null,
+      },
+    )
+  }
+
+  
 
   useEffect(() => {
     const getData = async () => {
@@ -148,7 +157,9 @@ export default function TableLecturer({match}) {
           {/* <Search onSearch={onSearch}/> */}
           <span>search</span>
         </Col>
-        <Col>
+        {
+          user && (user.roles === 'ADMIN') &&
+          <Col>
           <input type="file" onChange={e => handleAddLecturers(e.target.files[0])}/>
           <Button type="primary" onClick={() => setIsModalVisible(true)}>
             + Thêm giảng viên
@@ -163,6 +174,7 @@ export default function TableLecturer({match}) {
             <FormLecturer handleOk={handleOk} handleCancel={handleCancel} itemEdit={itemEdit} dataLecturer={data}/>
           </Modal>
         </Col>
+        }
       </Row>
       <br/>
 

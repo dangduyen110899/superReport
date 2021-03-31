@@ -28,13 +28,13 @@ const FormLecturer = ({handleOk, handleCancel, itemEdit, dataLecturer}) => {
 
   const renderMovieTitle = (arrDepartments, department) => {
     return (
-      arrDepartments.title.toLowerCase().indexOf(department.toLowerCase()) !== -1
+      arrDepartments?.title?.toLowerCase().indexOf(department?.toLowerCase()) !== -1
     );
   }
 
   const renderMovieTitle1 = (arrSubjects, subject) => {
     return (
-      arrSubjects.title.toLowerCase().indexOf(subject.toLowerCase()) !== -1
+      arrSubjects?.title?.toLowerCase().indexOf(subject?.toLowerCase()) !== -1
     );
   }
 
