@@ -14,14 +14,20 @@ import {
 import callAdmin from 'api/admin/Student';
 import FormStudent from './FormStudent';
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
+import { useHistory } from "react-router-dom";
+import queryString from 'query-string'
 
 export default function TableStudent({match}) {
+  const value=queryString.parse(match.location.search);
+  const history = useHistory()
   const [data, setData] = useState([])
   const [itemEdit, setItemEdit] = useState(null)
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [pageCurren, setPageCurren] = useState(1)
-  const [pagesize, setPagesize] = useState(20)
+  const [pageCurren, setPageCurren] = useState(value?.page || 1)
+  const [pagesize, setPagesize] = useState(value?.size || 20)
   const [totalData, setTotalData] = useState(0)
+  const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
 
   const handleOk = (item, itemId) => {
     item.status = 1;
@@ -100,8 +106,11 @@ export default function TableStudent({match}) {
       title: 'Mã lớp học',
       dataIndex: 'classCode',
       key: 'classCode',
-    },
-    {
+    }
+  ];
+
+  if(user && (user.roles === 'ADMIN')) {
+    columns.push({
       title: 'Action',
       dataIndex: 'operation',
       render: (_, record) =>
@@ -115,8 +124,8 @@ export default function TableStudent({match}) {
           </span>
           </Space>
         ) : null,
-    },
-  ];
+    })
+  }
 
   useEffect(() => {
     const getData = async () => {
@@ -151,6 +160,7 @@ export default function TableStudent({match}) {
   function onChange(page, pageSize) {
     setPageCurren(page)
     setPagesize(pageSize)
+    history.push(`/admin/student?page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
   }
 
   return (
@@ -160,7 +170,8 @@ export default function TableStudent({match}) {
           {/* <Search onSearch={onSearch}/> */}
           <span>search</span>
         </Col>
-        <Col>
+        { user && (user.roles === 'ADMIN') && 
+          <Col>
           <input type="file" onChange={e => handleAddStudents(e.target.files[0])}/>
           <Button type="primary" onClick={() => setIsModalVisible(true)}>
             + Add student
@@ -175,6 +186,7 @@ export default function TableStudent({match}) {
             <FormStudent handleOk={handleOk} handleCancel={handleCancel} itemEdit={itemEdit}/>
           </Modal>
         </Col>
+        } 
       </Row>
       <br/>
 

@@ -117,11 +117,11 @@ report.updateHour = async ( year, semester, name, gvId) => {
 report.list = async (req, res) => {
   const year = req.query.year;
   const semester = req.query.semester;
-  const page = req.query.page;
-  const size = req.query.size;
+  const page = Number(req.query.page);
+  const size = Number(req.query.size);
   let response1;
   let count1;
-  if (Boolean(year) && Boolean(semester)) {
+  if (Boolean(year) && Boolean(semester) && page && size) {
     const { count, rows } = await ReportHour.findAndCountAll({
       where: {
         [Op.and]: [
@@ -134,13 +134,15 @@ report.list = async (req, res) => {
     })
     response1 = rows
     count1 = count
+  } else if (Boolean(year) && Boolean(semester) && page && size) {
+    const { count, rows } = await ReportHour.findAndCountAll({
+      offset: Number((page-1)*size), 
+      limit: Number(size)
+    })
+    response1 = rows
+    count1 = count
   } else {
-    const { count, rows } = await ReportHour.findAndCountAll(
-      {
-        offset: Number((page-1)*size), 
-        limit: Number(size)
-      }
-    )
+    const { count, rows } = await ReportHour.findAndCountAll()
     response1 = rows
     count1 = count
   }

@@ -7,7 +7,7 @@ const signUp = (name, username, email, password, confirmPassword, roles) => {
 
 const signIn = (data) => {
   console.log("data", data)
-  return http.post(`${dbName}/signin`, { username: data.email, password: data.password})
+  return http.post(`${dbName}/signin`, data)
 }
 
 // eslint-disable-next-line

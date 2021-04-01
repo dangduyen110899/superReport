@@ -3,7 +3,7 @@ import authHeader from '../../utils/auth-header'
 const dbName='admin'
 
 const lecturer=(page, size)=>{
-  return http.post(`${dbName}/lecturer`,{page: page, size: size}, { headers: authHeader() })
+  return http.get(`${dbName}/lecturer?page=${page}&&size=${size}`, { headers: authHeader() })
 }
 
 const addLecturer=(data)=>{

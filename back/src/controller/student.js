@@ -6,9 +6,8 @@ const readXlsxFile = require('read-excel-file/node');
 const student = {}
 
 student.list = async (req, res) => {
-  const page = req.body.page
-  const size = req.body.size
-  console.log(page, size)
+  const page = Number(req.query.page)
+  const size = Number(req.query.size)
   const { count, rows: response } = await Student.findAndCountAll({
     where: {status: 1}, 
     offset: (page-1)*size, 

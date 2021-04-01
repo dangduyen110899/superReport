@@ -13,26 +13,35 @@ const getHourItem = require('./getHourItem');
 subSubjectLecturer.list = async (req, res) => {
   const year = req.query.year;
   const semester = req.query.semester;
-  let response;
-
-  if (Boolean(year) && Boolean(semester)) {
-    response = await SubSubjectLecturer.findAll({
+  let response, countx
+  const page = Number(req.query.page)
+  const size = Number(req.query.size)
+  if (Boolean(year) && Boolean(semester) && page && size) {
+    const { count, rows } = await SubSubjectLecturer.findAndCountAll({
       where: {
         [Op.and]: [
           { year: year },
           { semester: Number(semester) }
         ]
       },
-      limit: 30,
-      offset: 2
+      offset: (page-1)*size, 
+      limit: size
     })
+    response = rows
+    countx = count
+  } else if (page && size) {
+    const { count, rows } = await SubSubjectLecturer.findAndCountAll({
+      offset: (page-1)*size, 
+      limit: size
+    })
+    response = rows
+    countx = count
   } else {
-    response = await SubSubjectLecturer.findAll({
-      limit: 30,
-      offset: 2
-    })
+    const { count, rows } = await SubSubjectLecturer.findAndCountAll()
+    response = rows  
+    countx = count
   }
-  res.json(response);
+  res.json({data: response, total: countx});
 
 }
 

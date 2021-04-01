@@ -3,12 +3,12 @@ import authHeader from '../../utils/auth-header';
 const dbName='admin'
 
 
-const tkb=(year, semester)=>{
+const tkb=(year, semester, page, size)=>{
   if (year&&semester) {
-    return http.get(`${dbName}/tkb?year=${year}&&semester=${semester}`, { headers: authHeader() })
+    return http.get(`${dbName}/tkb?year=${year}&&semester=${semester}&&page=${page}&&size=${size}`, { headers: authHeader() })
   }
   else {
-    return http.get(`${dbName}/tkb?year=&&semester=`, { headers: authHeader() })
+    return http.get(`${dbName}/tkb?year=&&semester=&&page=${page}&&size=${size}`, { headers: authHeader() })
   }
 }
 

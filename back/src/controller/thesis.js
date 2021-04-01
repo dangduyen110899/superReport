@@ -12,48 +12,37 @@ const thesis = {}
 thesis.list = async (req, res) => {
   const year = req.query.year;
   const semester = req.query.semester;
-  let response;
-
-  if (Boolean(year) && Boolean(semester)) {
-    response = await Thesis.findAll({
+  let response, countx
+  const page = Number(req.query.page)
+  const size = Number(req.query.size)
+  if (Boolean(year) && Boolean(semester) && page && size) {
+    const { count, rows } = await Thesis.findAndCountAll({
       where: {
         [Op.and]: [
           { year: year },
           { semester: Number(semester) }
         ]
-      }
+      },
+      offset: (page-1)*size, 
+      limit: size
     })
+    response = rows
+    countx = count
+  } else if (page && size) {
+    const { count, rows } = await Thesis.findAndCountAll({
+      offset: (page-1)*size, 
+      limit: size
+    })
+    response = rows
+    countx = count
   } else {
-    response = await Thesis.findAll()
+    const { count, rows } = await Thesis.findAndCountAll()
+    response = rows
+    countx = count
   }
-  res.json(response);
+  res.json({data: response, total: countx});
 
 }
-
-// thesis.hehe = async ( req, res) => {
-//   try {
-//     const response = await Thesis.findAll({
-//       attributes: ["id","lecturerId", "studentId"],
-//       raw: true,
-//       include: [
-//         {
-//           model: Student
-//           // require: true,
-//           attributes: [['']]
-//         }
-//       ]
-//     })
-//     .then(data =>{
-//      res.send({success : true, content: data});
-//     })
-//     .catch(error=>{
-//        res.status(500).send({message: error})
-//     })
-//     res.json(response);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// }
 
 thesis.creates = async (req, res) => {
   const year = req.body.year;

@@ -2,12 +2,12 @@ import http from '../httpReques';
 import authHeader from '../../utils/auth-header';
 const dbName='admin'
 
-const thesis=(year, semester)=>{
+const thesis=(year, semester, page, size)=>{
   if (year&&semester) {
-    return http.get(`${dbName}/thesis?year=${year}&&semester=${semester}`, { headers: authHeader() })
+    return http.get(`${dbName}/thesis?year=${year}&&semester=${semester}&&page=${page}&&size=${size}`, { headers: authHeader() })
   }
   else {
-    return http.get(`${dbName}/thesis?year=&&semester=`, { headers: authHeader() })
+    return http.get(`${dbName}/thesis?year=&&semester=&&page=${page}&&size=${size}`, { headers: authHeader() })
   }
 }
 
