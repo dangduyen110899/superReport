@@ -9,7 +9,6 @@ import {
 import React, {useState, useEffect} from "react";
 import { ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
-import Err from "pages/403";
 import { Redirect } from 'react-router'
 
 function App() {

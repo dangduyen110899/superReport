@@ -4,6 +4,8 @@ import TableThesic from "pages/admin/DataKltn/TableThesis";
 import TableLecturer from "pages/admin/DataLecturer/TableLecturer";
 import TableStudent from "pages/admin/DataStudent/TableStudent";
 import TableTkb from "pages/admin/DataTkb/TableTkb";
+import ReportDetailThesis from "pages/admin/detail/ReportDetailThesis";
+import ReportDetailTkb from "pages/admin/detail/ReportDetailTkb";
 import TableReport from "pages/admin/Report/TableReport";
 
 export const routesAdmin = [
@@ -50,6 +52,18 @@ export const routesAdmin = [
     path: "/admin/report",
     exact: true,
     components: match => <TableReport match={match}/>,
+    role: 'adminorpm'
+  },
+  {
+    path: "/admin/report/schedules/:lecturerId",
+    exact: true,
+    components: match => <ReportDetailTkb match={match}/>,
+    role: 'adminorpm'
+  },
+  {
+    path: "/admin/report/thesis/:lecturerId",
+    exact: true,
+    components: match => <ReportDetailThesis match={match}/>,
     role: 'adminorpm'
   }
 ];

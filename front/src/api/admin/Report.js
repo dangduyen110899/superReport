@@ -3,12 +3,12 @@ import authHeader from '../../utils/auth-header';
 const dbName='admin'
 
 
-const report = (year, semester, page, size) => {
+const report = (year, semester, page, size,type) => {
   if (year&&semester) {
-    return http.get(`${dbName}/report?year=${year}&&semester=${semester}&&page=${page}&&size=${size}`, { headers: authHeader() })
+    return http.get(`${dbName}/report?year=${year}&&semester=${semester}&&page=${page}&&size=${size}&&type=${type}`, { headers: authHeader() })
   }
   else {
-    return http.get(`${dbName}/report?year=&&semester=&&page=${page}&&size=${size}`, { headers: authHeader() })
+    return http.get(`${dbName}/report?year=&&semester=&&page=${page}&&size=${size}type=${type}`, { headers: authHeader() })
   }
 }
 

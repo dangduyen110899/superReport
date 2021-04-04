@@ -6,9 +6,10 @@ const readXlsxFile = require('read-excel-file/node');
 lecturer.list = async (req, res) => {
   const page = Number(req.query.page)
   const size = Number(req.query.size)
+  const mode = Number(req.query.mode)
   try {
     const { count, rows: response } = await Lecturer.findAndCountAll({
-      where: {status: 1},
+      where: {status: 1, mode: mode},
       offset: (page-1)*size, 
       limit: size
     })
@@ -47,13 +48,17 @@ lecturer.creates = async (req, res) => {
           status: 1,
           department: rows[i][2],
           subject: rows[i][3],
+          mode: req.body.mode
         }
         lecturers.push(lecturer);
       }
 
       Lecturer.bulkCreate(lecturers).then(data => {
         res.json(data);
-      }).catch(er => res.json(er))
+      }).catch(er => {
+        console.log(er)
+        res.status(400).send(er.message);
+      })
     });
   }
   catch(error){

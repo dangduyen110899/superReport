@@ -12,6 +12,10 @@ const tkb=(year, semester, page, size)=>{
   }
 }
 
+const detailTkb=(year, semester, lecturerId, type, page, size)=>{
+  return http.get(`${dbName}/detailTkb?year=${year}&&semester=${semester}&&page=${page}&&size=${size}&&lecturerId=${lecturerId}&&type=${type}`, { headers: authHeader() })
+}
+
 const addTkb=(data)=>{
   return http.post(`${dbName}/tkb/create`, data, { headers: authHeader() })
 }
@@ -29,4 +33,4 @@ const checkYear=(data)=>{
 }
 
 // eslint-disable-next-line
-export default {checkYear, tkb, addTkbs, addTkb, editTkb};
+export default {checkYear, tkb, addTkbs, addTkb, editTkb, detailTkb};

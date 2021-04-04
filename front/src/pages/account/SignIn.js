@@ -17,7 +17,7 @@ const SignIn = () => {
       try {
         await account.signIn(data).then( response => {
           Cookies.set("user", JSON.stringify(response.data)) 
-          history.push('/admin/student')
+          history.push('/admin/report')
         })
       } catch (error) {
         setErrorSignin(error.response.data.message)

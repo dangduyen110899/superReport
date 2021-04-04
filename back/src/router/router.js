@@ -23,6 +23,7 @@ app.post('/api/admin/student/creates', [authJwt.verifyToken, authJwt.isAdmin],up
 app.put('/api/admin/student/update', [authJwt.verifyToken, authJwt.isAdmin],student.update);
 
 app.get('/api/admin/thesis', [authJwt.verifyToken, authJwt.isLeaderOrAdmin], thesis.list);
+app.get('/api/admin/detailThesis', [authJwt.verifyToken, authJwt.isLeaderOrAdmin], thesis.detailList);
 // app.post('/api/admin/thesis/create',thesis.create);
 app.post('/api/admin/thesis/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),thesis.creates);
 app.post('/api/admin/thesis/checkYear', [authJwt.verifyToken, authJwt.isAdmin],thesis.checkYear);
@@ -30,6 +31,7 @@ app.put('/api/admin/thesis/update', [authJwt.verifyToken, authJwt.isAdmin],thesi
 
 
 app.get('/api/admin/tkb', [authJwt.verifyToken, authJwt.isLeaderOrAdmin],  subSubjectLecturer.list );
+app.get('/api/admin/detailTkb', [authJwt.verifyToken, authJwt.isLeaderOrAdmin],  subSubjectLecturer.detailList );
 app.post('/api/admin/tkb/create', [authJwt.verifyToken, authJwt.isAdmin],subSubjectLecturer.create);
 app.post('/api/admin/tkb/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),subSubjectLecturer.creates);
 app.post('/api/admin/tkb/checkYear', [authJwt.verifyToken, authJwt.isAdmin],subSubjectLecturer.checkYear);

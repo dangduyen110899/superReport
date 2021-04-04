@@ -85,6 +85,8 @@ export default function TableTkb({match}) {
       title: 'TC',
       dataIndex: 'total_tc',
       key: 'total_tc',
+      width: 100,
+      align: 'center'
     },
     {
       title: 'Mã lớp học phần',
@@ -95,6 +97,8 @@ export default function TableTkb({match}) {
       title: 'Số SV',
       dataIndex: 'total_student',
       key: 'total_student',
+      width: 100,
+      align: 'center'
     },
     {
       title: 'Giảng viên',
@@ -105,11 +109,15 @@ export default function TableTkb({match}) {
       title: 'Thứ',
       dataIndex: 'day',
       key: 'day',
+      width: 100,
+      align: 'center'
     },
     {
       title: 'Tiết',
       dataIndex: 'time',
       key: 'time',
+      width: 100,
+      align: 'center'
     },
    
     {
@@ -121,6 +129,8 @@ export default function TableTkb({match}) {
       title: 'Ghi chú',
       dataIndex: 'note',
       key: 'note',
+      width: 100,
+      align: 'center'
     }
   ];
   if(!year && !semester) {
@@ -134,6 +144,8 @@ export default function TableTkb({match}) {
         title: 'Học kỳ',
         dataIndex: 'semester',
         key: 'semester',
+        width: 100,
+      align: 'center'
       }) }
 
   if(user && (user.roles === 'ADMIN')) { 
@@ -141,6 +153,8 @@ export default function TableTkb({match}) {
       {
         title: 'Action',
         dataIndex: 'operation',
+        width: 100,
+        align: 'center',
         render: (_, record) =>
           data.length >= 1 ? (
             <Space>
@@ -226,6 +240,7 @@ export default function TableTkb({match}) {
 
   return (
     <LayoutAdmin match={match}>
+      <h2 className="title">QUẢN LÝ THỜI KHÓA BIỂU</h2>
       <Row justify="space-between">
         <Col>
           <Select options={yearShow} defaultVl={'All'} onChangeYear={onChangeYear}></Select>
@@ -261,6 +276,7 @@ export default function TableTkb({match}) {
         dataSource={data}
         bordered
         pagination={false}
+        scroll={{ y: 550 }}
          />
          
          {

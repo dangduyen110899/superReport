@@ -11,6 +11,11 @@ const thesis=(year, semester, page, size)=>{
   }
 }
 
+const detailThesis=(year, semester, lecturerId, type, page, size)=>{
+  return http.get(`${dbName}/detailThesis?year=${year}&&semester=${semester}&&page=${page}&&size=${size}&&lecturerId=${lecturerId}&&type=${type}`, { headers: authHeader() })
+}
+
+
 const addThesis=(data)=>{
   return http.post(`${dbName}/thesis/create`, data, { headers: authHeader() })
 }
@@ -28,4 +33,4 @@ const checkYear=(data)=>{
 }
 
 // eslint-disable-next-line
-export default {checkYear, thesis, addThesiss, addThesis, editThesis};
+export default {checkYear, thesis, addThesiss, addThesis, editThesis, detailThesis};

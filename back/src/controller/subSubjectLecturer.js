@@ -45,6 +45,60 @@ subSubjectLecturer.list = async (req, res) => {
 
 }
 
+subSubjectLecturer.detailList = async (req, res) => {
+  const year = req.query.year;
+  const semester = req.query.semester;
+  let response, countx
+  const page = Number(req.query.page)
+  const size = Number(req.query.size)
+  const lecturerId = Number(req.query.lecturerId)
+  const type = Number(req.query.type)
+  if (type === 0) {
+    const { count, rows } = await SubSubjectLecturer.findAndCountAll({
+      where: {
+        [Op.and]: [
+          { year: year },
+          { semester: Number(semester) },
+          { lecturerId: lecturerId }
+        ]
+      },
+      offset: (page-1)*size, 
+      limit: size
+    })
+    response = rows
+    countx = count
+  } else if (type === 1) {
+    const { count, rows } = await SubSubjectLecturer.findAndCountAll({
+      where: {
+        [Op.and]: [
+          { year: year },
+          { lecturerId: lecturerId }
+        ]
+      },
+      offset: (page-1)*size, 
+      limit: size
+    })
+    response = rows
+    countx = count
+  } else {
+    const { count, rows } = await SubSubjectLecturer.findAndCountAll({
+      where: {
+        [Op.and]: [
+          { year: year },
+          { semester: Number(semester) },
+          { lecturerId: lecturerId }
+        ]
+      },
+      offset: (page-1)*size, 
+      limit: size
+    })
+    response = rows
+    countx = count
+  }
+  res.json({data: response, total: countx});
+
+}
+
 subSubjectLecturer.create = async ( req, res) =>{
   try {
     req.body.hour = getHourItem(req.body)

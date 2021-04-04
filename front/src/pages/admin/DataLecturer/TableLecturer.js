@@ -10,7 +10,7 @@ import {
   Popconfirm,
   Button,
   Modal,
-  Space, Pagination
+  Space, Pagination, Radio
 } from 'antd';
 import callAdmin from 'api/admin/Lecturer';
 import FormLecturer from './FormLecturer';
@@ -28,6 +28,7 @@ export default function TableLecturer({match}) {
   const [pagesize, setPagesize] = useState(value?.size || 20)
   const [totalData, setTotalData] = useState(0)
   const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
+  const [mode, setmode] = useState(value?.mode || '1')
 
   const handleOk = (item, itemId) => {
     item.status = 1;
@@ -36,14 +37,15 @@ export default function TableLecturer({match}) {
        if (itemId) {
         item.id = itemId;
         await callAdmin.editLecturer(item).then(async() => {
-          const res = await callAdmin.lecturer(pageCurren,pagesize)
+          const res = await callAdmin.lecturer(pageCurren,pagesize, mode)
           setData(res.data.data)
           setIsModalVisible(false);
           toast.success("Edit lecturer success!");
         })
        } else {
+          item.mode = mode
           await callAdmin.addLecturer(item)
-          const res = await callAdmin.lecturer(pageCurren,pagesize)
+          const res = await callAdmin.lecturer(pageCurren, pagesize, mode)
           setData(res.data.data)
           setTotalData(res.data.total)
           setIsModalVisible(false);
@@ -67,7 +69,7 @@ export default function TableLecturer({match}) {
       try {
         await callAdmin.editLecturer(itemEdit).then(async() =>
          {
-          const res = await callAdmin.lecturer(pageCurren,pagesize)
+          const res = await callAdmin.lecturer(pageCurren,pagesize,mode)
           setData(res.data.data)
           setTotalData(res.data.total)
          }
@@ -80,6 +82,13 @@ export default function TableLecturer({match}) {
   }
 
   let columns = [
+    {
+      title: "Số thứ tự",
+      key: "index",
+      render: (value, item, index) => (pageCurren - 1) *pagesize  + index + 1,
+      width: 100,
+      align: 'center'
+    },
     {
       title: 'Tên giảng viên',
       dataIndex: 'name',
@@ -111,6 +120,8 @@ export default function TableLecturer({match}) {
     columns.push(
       {
         title: 'Action',
+        width: 100,
+        align: 'center',
         dataIndex: 'operation',
         render: (_, record) =>
           data.length >= 1 ? (
@@ -125,14 +136,12 @@ export default function TableLecturer({match}) {
           ) : null,
       },
     )
-  }
-
-  
+  } 
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await callAdmin.lecturer(pageCurren,pagesize)
+        const res = await callAdmin.lecturer(pageCurren,pagesize,mode)
         setData(res.data.data)
         setTotalData(res.data.total)
       } catch (error) {
@@ -140,22 +149,23 @@ export default function TableLecturer({match}) {
       }
     };
     getData();
-  }, [pageCurren, pagesize]);
+  }, [pageCurren, pagesize, mode]);
 
   
   function onChange(page, pageSize) {
     setPageCurren(page)
     setPagesize(pageSize)
-    history.push(`/admin/lecturer?page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
+    history.push(`/admin/lecturer?page=${page}&&size=${pageSize}&&keyword=${'ddd'}&&mode=${mode}`)
   }
 
   const handleAddLecturers = (file) => {
     const formData = new FormData()
     formData.append("file", file)
+    formData.append("mode", mode)
     const adds = async () => {
       try {
         await callAdmin.addLecturers(formData)
-        const res = await callAdmin.lecturer(pageCurren,pagesize)
+        const res = await callAdmin.lecturer(pageCurren,pagesize,mode)
         setData(res.data.data)
         setTotalData(res.data.total)
       } catch (error) {
@@ -165,12 +175,24 @@ export default function TableLecturer({match}) {
     adds();
   }
 
+  function handleModeChange(event) {
+    setmode(event.target.value)
+    setPageCurren(1)
+    setPagesize(20)
+    history.push(`/admin/lecturer?page=${1}&&size=${pagesize}&&keyword=${'ddd'}&&mode=${event.target.value}`)
+  }
+
   return (
     <LayoutAdmin match={match}>
+      <h2 className="title">QUẢN LÝ DANH SÁCH GIẢNG VIÊN</h2>
       <Row justify="space-between">
         <Col>
-          {/* <Search onSearch={onSearch}/> */}
-          <span>search</span>
+        <div className="tab-lecturer">
+      <Radio.Group onChange={handleModeChange} value={mode} style={{ marginBottom: 8 }}>
+          <Radio.Button value="1">DS giảng viên cơ hữu</Radio.Button>
+          <Radio.Button value="0">DS giảng viên được mời</Radio.Button>
+        </Radio.Group>
+      </div>
         </Col>
         {
           user && (user.roles === 'ADMIN') &&
@@ -198,6 +220,7 @@ export default function TableLecturer({match}) {
         dataSource={data}
         bordered
         pagination={false}
+        scroll={{ y: 550 }}
          />
 
       <br/>

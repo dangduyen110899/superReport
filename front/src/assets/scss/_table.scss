@@ -1,0 +1,43 @@
+.ant-table-thead > tr > th
+{
+    font-size: 14px;
+    text-transform: uppercase;
+}
+.ant-table-tbody > tr > td {
+    font-size: 18px;
+    cursor: pointer;
+}
+tr:nth-child(odd){ 
+    background: #eaeaea;
+}
+tr:nth-child(even){
+    background: white;
+}
+thead[class*="ant-table-thead"] th{
+    // background-color:#000 !important;
+    // color: white;
+    font-weight: bold;
+    // border-color: #000;
+    text-align: center;
+  }
+
+  .title {
+    font-weight: bold;
+    font-family: cursive;
+    margin: 10px 0 40px;
+  }
+
+.tab-lecturer {
+    display: flex;
+    justify-content: left;
+    .ant-radio-button-wrapper {
+        width: 250px;
+        font-size: 18px;
+        padding: 8px 0;
+        height: 48px;
+    }
+}
+
+.ant-pagination { 
+    margin-top: 15px;
+}

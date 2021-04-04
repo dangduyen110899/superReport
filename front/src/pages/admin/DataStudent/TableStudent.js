@@ -78,9 +78,17 @@ export default function TableStudent({match}) {
 
   let columns = [
     {
+      title: "Số thứ tự",
+      key: "index",
+      render: (value, item, index) => (pageCurren - 1) *pagesize  + index + 1,
+      width: 100,
+      align: 'center'
+    },
+    {
       title: 'Mã sinh viên',
       dataIndex: 'code',
       key: 'code',
+      align: 'center'
     },
     {
       title: 'Họ tên',
@@ -91,21 +99,27 @@ export default function TableStudent({match}) {
       title: 'Giới tính',
       dataIndex: 'gender',
       key: 'gender',
+      width: 100,
+      align: 'center'
     },
     {
       title: 'Ngày sinh',
       dataIndex: 'birthday',
       key: 'birthday',
+      width: 200,
+      align: 'center'
     },
     {
       title: 'Quê quán',
       dataIndex: 'address',
       key: 'address',
+      align: 'center'
     },
     {
       title: 'Mã lớp học',
       dataIndex: 'classCode',
       key: 'classCode',
+      align: 'center'
     }
   ];
 
@@ -113,6 +127,8 @@ export default function TableStudent({match}) {
     columns.push({
       title: 'Action',
       dataIndex: 'operation',
+      width: 100,
+        align: 'center',
       render: (_, record) =>
         data.length >= 1 ? (
           <Space>
@@ -146,7 +162,7 @@ export default function TableStudent({match}) {
     const adds = async () => {
       try {
         await callAdmin.addStudents(formData)
-        const res = await callAdmin.lecturer(pageCurren,pagesize)
+        const res = await callAdmin.student(pageCurren,pagesize)
         setData(res.data.data)
         setTotalData(res.data.total)
         toast.success("Add students success!");
@@ -165,6 +181,7 @@ export default function TableStudent({match}) {
 
   return (
     <LayoutAdmin match={match}>
+      <h2 className="title">QUẢN LÝ DANH SÁCH SINH VIÊN</h2>
       <Row justify="space-between">
         <Col>
           {/* <Search onSearch={onSearch}/> */}
@@ -195,6 +212,7 @@ export default function TableStudent({match}) {
         dataSource={data}
         bordered
         pagination={false}
+        scroll={{ y: 550 }}
          />
       <br/>
       {

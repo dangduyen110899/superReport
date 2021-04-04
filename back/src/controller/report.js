@@ -119,9 +119,18 @@ report.list = async (req, res) => {
   const semester = req.query.semester;
   const page = Number(req.query.page);
   const size = Number(req.query.size);
+  const type = Number(req.query.type);
   let response1;
   let count1;
-  if (Boolean(year) && Boolean(semester) && page && size) {
+
+  function nextYear(year) {
+    const temp = year.slice(0,4)
+    console.log(temp)
+    const ntYear = Number(temp) + 1
+    return `${ntYear}-${ntYear+1}` 
+  }
+
+  if (Boolean(year) && Boolean(semester) && type===0) {
     const { count, rows } = await ReportHour.findAndCountAll({
       where: {
         [Op.and]: [
@@ -134,10 +143,38 @@ report.list = async (req, res) => {
     })
     response1 = rows
     count1 = count
-  } else if (Boolean(year) && Boolean(semester) && page && size) {
+  } else if (Boolean(year) && Boolean(semester) && type===1) {
     const { count, rows } = await ReportHour.findAndCountAll({
+      where:  { year: year },
       offset: Number((page-1)*size), 
-      limit: Number(size)
+      limit: Number(size),
+      attributes: ['year', 'lecturerId', 
+      [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
+      [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
+      [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
+      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject'],
+      group : ['year', 'lecturerId']
+    })
+    response1 = rows
+    count1 = count
+  } else if (Boolean(year) && Boolean(semester) && type===2) {
+    const { count, rows } = await ReportHour.findAndCountAll({
+      where:  { 
+        [Op.or]: [
+          { year: year, semester: 2},
+          { year: nextYear(year), semester: 1 }
+        ]
+       },
+      offset: Number((page-1)*size), 
+      limit: Number(size),
+      attributes: ['year', 'lecturerId', 
+      [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
+      [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
+      [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
+      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject'],
+      group : ['year', 'lecturerId']
     })
     response1 = rows
     count1 = count
