@@ -17,8 +17,15 @@ import FormLecturer from './FormLecturer';
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
 import queryString from 'query-string'
+import { useSelector, useDispatch } from 'store/index';
+import { LOADING_FULL_SCREEN } from 'store/action-types';
+import LoadingFullScreen from '../component/LoadingFullScreen';
 
 export default function TableLecturer({match}) {
+  const bannerState = useSelector((state) => state)
+  console.log("bannerState", bannerState)
+  const dispatch = useDispatch()
+  
   const value=queryString.parse(match.location.search);
   const history = useHistory()
   const [data, setData] = useState([])
@@ -31,6 +38,10 @@ export default function TableLecturer({match}) {
   const [mode, setmode] = useState(value?.mode || '1')
 
   const handleOk = (item, itemId) => {
+    dispatch({
+      type: LOADING_FULL_SCREEN,
+      payload: true,
+    })
     item.status = 1;
     const add = async () => {
       try {
@@ -40,6 +51,10 @@ export default function TableLecturer({match}) {
           const res = await callAdmin.lecturer(pageCurren,pagesize, mode)
           setData(res.data.data)
           setIsModalVisible(false);
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.success("Edit lecturer success!");
         })
        } else {
@@ -49,6 +64,10 @@ export default function TableLecturer({match}) {
           setData(res.data.data)
           setTotalData(res.data.total)
           setIsModalVisible(false);
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.success("Add lecturer success!");
        }
       } catch (error) {
@@ -64,6 +83,10 @@ export default function TableLecturer({match}) {
   };
 
   const handleDelete = (itemEdit) => {
+    dispatch({
+      type: LOADING_FULL_SCREEN,
+      payload: true,
+    })
     itemEdit.status = 0;
     const remove = async () => {
       try {
@@ -72,10 +95,18 @@ export default function TableLecturer({match}) {
           const res = await callAdmin.lecturer(pageCurren,pagesize,mode)
           setData(res.data.data)
           setTotalData(res.data.total)
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
          }
         )
       } catch (error) {
         console.log("failed to request API: ", error)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       }
     };
     remove();
@@ -140,12 +171,24 @@ export default function TableLecturer({match}) {
 
   useEffect(() => {
     const getData = async () => {
+      dispatch({
+        type: LOADING_FULL_SCREEN,
+        payload: true,
+      })
       try {
         const res = await callAdmin.lecturer(pageCurren,pagesize,mode)
         setData(res.data.data)
         setTotalData(res.data.total)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       } catch (error) {
         console.log("failed to request API: ", error)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       }
     };
     getData();
@@ -162,14 +205,26 @@ export default function TableLecturer({match}) {
     const formData = new FormData()
     formData.append("file", file)
     formData.append("mode", mode)
+    dispatch({
+      type: LOADING_FULL_SCREEN,
+      payload: true,
+    })
     const adds = async () => {
       try {
         await callAdmin.addLecturers(formData)
         const res = await callAdmin.lecturer(pageCurren,pagesize,mode)
         setData(res.data.data)
         setTotalData(res.data.total)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       } catch (error) {
         toast.error(error)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       }
     };
     adds();
@@ -228,6 +283,7 @@ export default function TableLecturer({match}) {
         totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
         defaultCurrent={pageCurren}/>
       }
+      <LoadingFullScreen/>
     </LayoutAdmin>
   )
 }

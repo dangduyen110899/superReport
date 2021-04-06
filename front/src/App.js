@@ -10,6 +10,7 @@ import React, {useState, useEffect} from "react";
 import { ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
 import { Redirect } from 'react-router'
+import { StoreProvider } from './store'
 
 function App() {
   const [user, setuser] = useState(Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null)
@@ -30,13 +31,15 @@ function App() {
     });
 
     return (
-      <Router>
-        <Switch>{result}</Switch>
-        <ToastContainer hideProgressBar autoClose={3000} />
-        {
-          !user?.roles && window.location.href!=='http://localhost:3000/' && <Redirect to='/403'/>
-        }
-      </Router>
+      <StoreProvider>
+        <Router>
+          <Switch>{result}</Switch>
+          <ToastContainer hideProgressBar autoClose={3000} />
+          {
+            !user?.roles && window.location.href!=='http://localhost:3000/' && <Redirect to='/403'/>
+          }
+        </Router>
+      </StoreProvider>
     );
   };
 

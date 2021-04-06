@@ -38,6 +38,7 @@ app.post('/api/admin/tkb/checkYear', [authJwt.verifyToken, authJwt.isAdmin],subS
 //app.get('/api/admin/tkb/update',subSubjectLecturer.update);
 
 app.get('/api/admin/report', [authJwt.verifyToken, authJwt.isLeaderOrAdmin],report.list);
+app.get('/api/lecturer/report', [authJwt.verifyToken, authJwt.isUser],report.listIdlecturer);
 
 app.post('/api/auth/signup', [verifySignUp.checkDuplicateUserNameOrEmail, verifySignUp.checkRolesExisted], controller.signup);
 	

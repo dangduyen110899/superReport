@@ -2,14 +2,18 @@ const db = require('../config/db');
 const Lecturer = db.lecturer;
 const lecturer = {}
 const readXlsxFile = require('read-excel-file/node');
-
+const { Op } = require("sequelize");
 lecturer.list = async (req, res) => {
   const page = Number(req.query.page)
   const size = Number(req.query.size)
   const mode = Number(req.query.mode)
   try {
     const { count, rows: response } = await Lecturer.findAndCountAll({
-      where: {status: 1, mode: mode},
+      where: {status: 1, mode: mode, 
+        [Op.or]: [
+          { name: { [Op.like]: '%Thọ%'}},
+          { name: { [Op.like]: '%Hùng%'}}
+        ]},
       offset: (page-1)*size, 
       limit: size
     })
