@@ -10,36 +10,60 @@ import {
   Popconfirm,
   Button,
   Modal,
-  Space
+  Space, Pagination
 } from 'antd';
 import callAdmin from 'api/admin/Thesis';
 import { toast } from "react-toastify";
 import FormAddYear from '../component/FormAddYear';
 import Select from '../component/Select';
+import { useHistory } from "react-router-dom";
+import queryString from 'query-string'
+import { useDispatch } from 'store/index';
+import { LOADING_FULL_SCREEN } from 'store/action-types';
+import LoadingFullScreen from '../component/LoadingFullScreen';
 
 export default function TableThesic({match}) {
+    const dispatch = useDispatch()
+  const value=queryString.parse(match.location.search);
+  const history = useHistory()
+  const [pageCurren, setPageCurren] = useState(value?.page || 1)
+  const [pagesize, setPagesize] = useState(value?.size || 20)
+  const [totalData, setTotalData] = useState(0)
   const [data, setData] = useState([])
   const [yearShow, setYearShow] = useState(['All'])
   const [itemEdit, setItemEdit] = useState(null)
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [year, setYear] = useState('');
-  const [semester, setSemester] = useState('')
+  const [year, setYear] = useState(value?.year || '');
+  const [semester, setSemester] = useState(value?.semester || '')
   const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
 
   const handleOkAddYear = (yearItem, semesterItem) => {
+    dispatch({
+      type: LOADING_FULL_SCREEN,
+      payload: true,
+    })
     const add = async () => {
       try {
         await callAdmin.checkYear({year: yearItem, semester: semesterItem}).then(() => {
           setYearShow([`${semesterItem} ${yearItem}`,...yearShow]);
           setIsModalVisible(false);
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.success("Add year success!");
         })
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         toast.warning(error?.response?.data?.message);
       }
     };
     add();
   };
+
 
   const handleCancel = () => {
     setItemEdit(null)
@@ -48,13 +72,25 @@ export default function TableThesic({match}) {
 
   const handleDelete = (itemEdit) => {
     itemEdit.status = 0;
+    dispatch({
+      type: LOADING_FULL_SCREEN,
+      payload: true,
+    })
     const remove = async () => {
       try {
         await callAdmin.editThesis(itemEdit)
         const res = await callAdmin.thesis(year,semester)
         setData(res.data)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         toast.success("Delete thesic success")
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         console.log("failed to request API: ", error)
       }
     };
@@ -62,25 +98,38 @@ export default function TableThesic({match}) {
   }
 
   let  columns = [
+    // {
+    //   title: "Số thứ tự",
+    //   key: "index",
+    //   render: (value, item, index) => (pageCurren - 1) *pagesize  + index + 1,
+    //   width: 60,
+    //   align: 'center'
+    // },
     {
       title: 'Mã SV',
       dataIndex: 'studentCode',
       key: 'studentCode',
+      align: 'center'
     },
     {
       title: 'Sinh viên',
       dataIndex: 'studentName',
       key: 'studentName',
+      width: 150,
+      align: 'center'
     },
     {
       title: 'Ngày sinh',
       dataIndex: 'birthday',
       key: 'birthday',
+      width: 150,
+      align: 'center'
     },
     {
       title: 'Lớp',
       dataIndex: 'classCode',
       key: 'classCode',
+      align: 'center'
     },
     {
       title: 'Tên đề tài',
@@ -97,17 +146,20 @@ export default function TableThesic({match}) {
       dataIndex: 'language',
       key: 'language',
       render: (text) => <span>{text===0 ? 'Tiếng việt' : 'Tiếng anh'}</span>,
+      align: 'center'
     },
     {
       title: 'Nhiệm vụ chiến lược',
       dataIndex: 'nvcl',
       key: 'nvcl',
       render: (text) => <span>{text===0 ? 'Không' : 'Có'}</span>,
+      align: 'center'
     },
     {
       title: 'Ghi chú',
       dataIndex: 'note',
       key: 'note',
+      align: 'center'
     }
   ];
   if(!year && !semester) {
@@ -116,11 +168,15 @@ export default function TableThesic({match}) {
         title: 'Năm học',
         dataIndex: 'year',
         key: 'year',
+        align: 'center',
+        width: 130,
       },
       {
         title: 'Học kỳ',
         dataIndex: 'semester',
         key: 'semester',
+        width: 70,
+      align: 'center'
       }
     )
   }
@@ -129,6 +185,8 @@ export default function TableThesic({match}) {
     columns.push({
       title: 'Action',
       dataIndex: 'operation',
+      width: 100,
+        align: 'center',
       render: (_, record) =>
         data.length >= 1 ? (
           <Space>
@@ -145,27 +203,48 @@ export default function TableThesic({match}) {
 
   useEffect(() => {
     const getData = async () => {
+      dispatch({
+        type: LOADING_FULL_SCREEN,
+        payload: true,
+      })
       try {
-        const res = await callAdmin.thesis(year,semester)
-        setData(res.data)
+        const res = await callAdmin.thesis(year,semester, pageCurren,pagesize)
+        setData(res.data.data)
+        setTotalData(res.data.total)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         console.log("failed to request API: ", error)
       }
     };
     getData();
-  }, [year, semester]);
+  }, [year, semester,  pageCurren,pagesize]);
 
   useEffect(() => {
     const getData = async () => {
+      dispatch({
+        type: LOADING_FULL_SCREEN,
+        payload: true,
+      })
       try {
-        return await callAdmin.thesis('','')
+        return await callAdmin.thesis('','', 0,0)
       } catch (error) {
         console.log("failed to request API: ", error)
       }
     };
     getData().then(res =>
       {
-        let arrString = res.data.map(item => item.semester + ' ' + item.year)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
+        let arrString = res.data.data.map(item => item.semester + ' ' + item.year)
         const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
         setYearShow(['All',...arr])
       }
@@ -179,13 +258,23 @@ export default function TableThesic({match}) {
     formData.append('semester', semester)
     const adds = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         const res = await callAdmin.addThesiss(formData)
-        if(res.data.length) {
-          setData([...data, ...res.data])
-          toast.success("Add thesiss success!");
-        } else {
+        if(!res.data.length) {
           toast.error(res.data.message);
         }
+        const res1 = await callAdmin.thesis(year,semester, pageCurren,pagesize)
+        setData(res1.data.data)
+        setTotalData(res1.data.total)
+        toast.success("Add Tkbs success!");
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
+
       } catch (error) {
         console.log("failed to request API: ", error)
       }
@@ -198,8 +287,15 @@ export default function TableThesic({match}) {
     setSemester(item2);
   }
 
+  function onChange(page, pageSize) {
+    setPageCurren(page)
+    setPagesize(pageSize)
+    history.push(`/admin/kltn?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
+  }
+
   return (
     <LayoutAdmin match={match}>
+      <h2 className="title">QUẢN LÝ KHÓA LUẬN TỐT NGHIỆP</h2>
       <Row justify="space-between">
         <Col>
           {
@@ -240,8 +336,15 @@ export default function TableThesic({match}) {
         columns={columns}
         dataSource={data}
         bordered
-        pagination={{ defaultPageSize: 10}}
+        pagination={false}
+        scroll={{ y: 550 }}
          />
+
+      {
+        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
+        defaultCurrent={pageCurren}/>
+      }
+       <LoadingFullScreen/>
     </LayoutAdmin>
   )
 }

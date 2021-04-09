@@ -9,34 +9,59 @@ import {
   Popconfirm,
   Button,
   Modal,
-  Space
+  Space, Pagination
 } from 'antd';
 import callAdmin from 'api/admin/Student';
 import FormStudent from './FormStudent';
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
+import { useHistory } from "react-router-dom";
+import queryString from 'query-string'
+import { useDispatch } from 'store/index';
+import LoadingFullScreen from '../component/LoadingFullScreen';
+import { LOADING_FULL_SCREEN } from 'store/action-types';
 
 export default function TableStudent({match}) {
+  const dispatch = useDispatch()
+  const value=queryString.parse(match.location.search);
+  const history = useHistory()
   const [data, setData] = useState([])
   const [itemEdit, setItemEdit] = useState(null)
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [pageCurren, setPageCurren] = useState(value?.page || 1)
+  const [pagesize, setPagesize] = useState(value?.size || 20)
+  const [totalData, setTotalData] = useState(0)
   const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
 
   const handleOk = (item, itemId) => {
     item.status = 1;
     const add = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         if (itemId) {
           item.id = itemId;
           await callAdmin.editStudent(item)
-          const res = await callAdmin.student()
-          setData(res.data)
+          const res = await callAdmin.student(pageCurren,pagesize)
+          setData(res.data.data)
           setIsModalVisible(false);
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.success("Edit student success!");
         } else {
-          const res = await callAdmin.addStudent(item)
-          setData([...data, res.data])
+          await callAdmin.addStudent(item)
+          const res = await callAdmin.student(pageCurren,pagesize)
+          setData(res.data.data)
+          setTotalData(res.data.total)
           setIsModalVisible(false);
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.success("Add student success!");
         }
       } catch (error) {
@@ -55,9 +80,18 @@ export default function TableStudent({match}) {
     itemEdit.status = 0;
     const remove = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         await callAdmin.editStudent(itemEdit)
-        const res = await callAdmin.student()
-        setData(res.data)
+        const res = await callAdmin.student(pageCurren,pagesize)
+        setData(res.data.data)
+        setTotalData(res.data.total)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         toast.success('Delete student success.')
       } catch (error) {
         console.log("failed to request API: ", error)
@@ -68,9 +102,17 @@ export default function TableStudent({match}) {
 
   let columns = [
     {
+      title: "Số thứ tự",
+      key: "index",
+      render: (value, item, index) => (pageCurren - 1) *pagesize  + index + 1,
+      width: 100,
+      align: 'center'
+    },
+    {
       title: 'Mã sinh viên',
       dataIndex: 'code',
       key: 'code',
+      align: 'center'
     },
     {
       title: 'Họ tên',
@@ -81,21 +123,27 @@ export default function TableStudent({match}) {
       title: 'Giới tính',
       dataIndex: 'gender',
       key: 'gender',
+      width: 100,
+      align: 'center'
     },
     {
       title: 'Ngày sinh',
       dataIndex: 'birthday',
       key: 'birthday',
+      width: 200,
+      align: 'center'
     },
     {
       title: 'Quê quán',
       dataIndex: 'address',
       key: 'address',
+      align: 'center'
     },
     {
       title: 'Mã lớp học',
       dataIndex: 'classCode',
       key: 'classCode',
+      align: 'center'
     }
   ];
 
@@ -103,6 +151,8 @@ export default function TableStudent({match}) {
     columns.push({
       title: 'Action',
       dataIndex: 'operation',
+      width: 100,
+        align: 'center',
       render: (_, record) =>
         data.length >= 1 ? (
           <Space>
@@ -120,23 +170,41 @@ export default function TableStudent({match}) {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await callAdmin.student()
-        setData(res.data)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
+        const res = await callAdmin.student(pageCurren,pagesize)
+        setData(res.data.data)
+        setTotalData(res.data.total)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       } catch (error) {
         console.log("failed to request API: ", error)
       }
     };
     getData();
-  }, []);
+  }, [pageCurren, pagesize]);
 
   const handleAddStudents = (file) => {
     const formData = new FormData()
     formData.append("file", file)
     const adds = async () => {
       try {
-        const res = await callAdmin.addStudents(formData)
-        console.log(res)
-        setData([...data, ...res.data])
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
+        await callAdmin.addStudents(formData)
+        const res = await callAdmin.student(pageCurren,pagesize)
+        setData(res.data.data)
+        setTotalData(res.data.total)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         toast.success("Add students success!");
       } catch (error) {
         console.log("failed to request API: ", error)
@@ -145,8 +213,15 @@ export default function TableStudent({match}) {
     adds();
   }
 
+  function onChange(page, pageSize) {
+    setPageCurren(page)
+    setPagesize(pageSize)
+    history.push(`/admin/student?page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
+  }
+
   return (
     <LayoutAdmin match={match}>
+      <h2 className="title">QUẢN LÝ DANH SÁCH SINH VIÊN</h2>
       <Row justify="space-between">
         <Col>
           {/* <Search onSearch={onSearch}/> */}
@@ -176,8 +251,15 @@ export default function TableStudent({match}) {
         columns={columns}
         dataSource={data}
         bordered
-        pagination={{ defaultPageSize: 10}}
+        pagination={false}
+        scroll={{ y: 550 }}
          />
+      <br/>
+      {
+        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
+        defaultCurrent={pageCurren}/>
+      }
+       <LoadingFullScreen/>
     </LayoutAdmin>
   )
 }

@@ -1,0 +1,3 @@
+export const TOAST_STATE = 'TOAST_STATE'
+export const LOADING_FULL_SCREEN = 'LOADING_FULL_SCREEN'
+

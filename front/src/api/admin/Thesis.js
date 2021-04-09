@@ -2,14 +2,19 @@ import http from '../httpReques';
 import authHeader from '../../utils/auth-header';
 const dbName='admin'
 
-const thesis=(year, semester)=>{
+const thesis=(year, semester, page, size)=>{
   if (year&&semester) {
-    return http.get(`${dbName}/thesis?year=${year}&&semester=${semester}`, { headers: authHeader() })
+    return http.get(`${dbName}/thesis?year=${year}&&semester=${semester}&&page=${page}&&size=${size}`, { headers: authHeader() })
   }
   else {
-    return http.get(`${dbName}/thesis?year=&&semester=`, { headers: authHeader() })
+    return http.get(`${dbName}/thesis?year=&&semester=&&page=${page}&&size=${size}`, { headers: authHeader() })
   }
 }
+
+const detailThesis=(year, semester, lecturerId, type, page, size)=>{
+  return http.get(`${dbName}/detailThesis?year=${year}&&semester=${semester}&&page=${page}&&size=${size}&&lecturerId=${lecturerId}&&type=${type}`, { headers: authHeader() })
+}
+
 
 const addThesis=(data)=>{
   return http.post(`${dbName}/thesis/create`, data, { headers: authHeader() })
@@ -28,4 +33,4 @@ const checkYear=(data)=>{
 }
 
 // eslint-disable-next-line
-export default {checkYear, thesis, addThesiss, addThesis, editThesis};
+export default {checkYear, thesis, addThesiss, addThesis, editThesis, detailThesis};

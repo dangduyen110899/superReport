@@ -12,6 +12,7 @@ module.exports = (sequelize, Sequelize) => {
     status: Sequelize.INTEGER,
     department: Sequelize.STRING,
     subject: Sequelize.STRING,
+    mode: Sequelize.STRING,
   },{
     timestamps: false
   });

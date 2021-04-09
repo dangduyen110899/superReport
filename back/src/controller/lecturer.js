@@ -2,11 +2,22 @@ const db = require('../config/db');
 const Lecturer = db.lecturer;
 const lecturer = {}
 const readXlsxFile = require('read-excel-file/node');
-
+const { Op } = require("sequelize");
 lecturer.list = async (req, res) => {
+  const page = Number(req.query.page)
+  const size = Number(req.query.size)
+  const mode = Number(req.query.mode)
   try {
-    const response = await Lecturer.findAll({where: {status: 1}})
-    res.json(response);
+    const { count, rows: response } = await Lecturer.findAndCountAll({
+      where: {status: 1, mode: mode, 
+        // [Op.or]: [
+        //   { name: { [Op.like]: '%Thọ%'}}
+        // ]
+      },
+      offset: (page-1)*size, 
+      limit: size
+    })
+    res.json({data: response, total: count});
   }
   catch (e) {
     console.log(e);
@@ -41,13 +52,17 @@ lecturer.creates = async (req, res) => {
           status: 1,
           department: rows[i][2],
           subject: rows[i][3],
+          mode: req.body.mode
         }
         lecturers.push(lecturer);
       }
 
       Lecturer.bulkCreate(lecturers).then(data => {
         res.json(data);
-      }).catch(er => res.json(er))
+      }).catch(er => {
+        console.log(er)
+        res.status(400).send(er.message);
+      })
     });
   }
   catch(error){

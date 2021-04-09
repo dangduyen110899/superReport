@@ -9,7 +9,7 @@ import {
   Popconfirm,
   Button,
   Modal,
-  Space
+  Space, Pagination
 } from 'antd';
 import callAdmin from 'api/admin/Tkb';
 import { toast } from "react-toastify";
@@ -17,14 +17,25 @@ import FormAddYear from '../component/FormAddYear';
 import Select from '../component/Select';
 import FormTkb from './FormTkb';
 import Cookies from "js-cookie";
+import { useHistory } from "react-router-dom";
+import queryString from 'query-string'
+import { useDispatch } from 'store/index';
+import LoadingFullScreen from '../component/LoadingFullScreen';
+import { LOADING_FULL_SCREEN } from 'store/action-types';
 
 export default function TableTkb({match}) {
+  const dispatch = useDispatch()
+  const value=queryString.parse(match.location.search);
+  const history = useHistory()
+  const [pageCurren, setPageCurren] = useState(value?.page || 1)
+  const [pagesize, setPagesize] = useState(value?.size || 20)
   const [data, setData] = useState([])
   const [yearShow, setYearShow] = useState(['All'])
   const [itemEdit, setItemEdit] = useState(null)
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [year, setYear] = useState('');
-  const [semester, setSemester] = useState('')
+  const [year, setYear] = useState(value?.year || '');
+  const [semester, setSemester] = useState(value?.semester || '')
+  const [totalData, setTotalData] = useState(0)
   const [showFormCheckyear, setShowFormCheckyear] = useState(true)
   const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
 
@@ -32,12 +43,24 @@ export default function TableTkb({match}) {
   const handleOkAddYear = (yearItem, semesterItem) => {
     const add = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         await callAdmin.checkYear({year: yearItem, semester: semesterItem}).then(() => {
           setYearShow([`${semesterItem} ${yearItem}`,...yearShow]);
           setIsModalVisible(false);
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.success("Add year success!");
         })
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         toast.warning(error?.response?.data?.message);
       }
     };
@@ -53,12 +76,18 @@ export default function TableTkb({match}) {
     itemEdit.status = 0;
     const remove = async () => {
       try {
-        await callAdmin.editTkb(itemEdit).then(res =>
-         {
-          const dataNew = data.filter(item => item.id!==itemEdit.id)
-          setData(dataNew)
-         }
-        )
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
+        await callAdmin.editTkb(itemEdit)
+        const res = await await callAdmin.tkb(year,semester, pageCurren,pagesize)
+          setData(res.data.data)
+          setTotalData(res.data.total)
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
       } catch (error) {
         console.log("failed to request API: ", error)
       }
@@ -80,6 +109,8 @@ export default function TableTkb({match}) {
       title: 'TC',
       dataIndex: 'total_tc',
       key: 'total_tc',
+      width: 100,
+      align: 'center'
     },
     {
       title: 'Mã lớp học phần',
@@ -90,6 +121,8 @@ export default function TableTkb({match}) {
       title: 'Số SV',
       dataIndex: 'total_student',
       key: 'total_student',
+      width: 100,
+      align: 'center'
     },
     {
       title: 'Giảng viên',
@@ -100,11 +133,15 @@ export default function TableTkb({match}) {
       title: 'Thứ',
       dataIndex: 'day',
       key: 'day',
+      width: 100,
+      align: 'center'
     },
     {
       title: 'Tiết',
       dataIndex: 'time',
       key: 'time',
+      width: 100,
+      align: 'center'
     },
    
     {
@@ -116,6 +153,8 @@ export default function TableTkb({match}) {
       title: 'Ghi chú',
       dataIndex: 'note',
       key: 'note',
+      width: 100,
+      align: 'center'
     }
   ];
   if(!year && !semester) {
@@ -129,6 +168,8 @@ export default function TableTkb({match}) {
         title: 'Học kỳ',
         dataIndex: 'semester',
         key: 'semester',
+        width: 100,
+      align: 'center'
       }) }
 
   if(user && (user.roles === 'ADMIN')) { 
@@ -136,6 +177,8 @@ export default function TableTkb({match}) {
       {
         title: 'Action',
         dataIndex: 'operation',
+        width: 100,
+        align: 'center',
         render: (_, record) =>
           data.length >= 1 ? (
             <Space>
@@ -153,29 +196,51 @@ export default function TableTkb({match}) {
   useEffect(() => {
     const getData = async () => {
       try {
-        await callAdmin.tkb(year,semester).then(res =>
-          setData(res.data)
-        )
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
+        await callAdmin.tkb(year,semester, pageCurren,pagesize).then(res =>
+        {
+          setData(res.data.data)
+          setTotalData(res.data.total)
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
+        })
       } catch (error) {
         console.log("failed to request API: ", error)
       }
     };
     getData();
-  }, [year, semester]);
+  }, [year, semester, pageCurren,pagesize]);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        return await callAdmin.tkb('','')
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
+        return await callAdmin.tkb('','', 0, 0)
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         console.log("failed to request API: ", error)
       }
     };
     getData().then(res =>
       {
-        let arrString = res.data.map(item => item.semester + ' ' + item.year)
+        let arrString = res.data.data.map(item => item.semester + ' ' + item.year)
         const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
         setYearShow(['All',...arr])
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       }
     )
   }, []);
@@ -187,15 +252,31 @@ export default function TableTkb({match}) {
     formData.append('semester', semester)
     const adds = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         const res = await callAdmin.addTkbs(formData)
-        if (res.data.length) {
-          setData([...data, ...res.data])
-          toast.success("Add Tkbs success!");
-        }
-        else {
+        if (!res.data.length) {
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.error(res.data.message)
         }
+        const res1 = await callAdmin.tkb(year,semester, pageCurren,pagesize)
+          setData(res1.data.data)
+          setTotalData(res1.data.total)
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
+          toast.success("Add Tkbs success!");
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         console.log("failed to request API: ", error)
       }
     };
@@ -211,8 +292,15 @@ export default function TableTkb({match}) {
 
   }
 
+  function onChange(page, pageSize) {
+    setPageCurren(page)
+    setPagesize(pageSize)
+    history.push(`/admin/tkb?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
+  }
+
   return (
     <LayoutAdmin match={match}>
+      <h2 className="title">QUẢN LÝ THỜI KHÓA BIỂU</h2>
       <Row justify="space-between">
         <Col>
           <Select options={yearShow} defaultVl={'All'} onChangeYear={onChangeYear}></Select>
@@ -247,8 +335,15 @@ export default function TableTkb({match}) {
         columns={columns}
         dataSource={data}
         bordered
-        pagination={{ defaultPageSize: 10}}
+        pagination={false}
+        scroll={{ y: 550 }}
          />
+         
+         {
+        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
+        defaultCurrent={pageCurren}/>
+      }
+      <LoadingFullScreen/>
     </LayoutAdmin>
   )
 }

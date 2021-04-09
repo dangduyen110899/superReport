@@ -15,6 +15,7 @@ import { useHistory } from "react-router-dom";
 const { Header, Content, Sider } = Layout;
 
 export default function LayoutAdmin({children, match}) {
+  const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null
 
   const history = useHistory()
   const [collapsed, setCollapsed] = useState(false)
@@ -49,21 +50,30 @@ export default function LayoutAdmin({children, match}) {
         </span>
       </div>
       <Menu theme="dark" mode="inline" defaultSelectedKeys={[match.match.path==="/admin/tkb" ? "1" : match.match.path==="/admin/kltn" ? "2" : match.match.path==="/admin/lecturer" ? "3" : match.match.path==="/admin/student" ? "4" : "5"]}>
-        <Menu.Item key="1" icon={<DatabaseOutlined />}>
-          <Link to="/admin/tkb">Data tkb</Link>
-        </Menu.Item>
-        <Menu.Item key="2" icon={<DatabaseOutlined />}>
-          <Link to="/admin/kltn">Data kltn</Link>
-        </Menu.Item>
-        <Menu.Item key="3" icon={<DatabaseOutlined />}>
-          <Link to="/admin/lecturer">Data lecturer</Link>
-        </Menu.Item>
-        <Menu.Item key="4" icon={<DatabaseOutlined />}>
-          <Link to="/admin/student">Data student</Link>
-        </Menu.Item>
-        <Menu.Item key="5" icon={<DatabaseOutlined />}>
+        {
+          (user.roles === 'ADMIN') 
+          && 
+          <>
+            <Menu.Item key="1" icon={<DatabaseOutlined />}>
+            <Link to="/admin/tkb">Data tkb</Link>
+            </Menu.Item>
+            <Menu.Item key="2" icon={<DatabaseOutlined />}>
+              <Link to="/admin/kltn">Data kltn</Link>
+            </Menu.Item>
+            <Menu.Item key="3" icon={<DatabaseOutlined />}>
+              <Link to="/admin/lecturer">Data lecturer</Link>
+            </Menu.Item>
+            <Menu.Item key="4" icon={<DatabaseOutlined />}>
+              <Link to="/admin/student">Data student</Link>
+            </Menu.Item>
+          </>
+        }
+        {
+          (user.roles === 'ADMIN' || user.roles === 'LEADER' || user.roles === 'USER') && 
+          <Menu.Item key="5" icon={<DatabaseOutlined />}>
           <Link to="/admin/report">Report</Link>
         </Menu.Item>
+        }
       </Menu>
       <span onClick={toggle} style={{color: "#fff", float: "right", margin: "30px"}}>{
         collapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>

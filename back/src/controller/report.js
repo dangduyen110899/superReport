@@ -117,21 +117,160 @@ report.updateHour = async ( year, semester, name, gvId) => {
 report.list = async (req, res) => {
   const year = req.query.year;
   const semester = req.query.semester;
-  let response;
-  if (Boolean(year) && Boolean(semester)) {
-    response = await ReportHour.findAll({
+  const page = Number(req.query.page);
+  const size = Number(req.query.size);
+  const type = Number(req.query.type);
+  let sort = req.query.sort=='tang' ? 'ASC' : 'DESC';
+  const sortField = req.query.sortField ? req.query.sortField : 'id' ;
+  if (sortField==='id') {
+    sort = 'ASC'
+  }
+  let response1;
+  let count1;
+
+  function nextYear(year) {
+    const temp = year.slice(0,4)
+    console.log(temp)
+    const ntYear = Number(temp) + 1
+    return `${ntYear}-${ntYear+1}` 
+  }
+
+  if (Boolean(year) && Boolean(semester) && type===0) {
+    const { count, rows } = await ReportHour.findAndCountAll({
       where: {
         [Op.and]: [
           { year: year },
           { semester: Number(semester) }
         ]
-      }
+      },
+      offset: Number((page-1)*size), 
+      limit: Number(size),
+      order: [
+        [sortField, sort]
+    ],
     })
+    response1 = rows
+    count1 = count
+  } else if (Boolean(year) && Boolean(semester) && type===1) {
+    const { count, rows } = await ReportHour.findAndCountAll({
+      where:  { year: year },
+      offset: Number((page-1)*size), 
+      limit: Number(size),
+      attributes: ['year', 'lecturerId', 
+      [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
+      [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
+      [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
+      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject'],
+      group : ['year', 'lecturerId']
+    })
+    response1 = rows
+    count1 = count
+  } else if (Boolean(year) && Boolean(semester) && type===2) {
+    const { count, rows } = await ReportHour.findAndCountAll({
+      where:  { 
+        [Op.or]: [
+          { year: year, semester: 2},
+          { year: nextYear(year), semester: 1 }
+        ]
+       },
+      offset: Number((page-1)*size), 
+      limit: Number(size),
+      attributes: ['year', 'lecturerId', 
+      [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
+      [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
+      [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
+      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject'],
+      group : ['lecturerId']
+    })
+    response1 = rows
+    count1 = count
   } else {
-    response = await ReportHour.findAll()
+    const { count, rows } = await ReportHour.findAndCountAll()
+    response1 = rows
+    count1 = count
   }
-  res.json(response);
+  res.json({data: response1, total: count1});
 
 }
 
+report.listIdlecturer = async (req, res) => {
+  const year = req.query.year;
+  const semester = req.query.semester;
+  const page = Number(req.query.page);
+  const size = Number(req.query.size);
+  const type = Number(req.query.type);
+  const emailLecturer = req.emailLecturer
+  const gv = await Lecturer.findAll({where: {email: emailLecturer}})
+  const gvId = gv[0].dataValues.id
+  let response1;
+  let count1;
+
+  function nextYear(year) {
+    const temp = year.slice(0,4)
+    console.log(temp)
+    const ntYear = Number(temp) + 1
+    return `${ntYear}-${ntYear+1}` 
+  }
+
+  if (Boolean(year) && Boolean(semester) && type===0) {
+    const { count, rows } = await ReportHour.findAndCountAll({
+      where: {
+        lecturerId: gvId,
+        [Op.and]: [
+          { year: year },
+          { semester: Number(semester) }
+        ]
+      },
+      offset: Number((page-1)*size), 
+      limit: Number(size)
+    })
+    response1 = rows
+    count1 = count
+  } else if (Boolean(year) && Boolean(semester) && type===1) {
+    const { count, rows } = await ReportHour.findAndCountAll({
+      where:  { year: year, lecturerId: gvId},
+      offset: Number((page-1)*size), 
+      limit: Number(size),
+      attributes: ['year', 'lecturerId', 
+      [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
+      [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
+      [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
+      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject'],
+      group : ['year', 'lecturerId']
+    })
+    response1 = rows
+    count1 = count
+  } else if (Boolean(year) && Boolean(semester) && type===2) {
+    const { count, rows } = await ReportHour.findAndCountAll({
+      where:  { 
+        lecturerId: gvId,
+        [Op.or]: [
+          { year: year, semester: 2},
+          { year: nextYear(year), semester: 1 }
+        ]
+       },
+      offset: Number((page-1)*size), 
+      limit: Number(size),
+      attributes: ['year', 'lecturerId', 
+      [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
+      [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
+      [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
+      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject'],
+      group : ['lecturerId']
+    })
+    response1 = rows
+    count1 = count
+  } else {
+    const { count, rows } = await ReportHour.findAndCountAll({where: {
+      lecturerId: gvId}})
+    response1 = rows
+    count1 = count
+  }
+  res.json({data: response1, total: count1});
+
+}
 module.exports = report;

@@ -72,6 +72,7 @@ isUser = (req, res, next) => {
 	User.findOne({where: {id: req.userId}})
 		.then(user => {
 			if (user.dataValues.role === 'USER') {
+				req.emailLecturer = user.dataValues.email
 				next();
 				return;
 			}

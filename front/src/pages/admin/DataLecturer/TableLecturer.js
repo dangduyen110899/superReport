@@ -10,36 +10,63 @@ import {
   Popconfirm,
   Button,
   Modal,
-  Space
+  Space, Pagination, Radio
 } from 'antd';
 import callAdmin from 'api/admin/Lecturer';
 import FormLecturer from './FormLecturer';
 import { toast } from "react-toastify";
+import { useHistory } from "react-router-dom";
+import queryString from 'query-string'
+import { useSelector, useDispatch } from 'store/index';
+import { LOADING_FULL_SCREEN } from 'store/action-types';
+import LoadingFullScreen from '../component/LoadingFullScreen';
 
 export default function TableLecturer({match}) {
+  const dispatch = useDispatch()
+  
+  const value=queryString.parse(match.location.search);
+  const history = useHistory()
   const [data, setData] = useState([])
   const [itemEdit, setItemEdit] = useState(null)
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [pageCurren, setPageCurren] = useState(value?.page || 1)
+  const [pagesize, setPagesize] = useState(value?.size || 20)
+  const [totalData, setTotalData] = useState(0)
   const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
+  const [mode, setmode] = useState(value?.mode || '1')
 
   const handleOk = (item, itemId) => {
+    dispatch({
+      type: LOADING_FULL_SCREEN,
+      payload: true,
+    })
     item.status = 1;
     const add = async () => {
       try {
        if (itemId) {
         item.id = itemId;
         await callAdmin.editLecturer(item).then(async() => {
-          const res = await callAdmin.lecturer()
-          setData(res.data)
+          const res = await callAdmin.lecturer(pageCurren,pagesize, mode)
+          setData(res.data.data)
           setIsModalVisible(false);
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.success("Edit lecturer success!");
         })
        } else {
-        await callAdmin.addLecturer(item).then(res => {
-          setData([...data, res.data])
+          item.mode = mode
+          await callAdmin.addLecturer(item)
+          const res = await callAdmin.lecturer(pageCurren, pagesize, mode)
+          setData(res.data.data)
+          setTotalData(res.data.total)
           setIsModalVisible(false);
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.success("Add lecturer success!");
-        })
        }
       } catch (error) {
         toast.warning(error?.response?.data?.message);
@@ -54,23 +81,43 @@ export default function TableLecturer({match}) {
   };
 
   const handleDelete = (itemEdit) => {
+    dispatch({
+      type: LOADING_FULL_SCREEN,
+      payload: true,
+    })
     itemEdit.status = 0;
     const remove = async () => {
       try {
         await callAdmin.editLecturer(itemEdit).then(async() =>
          {
-          const res = await callAdmin.lecturer()
-          setData(res.data)
+          const res = await callAdmin.lecturer(pageCurren,pagesize,mode)
+          setData(res.data.data)
+          setTotalData(res.data.total)
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
          }
         )
       } catch (error) {
         console.log("failed to request API: ", error)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       }
     };
     remove();
   }
 
   let columns = [
+    {
+      title: "Số thứ tự",
+      key: "index",
+      render: (value, item, index) => (pageCurren - 1) *pagesize  + index + 1,
+      width: 100,
+      align: 'center'
+    },
     {
       title: 'Tên giảng viên',
       dataIndex: 'name',
@@ -102,6 +149,8 @@ export default function TableLecturer({match}) {
     columns.push(
       {
         title: 'Action',
+        width: 100,
+        align: 'center',
         dataIndex: 'operation',
         render: (_, record) =>
           data.length >= 1 ? (
@@ -116,46 +165,87 @@ export default function TableLecturer({match}) {
           ) : null,
       },
     )
-  }
-
-  
+  } 
 
   useEffect(() => {
     const getData = async () => {
+      dispatch({
+        type: LOADING_FULL_SCREEN,
+        payload: true,
+      })
       try {
-        const res = await callAdmin.lecturer()
-        setData(res.data)
+        const res = await callAdmin.lecturer(pageCurren,pagesize,mode)
+        setData(res.data.data)
+        setTotalData(res.data.total)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       } catch (error) {
         console.log("failed to request API: ", error)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       }
     };
     getData();
-  }, []);
+  }, [pageCurren, pagesize, mode]);
+
+  
+  function onChange(page, pageSize) {
+    setPageCurren(page)
+    setPagesize(pageSize)
+    history.push(`/admin/lecturer?page=${page}&&size=${pageSize}&&keyword=${'ddd'}&&mode=${mode}`)
+  }
 
   const handleAddLecturers = (file) => {
     const formData = new FormData()
     formData.append("file", file)
+    formData.append("mode", mode)
+    dispatch({
+      type: LOADING_FULL_SCREEN,
+      payload: true,
+    })
     const adds = async () => {
       try {
-        await callAdmin.addLecturers(formData).then(res =>
-         {
-          setData([...data, ...res.data])
-          toast.success("Add lecturers success!");
-         }
-        )
+        await callAdmin.addLecturers(formData)
+        const res = await callAdmin.lecturer(pageCurren,pagesize,mode)
+        setData(res.data.data)
+        setTotalData(res.data.total)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       } catch (error) {
         toast.error(error)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       }
     };
     adds();
   }
 
+  function handleModeChange(event) {
+    setmode(event.target.value)
+    setPageCurren(1)
+    setPagesize(20)
+    history.push(`/admin/lecturer?page=${1}&&size=${pagesize}&&keyword=${'ddd'}&&mode=${event.target.value}`)
+  }
+
   return (
     <LayoutAdmin match={match}>
+      <h2 className="title">QUẢN LÝ DANH SÁCH GIẢNG VIÊN</h2>
       <Row justify="space-between">
         <Col>
-          {/* <Search onSearch={onSearch}/> */}
-          <span>search</span>
+        <div className="tab-lecturer">
+      <Radio.Group onChange={handleModeChange} value={mode} style={{ marginBottom: 8 }}>
+          <Radio.Button value="1">DS giảng viên cơ hữu</Radio.Button>
+          <Radio.Button value="0">DS giảng viên được mời</Radio.Button>
+        </Radio.Group>
+      </div>
         </Col>
         {
           user && (user.roles === 'ADMIN') &&
@@ -182,8 +272,16 @@ export default function TableLecturer({match}) {
         columns={columns}
         dataSource={data}
         bordered
-        pagination={{ defaultPageSize: 10}}
+        pagination={false}
+        scroll={{ y: 550 }}
          />
+
+      <br/>
+      {
+        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
+        defaultCurrent={pageCurren}/>
+      }
+      <LoadingFullScreen/>
     </LayoutAdmin>
   )
 }
