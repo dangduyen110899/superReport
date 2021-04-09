@@ -173,6 +173,9 @@ export default function ReportDetailTkb({match}) {
     <LayoutAdmin match={match}>
       <h2 className="title">TKB chi tiết giảng viên: {data[0] && data[0]?.lecturerName}</h2>
       <h4 className="title">{type===0 ? `Học kỳ ${semester} năm học ${year}` : type===1 ? `Năm học ${year}` : `Năm tài chính ${year}` }</h4>
+      <button className="btn btn-primary" onClick={() => history.goBack()} style={{float: "left",
+    margin: "-46px 0",
+    fontSize: '9px'}}>Go Back</button>
       <Table
         columns={columns}
         dataSource={data}

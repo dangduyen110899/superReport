@@ -18,8 +18,12 @@ import FormAddYear from '../component/FormAddYear';
 import Select from '../component/Select';
 import { useHistory } from "react-router-dom";
 import queryString from 'query-string'
+import { useDispatch } from 'store/index';
+import { LOADING_FULL_SCREEN } from 'store/action-types';
+import LoadingFullScreen from '../component/LoadingFullScreen';
 
 export default function TableThesic({match}) {
+    const dispatch = useDispatch()
   const value=queryString.parse(match.location.search);
   const history = useHistory()
   const [pageCurren, setPageCurren] = useState(value?.page || 1)
@@ -34,19 +38,32 @@ export default function TableThesic({match}) {
   const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
 
   const handleOkAddYear = (yearItem, semesterItem) => {
+    dispatch({
+      type: LOADING_FULL_SCREEN,
+      payload: true,
+    })
     const add = async () => {
       try {
         await callAdmin.checkYear({year: yearItem, semester: semesterItem}).then(() => {
           setYearShow([`${semesterItem} ${yearItem}`,...yearShow]);
           setIsModalVisible(false);
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.success("Add year success!");
         })
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         toast.warning(error?.response?.data?.message);
       }
     };
     add();
   };
+
 
   const handleCancel = () => {
     setItemEdit(null)
@@ -55,13 +72,25 @@ export default function TableThesic({match}) {
 
   const handleDelete = (itemEdit) => {
     itemEdit.status = 0;
+    dispatch({
+      type: LOADING_FULL_SCREEN,
+      payload: true,
+    })
     const remove = async () => {
       try {
         await callAdmin.editThesis(itemEdit)
         const res = await callAdmin.thesis(year,semester)
         setData(res.data)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         toast.success("Delete thesic success")
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         console.log("failed to request API: ", error)
       }
     };
@@ -174,11 +203,23 @@ export default function TableThesic({match}) {
 
   useEffect(() => {
     const getData = async () => {
+      dispatch({
+        type: LOADING_FULL_SCREEN,
+        payload: true,
+      })
       try {
         const res = await callAdmin.thesis(year,semester, pageCurren,pagesize)
         setData(res.data.data)
         setTotalData(res.data.total)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         console.log("failed to request API: ", error)
       }
     };
@@ -187,6 +228,10 @@ export default function TableThesic({match}) {
 
   useEffect(() => {
     const getData = async () => {
+      dispatch({
+        type: LOADING_FULL_SCREEN,
+        payload: true,
+      })
       try {
         return await callAdmin.thesis('','', 0,0)
       } catch (error) {
@@ -195,6 +240,10 @@ export default function TableThesic({match}) {
     };
     getData().then(res =>
       {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         let arrString = res.data.data.map(item => item.semester + ' ' + item.year)
         const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
         setYearShow(['All',...arr])
@@ -209,6 +258,10 @@ export default function TableThesic({match}) {
     formData.append('semester', semester)
     const adds = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         const res = await callAdmin.addThesiss(formData)
         if(!res.data.length) {
           toast.error(res.data.message);
@@ -217,6 +270,10 @@ export default function TableThesic({match}) {
         setData(res1.data.data)
         setTotalData(res1.data.total)
         toast.success("Add Tkbs success!");
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
 
       } catch (error) {
         console.log("failed to request API: ", error)
@@ -287,6 +344,7 @@ export default function TableThesic({match}) {
         totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
         defaultCurrent={pageCurren}/>
       }
+       <LoadingFullScreen/>
     </LayoutAdmin>
   )
 }

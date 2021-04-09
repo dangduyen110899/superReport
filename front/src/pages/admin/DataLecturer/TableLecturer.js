@@ -22,8 +22,6 @@ import { LOADING_FULL_SCREEN } from 'store/action-types';
 import LoadingFullScreen from '../component/LoadingFullScreen';
 
 export default function TableLecturer({match}) {
-  const bannerState = useSelector((state) => state)
-  console.log("bannerState", bannerState)
   const dispatch = useDispatch()
   
   const value=queryString.parse(match.location.search);

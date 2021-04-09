@@ -11,8 +11,12 @@ import { useHistory, Link } from "react-router-dom";
 import queryString from 'query-string'
 import Cookies from "js-cookie";
 import SelectYear from './SelectYear';
+import { useDispatch } from 'store/index';
+import { LOADING_FULL_SCREEN } from 'store/action-types';
+import LoadingFullScreen from '../component/LoadingFullScreen';
 
 export default function TableReport({match}) {
+  const dispatch = useDispatch()
   const value=queryString.parse(match.location.search);
   const history = useHistory()
   const [data, setData] = useState([])
@@ -25,6 +29,27 @@ export default function TableReport({match}) {
   const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
   const [type, settype] = useState(0)
   const [yearShow2, setYearShow2] = useState([])
+  const [sort, setSort] = useState('')
+  const [sortField, setSortField] = useState('')
+
+  const sortHour = (field) => {
+    if (sortField=='') {
+      setSort('tang');
+      setSortField(field)
+    }
+    else if (sort=='' && field!==sortField) {
+      setSortField(field)
+      setSort("tang")
+    } if (sort=='' && field!==sortField) {
+      setSort("tang")
+    }
+    else if (sort=='tang') {
+      setSort('giam')
+    } else {
+      setSort('')
+      setSortField('')
+    }
+  }
 
   let columns = [
     {
@@ -55,44 +80,44 @@ export default function TableReport({match}) {
     //   key: 'programs',
     // },
     {
-      title: 'Giờ dạy trên lớp',
+      title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy trên lớp <i class="fas fa-sort"></i></div>},
       dataIndex: 'hourSchedule',
       key: 'hourSchedule',
-      width: 100,
+      width: 150,
       align: 'center',
       render: (value, item) => <Link to={`/admin/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
     {
-      title: 'Giờ hd khóa luận',
+      title: () => { return <div onClick={() => sortHour('hourThesis')}>Giờ hd khóa luận <i class="fas fa-sort"></i></div>},
       dataIndex: 'hourThesis',
       key: 'hourThesis',
-      width: 100,
+      width: 150,
       align: 'center',
       render: (value, item) => <Link to={`/admin/report/thesis/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
     {
-      title: 'Giờ hd đồ án',
+      title: () => { return <div onClick={() => sortHour('hourProject')}>Giờ hd đồ án <i class="fas fa-sort"></i></div>},
       dataIndex: 'hourProject',
       key: 'hourProject',
-      width: 100,
+      width: 130,
       align: 'center'
     },
     {
-      title: 'Giờ hd thực tập',
+      title: () => { return <div onClick={() => sortHour('hourTTCN')}>Giờ hd thực tập <i class="fas fa-sort"></i></div>},
       dataIndex: 'hourTTCN',
       key: 'hourTTCN',
-      width: 100,
+      width: 130,
       align: 'center'
     },
     {
-      title: 'Tổng số giờ',
+      title: () => { return <div onClick={() => sortHour('total')}>Tổng số giờ <i class="fas fa-sort"></i></div>},
       dataIndex: 'total',
       key: 'total',
-      width: 100,
+      width: 130,
       align: 'center'
     },
     {
-      title: 'Tỷ lệ',
+      title: () => { return <div onClick={() => sortHour('total')}>Tỷ lệ <i class="fas fa-sort"></i></div>},
       key: "index",
       render: (value, item) => `${Math.round((item.total/270)*100)} %` ,
       width: 100,
@@ -106,7 +131,7 @@ export default function TableReport({match}) {
   //       title: 'Năm học',
   //       dataIndex: 'year',
   //       key: 'year',
-  //     },
+// },
   //     {
   //       title: 'Học kỳ',
   //       dataIndex: 'semester',
@@ -115,7 +140,6 @@ export default function TableReport({match}) {
   //     align: 'center'
   //     })
   // }
-
   const onChangeYear = (item1, item2) => {
     setYear(item1);
     setSemester(item2);
@@ -124,22 +148,38 @@ export default function TableReport({match}) {
   useEffect(() => {
     const getData = async () => {
       try {
-        await callAdmin.report(year,semester, pageCurren,pagesize,type).then(res =>{
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
+        await callAdmin.report(year,semester, pageCurren,pagesize,type, sortField, sort).then(res =>{
           setData(res.data.data)
           setTotalData(res.data.total)
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
         })
       } catch (error) {
         console.log("failed to request API: ", error)
       }
     };
     getData();
-  }, [year, semester,pageCurren, pagesize,type]);
+  }, [year, semester,pageCurren, pagesize,type,sort, sortField]);
 
   useEffect(() => {
     const getData = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         return await callAdmin.report('','', 0,0,0)
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         console.log("failed to request API: ", error)
       }
     };
@@ -157,16 +197,15 @@ export default function TableReport({match}) {
         arr && setYearShow([...arr])
         arr2 && setYearShow2(arr2)
         arr2 && setYear(arr2[0])
-        const x = arr[0]?.split(' ');
+        const x = arr && arr[0]?.split(' ');
         x && setSemester(x[0])
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       }
     )
   }, []);
-
-  function onChange(page, pageSize) {
-    setPageCurren(page)
-    setPagesize(pageSize)
-  }
 
   function onChange(page, pageSize) {
     setPageCurren(page)
@@ -208,6 +247,7 @@ export default function TableReport({match}) {
         totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
         defaultCurrent={pageCurren}/>
       }
+      <LoadingFullScreen/>
     </LayoutAdmin>
   )
 }

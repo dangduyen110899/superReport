@@ -17,8 +17,12 @@ import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { useHistory } from "react-router-dom";
 import queryString from 'query-string'
+import { useDispatch } from 'store/index';
+import LoadingFullScreen from '../component/LoadingFullScreen';
+import { LOADING_FULL_SCREEN } from 'store/action-types';
 
 export default function TableStudent({match}) {
+  const dispatch = useDispatch()
   const value=queryString.parse(match.location.search);
   const history = useHistory()
   const [data, setData] = useState([])
@@ -33,12 +37,20 @@ export default function TableStudent({match}) {
     item.status = 1;
     const add = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         if (itemId) {
           item.id = itemId;
           await callAdmin.editStudent(item)
           const res = await callAdmin.student(pageCurren,pagesize)
           setData(res.data.data)
           setIsModalVisible(false);
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.success("Edit student success!");
         } else {
           await callAdmin.addStudent(item)
@@ -46,6 +58,10 @@ export default function TableStudent({match}) {
           setData(res.data.data)
           setTotalData(res.data.total)
           setIsModalVisible(false);
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.success("Add student success!");
         }
       } catch (error) {
@@ -64,10 +80,18 @@ export default function TableStudent({match}) {
     itemEdit.status = 0;
     const remove = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         await callAdmin.editStudent(itemEdit)
         const res = await callAdmin.student(pageCurren,pagesize)
         setData(res.data.data)
         setTotalData(res.data.total)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         toast.success('Delete student success.')
       } catch (error) {
         console.log("failed to request API: ", error)
@@ -146,9 +170,17 @@ export default function TableStudent({match}) {
   useEffect(() => {
     const getData = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         const res = await callAdmin.student(pageCurren,pagesize)
         setData(res.data.data)
         setTotalData(res.data.total)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       } catch (error) {
         console.log("failed to request API: ", error)
       }
@@ -161,10 +193,18 @@ export default function TableStudent({match}) {
     formData.append("file", file)
     const adds = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         await callAdmin.addStudents(formData)
         const res = await callAdmin.student(pageCurren,pagesize)
         setData(res.data.data)
         setTotalData(res.data.total)
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         toast.success("Add students success!");
       } catch (error) {
         console.log("failed to request API: ", error)
@@ -219,6 +259,7 @@ export default function TableStudent({match}) {
         totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
         defaultCurrent={pageCurren}/>
       }
+       <LoadingFullScreen/>
     </LayoutAdmin>
   )
 }

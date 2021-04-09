@@ -120,6 +120,11 @@ report.list = async (req, res) => {
   const page = Number(req.query.page);
   const size = Number(req.query.size);
   const type = Number(req.query.type);
+  let sort = req.query.sort=='tang' ? 'ASC' : 'DESC';
+  const sortField = req.query.sortField ? req.query.sortField : 'id' ;
+  if (sortField==='id') {
+    sort = 'ASC'
+  }
   let response1;
   let count1;
 
@@ -139,7 +144,10 @@ report.list = async (req, res) => {
         ]
       },
       offset: Number((page-1)*size), 
-      limit: Number(size)
+      limit: Number(size),
+      order: [
+        [sortField, sort]
+    ],
     })
     response1 = rows
     count1 = count

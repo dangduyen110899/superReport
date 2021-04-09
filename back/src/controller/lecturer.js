@@ -10,10 +10,10 @@ lecturer.list = async (req, res) => {
   try {
     const { count, rows: response } = await Lecturer.findAndCountAll({
       where: {status: 1, mode: mode, 
-        [Op.or]: [
-          { name: { [Op.like]: '%Thọ%'}},
-          { name: { [Op.like]: '%Hùng%'}}
-        ]},
+        // [Op.or]: [
+        //   { name: { [Op.like]: '%Thọ%'}}
+        // ]
+      },
       offset: (page-1)*size, 
       limit: size
     })

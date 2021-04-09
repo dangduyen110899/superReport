@@ -19,8 +19,12 @@ import FormTkb from './FormTkb';
 import Cookies from "js-cookie";
 import { useHistory } from "react-router-dom";
 import queryString from 'query-string'
+import { useDispatch } from 'store/index';
+import LoadingFullScreen from '../component/LoadingFullScreen';
+import { LOADING_FULL_SCREEN } from 'store/action-types';
 
 export default function TableTkb({match}) {
+  const dispatch = useDispatch()
   const value=queryString.parse(match.location.search);
   const history = useHistory()
   const [pageCurren, setPageCurren] = useState(value?.page || 1)
@@ -39,12 +43,24 @@ export default function TableTkb({match}) {
   const handleOkAddYear = (yearItem, semesterItem) => {
     const add = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         await callAdmin.checkYear({year: yearItem, semester: semesterItem}).then(() => {
           setYearShow([`${semesterItem} ${yearItem}`,...yearShow]);
           setIsModalVisible(false);
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.success("Add year success!");
         })
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         toast.warning(error?.response?.data?.message);
       }
     };
@@ -60,10 +76,18 @@ export default function TableTkb({match}) {
     itemEdit.status = 0;
     const remove = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         await callAdmin.editTkb(itemEdit)
         const res = await await callAdmin.tkb(year,semester, pageCurren,pagesize)
           setData(res.data.data)
           setTotalData(res.data.total)
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
       } catch (error) {
         console.log("failed to request API: ", error)
       }
@@ -172,10 +196,18 @@ export default function TableTkb({match}) {
   useEffect(() => {
     const getData = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         await callAdmin.tkb(year,semester, pageCurren,pagesize).then(res =>
         {
           setData(res.data.data)
           setTotalData(res.data.total)
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
         })
       } catch (error) {
         console.log("failed to request API: ", error)
@@ -187,8 +219,16 @@ export default function TableTkb({match}) {
   useEffect(() => {
     const getData = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         return await callAdmin.tkb('','', 0, 0)
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         console.log("failed to request API: ", error)
       }
     };
@@ -197,6 +237,10 @@ export default function TableTkb({match}) {
         let arrString = res.data.data.map(item => item.semester + ' ' + item.year)
         const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
         setYearShow(['All',...arr])
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
       }
     )
   }, []);
@@ -208,15 +252,31 @@ export default function TableTkb({match}) {
     formData.append('semester', semester)
     const adds = async () => {
       try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
         const res = await callAdmin.addTkbs(formData)
         if (!res.data.length) {
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.error(res.data.message)
         }
         const res1 = await callAdmin.tkb(year,semester, pageCurren,pagesize)
           setData(res1.data.data)
           setTotalData(res1.data.total)
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
           toast.success("Add Tkbs success!");
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         console.log("failed to request API: ", error)
       }
     };
@@ -283,6 +343,7 @@ export default function TableTkb({match}) {
         totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
         defaultCurrent={pageCurren}/>
       }
+      <LoadingFullScreen/>
     </LayoutAdmin>
   )
 }
