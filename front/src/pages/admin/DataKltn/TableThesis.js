@@ -21,6 +21,7 @@ import queryString from 'query-string'
 import { useDispatch } from 'store/index';
 import { LOADING_FULL_SCREEN } from 'store/action-types';
 import LoadingFullScreen from '../component/LoadingFullScreen';
+import FormThesis from './FormThesis';
 
 export default function TableThesic({match}) {
     const dispatch = useDispatch()
@@ -30,14 +31,16 @@ export default function TableThesic({match}) {
   const [pagesize, setPagesize] = useState(value?.size || 20)
   const [totalData, setTotalData] = useState(0)
   const [data, setData] = useState([])
-  const [yearShow, setYearShow] = useState(['All'])
+  const [yearShow, setYearShow] = useState([''])
   const [itemEdit, setItemEdit] = useState(null)
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [year, setYear] = useState(value?.year || '');
   const [semester, setSemester] = useState(value?.semester || '')
   const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
+  const [load, setLoad] = useState(false)
 
-  const handleOkAddYear = (yearItem, semesterItem) => {
+  const handleOkAddYear = (yearItem, semesterItem, fileItem) => {
+    console.log(fileItem)
     dispatch({
       type: LOADING_FULL_SCREEN,
       payload: true,
@@ -45,13 +48,7 @@ export default function TableThesic({match}) {
     const add = async () => {
       try {
         await callAdmin.checkYear({year: yearItem, semester: semesterItem}).then(() => {
-          setYearShow([`${semesterItem} ${yearItem}`,...yearShow]);
-          setIsModalVisible(false);
-          dispatch({
-            type: LOADING_FULL_SCREEN,
-            payload: false,
-          })
-          toast.success("Add year success!");
+          handleAddThesiss(fileItem, yearItem, semesterItem)
         })
       } catch (error) {
         dispatch({
@@ -246,36 +243,35 @@ export default function TableThesic({match}) {
         })
         let arrString = res.data.data.map(item => item.semester + ' ' + item.year)
         const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
-        setYearShow(['All',...arr])
+        setYearShow([...arr])
       }
     )
-  }, []);
+  }, [load]);
 
-  const handleAddThesiss = (file) => {
+  const handleAddThesiss = (file,year, semester) => {
+    setIsModalVisible(false)
     const formData = new FormData()
     formData.append("file", file)
     formData.append('year', year)
     formData.append('semester', semester)
     const adds = async () => {
       try {
-        dispatch({
-          type: LOADING_FULL_SCREEN,
-          payload: true,
-        })
         const res = await callAdmin.addThesiss(formData)
         if(!res.data.length) {
           toast.error(res.data.message);
         }
-        const res1 = await callAdmin.thesis(year,semester, pageCurren,pagesize)
-        setData(res1.data.data)
-        setTotalData(res1.data.total)
-        toast.success("Add Tkbs success!");
+        setLoad(!load)
+        toast.success("Add Kltn success!");
         dispatch({
           type: LOADING_FULL_SCREEN,
           payload: false,
         })
 
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         console.log("failed to request API: ", error)
       }
     };
@@ -301,7 +297,7 @@ export default function TableThesic({match}) {
           {
             useMemo(() => {
               return (
-                <Select options={yearShow} defaultVl={'All'} onChangeYear={onChangeYear}></Select>
+                <Select options={yearShow} defaultVl={''} onChangeYear={onChangeYear}></Select>
               )
             }, [yearShow])
           }
@@ -309,13 +305,9 @@ export default function TableThesic({match}) {
        {
          user && user.roles === 'ADMIN' &&
          <Col>
-         <input type="file" onChange={e => handleAddThesiss(e.target.files[0])}/>
          <Space>
            <Button type="primary" onClick={() => setIsModalVisible(true)}>
-             + Add thesis
-           </Button>
-           <Button type="primary" onClick={() => setIsModalVisible(true)}>
-             + Add year semester
+             Thêm quản lý khóa luận tốt nghiệp
            </Button>
          </Space>
          <Modal
@@ -325,7 +317,7 @@ export default function TableThesic({match}) {
            onCancel={handleCancel}
            visible={isModalVisible}
          >
-           <FormAddYear handleOkAddYear={handleOkAddYear} handleCancel={handleCancel} />
+           <FormThesis handleOkAddYear={handleOkAddYear} handleCancel={handleCancel} />
          </Modal>
        </Col>
        }

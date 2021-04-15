@@ -40,7 +40,7 @@ export default function TableReport({match}) {
     else if (sort=='' && field!==sortField) {
       setSortField(field)
       setSort("tang")
-    } if (sort=='' && field!==sortField) {
+    } if (sort=='giam' && field==sortField) {
       setSort("tang")
     }
     else if (sort=='tang') {
@@ -115,31 +115,21 @@ export default function TableReport({match}) {
       key: 'total',
       width: 130,
       align: 'center'
-    },
-    {
-      title: () => { return <div onClick={() => sortHour('total')}>Tỷ lệ <i class="fas fa-sort"></i></div>},
-      key: "index",
-      render: (value, item) => `${Math.round((item.total/270)*100)} %` ,
-      width: 100,
-      align: 'center'
-    },
+    }
   ];
 
-  // if(!year && !semester) {
-  //   columns.unshift(
-  //     {
-  //       title: 'Năm học',
-  //       dataIndex: 'year',
-  //       key: 'year',
-// },
-  //     {
-  //       title: 'Học kỳ',
-  //       dataIndex: 'semester',
-  //       key: 'semester',
-  //       width: 100,
-  //     align: 'center'
-  //     })
-  // }
+  if(type) {
+    columns.push(
+      {
+        title: () => { return <div onClick={() => sortHour('total')}>Tỷ lệ <i class="fas fa-sort"></i></div>},
+        dataIndex: 'rate',
+        key: "rate",
+        width: 100,
+        align: 'center',
+        render: (value, item) => <span>{value} %</span>
+      },
+    )
+  }
   const onChangeYear = (item1, item2) => {
     setYear(item1);
     setSemester(item2);
@@ -161,6 +151,10 @@ export default function TableReport({match}) {
           })
         })
       } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
         console.log("failed to request API: ", error)
       }
     };

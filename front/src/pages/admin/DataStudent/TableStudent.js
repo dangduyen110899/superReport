@@ -230,9 +230,6 @@ export default function TableStudent({match}) {
         { user && (user.roles === 'ADMIN') && 
           <Col>
           <input type="file" onChange={e => handleAddStudents(e.target.files[0])}/>
-          <Button type="primary" onClick={() => setIsModalVisible(true)}>
-            + Add student
-          </Button>
           <Modal
             title="Select time"
             footer={null}

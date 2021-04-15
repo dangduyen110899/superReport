@@ -28,6 +28,7 @@ db.subSubjectLecturer = require('../models/SubSubjectLecturer')(sequelize, Seque
 db.reportHour = require('../models/ReportHour')(sequelize, Sequelize);
 // authenti
 db.user = require('../models/User')(sequelize, Sequelize);
+db.quota = require('../models/Quota')(sequelize, Sequelize);
 
 db.lecturer.hasMany(db.thesis);
 db.thesis.belongsTo(db.lecturer);
@@ -41,6 +42,9 @@ db.subSubjectLecturer.belongsTo(db.lecturer);
 
 db.subject.hasMany(db.subSubjectLecturer);
 db.subSubjectLecturer.belongsTo(db.subject);
+
+db.quota.hasMany(db.lecturer);
+db.lecturer.belongsTo(db.quota);
 
 // db.role.hasMany(db.user_roles);
 // db.user_roles.belongsTo(db.lecturer);

@@ -49,29 +49,32 @@ export default function LayoutAdmin({children, match}) {
           {collapsed ? '' : 'SUPER-REPORT'}
         </span>
       </div>
-      <Menu theme="dark" mode="inline" defaultSelectedKeys={[match.match.path==="/admin/tkb" ? "1" : match.match.path==="/admin/kltn" ? "2" : match.match.path==="/admin/lecturer" ? "3" : match.match.path==="/admin/student" ? "4" : "5"]}>
+      <Menu theme="dark" mode="inline" defaultSelectedKeys={[match.match.path==="/admin/tkb" ? "1" : match.match.path==="/admin/kltn" ? "2" : match.match.path==="/admin/lecturer" ? "3" : match.match.path==="/admin/student" ? "4" :  match.match.path==="/admin/report" ? "5" : "10" ]}>
         {
-          (user.roles === 'ADMIN') 
+          (user?.roles === 'ADMIN') 
           && 
           <>
             <Menu.Item key="1" icon={<DatabaseOutlined />}>
-            <Link to="/admin/tkb">Data tkb</Link>
+            <Link to="/admin/tkb">Quản lý TKB</Link>
             </Menu.Item>
             <Menu.Item key="2" icon={<DatabaseOutlined />}>
-              <Link to="/admin/kltn">Data kltn</Link>
+              <Link to="/admin/kltn">Quản lý KLTN</Link>
             </Menu.Item>
             <Menu.Item key="3" icon={<DatabaseOutlined />}>
-              <Link to="/admin/lecturer">Data lecturer</Link>
+              <Link to="/admin/lecturer">Quản lý giảng viên</Link>
             </Menu.Item>
             <Menu.Item key="4" icon={<DatabaseOutlined />}>
-              <Link to="/admin/student">Data student</Link>
+              <Link to="/admin/student">Quản lý sinh viên</Link>
+            </Menu.Item>
+            <Menu.Item key="10" icon={<DatabaseOutlined />}>
+              <Link to="/admin/quota">Quản lý định mức</Link>
             </Menu.Item>
           </>
         }
         {
-          (user.roles === 'ADMIN' || user.roles === 'LEADER' || user.roles === 'USER') && 
+          (user?.roles === 'ADMIN' || user?.roles === 'LEADER' || user?.roles === 'USER') && 
           <Menu.Item key="5" icon={<DatabaseOutlined />}>
-          <Link to="/admin/report">Report</Link>
+          <Link to="/admin/report">Báo cáo</Link>
         </Menu.Item>
         }
       </Menu>

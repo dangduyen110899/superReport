@@ -19,6 +19,7 @@ function App() {
     // if (!user?.roles) { 
     //   routes = [routesAdmin[0], routesAdmin[1]]
     // }
+    console.log("roles", user?.roles)
     let result = routes.map((route, index) => {
     return (
       <Route

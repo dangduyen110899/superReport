@@ -124,6 +124,17 @@ const FormLecturer = ({handleOk, handleCancel, itemEdit, dataLecturer}) => {
 
             <div className="form-login__form-group">
               <div className="d-flex justify-content-between">
+                <label className="form-label">Chức vụ:</label>
+              </div> 
+              <input
+                name="position"
+                className="form-input"
+                ref={register()}
+              />
+            </div>
+  
+            <div className="form-login__form-group">
+              <div className="d-flex justify-content-between">
                 <label className="form-label">Chương trình:</label>
                 <select name="programs" className="programs" ref={register()}>
                 <option value={1}>Đại học</option>
