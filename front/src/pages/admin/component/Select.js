@@ -20,7 +20,7 @@ export default function Select({options, onChangeYear}) {
         data && data.map(option => {
           const ar = option.split(' ');
           return (
-            <option selected={vl===option} key={option} value={option}>{option==='All' ? 'All' : ` Hoc ky ${ar[0]} nam hoc ${ar[1]}`}</option>
+            <option selected={vl===option} key={option} value={option}>{option==='' ? '' : ` Hoc ky ${ar[0]} nam hoc ${ar[1]}`}</option>
           )
         })
       }

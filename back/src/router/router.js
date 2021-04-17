@@ -5,11 +5,18 @@ const lecturer = require('../controller/lecturer');
 const subSubjectLecturer = require('../controller/subSubjectLecturer');
 let upload = require('../config/multer');
 const report = require('../controller/report');
+const quota = require('../controller/quota');
 const controller = require('../controller/controller');
 const authJwt = require('../router/verifyJwtToken');
 const verifySignUp = require('../router/verifySignUp');
 
 function route(app) {
+
+// them dinh muc
+app.get('/api/admin/quota', [authJwt.verifyToken, authJwt.isAdmin],quota.list);
+app.post('/api/admin/quota/create',[authJwt.verifyToken, authJwt.isAdmin],quota.create);
+app.post('/api/admin/quota/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),quota.creates);
+app.put('/api/admin/quota/update',[authJwt.verifyToken, authJwt.isAdmin],quota.update);
 
 //  app.get('/api/lecturer/hehe',function(res,req) {lecturer.hehe});
 app.get('/api/admin/lecturer', [authJwt.verifyToken, authJwt.isLeaderOrAdmin],lecturer.list);

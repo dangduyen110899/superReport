@@ -1,20 +1,53 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Space, Row, Button} from 'antd';
-import {Input, InputNumber} from 'antd';
-import { ErrorMessage } from "@hookform/error-message";
+import { Select , Space, Row, Button, Input} from 'antd';
 
-const FormTkb = ({handleOk, handleCancel, itemEdit}) => {
-  let defaultValues = {
-    name: itemEdit?.name,
-    email: itemEdit?.email,
-    programs: itemEdit?.programs,
-  };
-  const { handleSubmit, control, errors } = useForm({ defaultValues });
+const { Option } = Select;
 
+export default function FormTkb({handleOkAddYear, handleCancel}) {
+  const { handleSubmit, control } = useForm();
+  const [fileKltn, setFileKltn] = useState()
   return (
-    <h1>chua lam</h1>
-  );
-};
+    <form onSubmit={handleSubmit(data => handleOkAddYear(data.year, data.semester, fileKltn))}>
+      <Space direction="vertical">
+        <Row>
+          <Space direction="vertical">
+            <Space>
+              <label >School  Year (format: xxxx-yyyy)</label>
+              <Controller
+                as={
+                  <Input/>
+                }
+                name="year"
+                control={control}
+              />
+            </Space>
 
-export default FormTkb;
+            <Space>
+              <label>Semester</label>
+              <Controller
+                as={
+                  <Select placeholder="Select semester">
+                    <Option value={1}>I</Option>
+                    <Option value={2}>II</Option>
+                  </Select>
+                }
+                name="semester"
+                control={control}
+              />
+            </Space>
+            </Space>
+          </Row>
+          <Row>
+          <input type="file" name="thesis" onChange={e => setFileKltn(e.target.files[0])}/>
+          </Row>
+        <Row>
+        <Space>
+          <Button type="primary" htmlType="submit">Save</Button>
+          <Button onClick={() => handleCancel()}>Cancel</Button>
+        </Space>
+    </Row>
+    </Space>
+  </form>
+  )
+}

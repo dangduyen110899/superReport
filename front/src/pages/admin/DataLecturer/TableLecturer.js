@@ -138,11 +138,11 @@ export default function TableLecturer({match}) {
       dataIndex: 'subject',
       key: 'subject',
     },
-    // {
-    //   title: 'Programs',
-    //   dataIndex: 'programs',
-    //   key: 'programs',
-    // },
+    {
+      title: 'Chức vụ',
+      dataIndex: 'position',
+      key: 'position',
+    },
   ];
 
   if(user && (user.roles === 'ADMIN')) {
@@ -243,7 +243,7 @@ export default function TableLecturer({match}) {
         <div className="tab-lecturer">
       <Radio.Group onChange={handleModeChange} value={mode} style={{ marginBottom: 8 }}>
           <Radio.Button value="1">DS giảng viên cơ hữu</Radio.Button>
-          <Radio.Button value="0">DS giảng viên được mời</Radio.Button>
+          <Radio.Button value="0">DS giảng viên thỉnh giảng</Radio.Button>
         </Radio.Group>
       </div>
         </Col>

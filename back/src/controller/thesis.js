@@ -181,10 +181,13 @@ thesis.creates = async (req, res) => {
         }
       }
       fetchApi().then( async () => {
-        await Thesis.bulkCreate(theses).then(() =>{
-         res.json(theses);
-        })
-
+        try {
+          await Thesis.bulkCreate(theses).then(() =>{
+            res.json(theses);
+           })
+        } catch (error) {
+          console.log(error)
+        }
         const lecturerIdKltn = Array.from(new Set(theses.map(item => item.lecturerId)))
 
         for (let i = 0; i < lecturerIdKltn.length; i++) {
