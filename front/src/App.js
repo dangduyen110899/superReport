@@ -1,5 +1,5 @@
 import {
-  routesAdmin
+  routes
 } from "./routes";
 import {
   Switch,
@@ -11,24 +11,33 @@ import { ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
 import { Redirect } from 'react-router'
 import { StoreProvider } from './store'
+import { PrivateRoute } from "components/PrivateRoute";
 
 function App() {
   const [user, setuser] = useState(Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null)
+  console.log(routes, user)
   const showRoute = () => {
-    let routes = routesAdmin
-    // if (!user?.roles) { 
-    //   routes = [routesAdmin[0], routesAdmin[1]]
-    // }
-    console.log("roles", user?.roles)
     let result = routes.map((route, index) => {
-    return (
-      <Route
-        key={index}
-        path={route.path}
-        exact={route.exact}
-        component={route.components}
-      />
-    );
+      if (route.role) {
+        return (
+          <PrivateRoute
+            key={index}
+            path={route.path}
+            exact={route.exact}
+            component={route.components}
+            roles={route.role}
+          />
+        )
+      } else {
+        return (
+          <Route
+            key={index}
+            path={route.path}
+            exact={route.exact}
+            component={route.components}
+          />
+        );
+      }
     });
 
     return (
@@ -36,9 +45,9 @@ function App() {
         <Router>
           <Switch>{result}</Switch>
           <ToastContainer hideProgressBar autoClose={3000} />
-          {
+          {/* {
             !user?.roles && window.location.href!=='http://localhost:3000/' && <Redirect to='/403'/>
-          }
+          } */}
         </Router>
       </StoreProvider>
     );
