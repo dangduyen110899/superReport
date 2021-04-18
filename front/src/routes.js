@@ -9,7 +9,7 @@ import ReportDetailThesis from "pages/admin/detail/ReportDetailThesis";
 import ReportDetailTkb from "pages/admin/detail/ReportDetailTkb";
 import TableReport from "pages/admin/Report/TableReport";
 
-export const routesAdmin = [
+export const routes = [
   // {
   //   path: "/",
   //   exact: false,
@@ -19,58 +19,60 @@ export const routesAdmin = [
     path: "/403",
     exact: true,
     components: match => <Err match={match}/>,
+    role: ''
   },
   {
     path: "/",
     exact: true,
     components: SignIn,
+    role: ''
   },
   {
     path: "/admin/lecturer",
     exact: true,
     components: match => <TableLecturer match={match}/>,
-    role: 'adminorpm'
+    role: ['ADMIN']
   },
   {
     path: "/admin/student",
     exact: true,
     components: match => <TableStudent match={match}/>,
-    role: 'adminorpm'
+    role: ['ADMIN']
   },
   {
     path: "/admin/tkb",
     exact: true,
     components: match => <TableTkb match={match}/>,
-    role: 'adminorpm'
+    role: ['ADMIN']
   },
   {
     path: "/admin/kltn",
     exact: true,
     components: match => <TableThesic match={match}/>,
-    role: 'adminorpm'
+    role: ['ADMIN']
   },
   {
     path: "/admin/report",
     exact: true,
     components: match => <TableReport match={match}/>,
-    role: 'adminorpm'
+    role: ['ADMIN', 'LEADER', 'LECTURER']
   },
   {
     path: "/admin/quota",
     exact: true,
     components: match => <TableQuota match={match}/>,
-    role: 'adminorpm'
+    role: ['ADMIN']
   },
   {
     path: "/admin/report/schedules/:lecturerId",
     exact: true,
     components: match => <ReportDetailTkb match={match}/>,
-    role: 'adminorpm'
+    role: ['ADMIN', 'LEADER', 'LECTURER']
   },
   {
     path: "/admin/report/thesis/:lecturerId",
     exact: true,
     components: match => <ReportDetailThesis match={match}/>,
-    role: 'adminorpm'
+    role: ['ADMIN', 'LEADER', 'LECTURER']
   }
 ];

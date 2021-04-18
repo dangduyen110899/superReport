@@ -19,17 +19,17 @@ app.post('/api/admin/quota/creates', [authJwt.verifyToken, authJwt.isAdmin],uplo
 app.put('/api/admin/quota/update',[authJwt.verifyToken, authJwt.isAdmin],quota.update);
 
 //  app.get('/api/lecturer/hehe',function(res,req) {lecturer.hehe});
-app.get('/api/admin/lecturer', [authJwt.verifyToken, authJwt.isLeaderOrAdmin],lecturer.list);
+app.get('/api/admin/lecturer', [authJwt.verifyToken, authJwt.isAdmin],lecturer.list);
 app.post('/api/admin/lecturer/create',[authJwt.verifyToken, authJwt.isAdmin],lecturer.create);
 app.post('/api/admin/lecturer/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),lecturer.creates);
 app.put('/api/admin/lecturer/update',[authJwt.verifyToken, authJwt.isAdmin],lecturer.update);
 
-app.get('/api/admin/student', [authJwt.verifyToken, authJwt.isLeaderOrAdmin],student.list);
+app.get('/api/admin/student', [authJwt.verifyToken, authJwt.isAdmin],student.list);
 app.post('/api/admin/student/create', [authJwt.verifyToken, authJwt.isAdmin],student.create);
 app.post('/api/admin/student/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),student.creates);
 app.put('/api/admin/student/update', [authJwt.verifyToken, authJwt.isAdmin],student.update);
 
-app.get('/api/admin/thesis', [authJwt.verifyToken, authJwt.isLeaderOrAdmin], thesis.list);
+app.get('/api/admin/thesis', [authJwt.verifyToken, authJwt.isAdmin], thesis.list);
 app.get('/api/admin/detailThesis', [authJwt.verifyToken, authJwt.isLeaderOrAdmin], thesis.detailList);
 // app.post('/api/admin/thesis/create',thesis.create);
 app.post('/api/admin/thesis/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),thesis.creates);
@@ -37,7 +37,7 @@ app.post('/api/admin/thesis/checkYear', [authJwt.verifyToken, authJwt.isAdmin],t
 app.put('/api/admin/thesis/update', [authJwt.verifyToken, authJwt.isAdmin],thesis.update);
 
 
-app.get('/api/admin/tkb', [authJwt.verifyToken, authJwt.isLeaderOrAdmin],  subSubjectLecturer.list );
+app.get('/api/admin/tkb', [authJwt.verifyToken, authJwt.isAdmin],  subSubjectLecturer.list );
 app.get('/api/admin/detailTkb', [authJwt.verifyToken, authJwt.isLeaderOrAdmin],  subSubjectLecturer.detailList );
 app.post('/api/admin/tkb/create', [authJwt.verifyToken, authJwt.isAdmin],subSubjectLecturer.create);
 app.post('/api/admin/tkb/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),subSubjectLecturer.creates);
