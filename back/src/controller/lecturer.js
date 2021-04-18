@@ -44,11 +44,11 @@ lecturer.creates = async (req, res) => {
       let length = rows.length;
       for(let i=0; i<length; i++){
 
-        const res1 = await Quota.findOne({
-          where: {
-            position: rows[i][5] || 'Giảng viên'
-          }
-        })
+        // const res1 = await Quota.findOne({
+        //   where: {
+        //     position: rows[i][5] || 'Giảng viên'
+        //   }
+        // })
 
         let lecturer = {
           name: rows[i][0],
@@ -59,7 +59,7 @@ lecturer.creates = async (req, res) => {
           subject: rows[i][3],
           mode: req.body.mode,
           position: rows[i][5] || '',
-          quotumId: (res1 && res1.length>0) ? res1[0].dataValues.id : 14
+          // quotumId: (res1 && res1.length>0) ? res1[0].dataValues.id : 14
         }
         lecturers.push(lecturer);
       }
@@ -90,7 +90,7 @@ lecturer.update = async ( req, res) =>{
     department: req.body.department,
     subject: req.body.subject,
     position: req.body.position,
-    quotumId: req.body.quotumId
+    // quotumId: req.body.quotumId
   }
   try {
     const response = await Lecturer.update( request,{

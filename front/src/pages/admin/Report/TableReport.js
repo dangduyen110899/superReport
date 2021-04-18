@@ -15,6 +15,9 @@ import { useDispatch } from 'store/index';
 import { LOADING_FULL_SCREEN } from 'store/action-types';
 import LoadingFullScreen from '../component/LoadingFullScreen';
 import { downloadFile } from './DowloadFile';
+import SelectSemester from './SelectSemester';
+import * as _ from 'lodash';
+
 
 export default function TableReport({match}) {
   const dispatch = useDispatch()
@@ -32,23 +35,32 @@ export default function TableReport({match}) {
   const [yearShow2, setYearShow2] = useState([])
   const [sort, setSort] = useState('')
   const [sortField, setSortField] = useState('')
+  const [valuefilter1, setvaluefilter1] = useState([])
+  const [valuefilter2, setvaluefilter2] = useState([])
+  const [listDepartment, setlistDepartment] = useState([])
+
 
   const sortHour = (field) => {
     if (sortField=='') {
       setSort('tang');
       setSortField(field)
+      return true
     }
     else if (sort=='' && field!==sortField) {
       setSortField(field)
       setSort("tang")
+      return true
     } if (sort=='giam' && field==sortField) {
       setSort("tang")
+      return true
     }
     else if (sort=='tang') {
       setSort('giam')
+      return true
     } else {
       setSort('')
       setSortField('')
+      return true
     }
   }
 
@@ -66,7 +78,44 @@ export default function TableReport({match}) {
       key: 'lecturerName',
     },
     {
-      title: 'Khoa',
+      title: () => {
+        return (
+          <div style={{position: 'relative'}}>
+            <div>Khoa</div>
+            <div style={{boxShadow: '0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%)', padding: '10px', position: 'absolute', top: '50px', right: '-15px', zIndex: '999', background: '#fff', borderRadius: '2px', width: '250px', overflow: 'auto'}}>
+              {
+                listDepartment.map(item => {
+                  return (
+                    <div className="d-flex">
+                      <div style={{ marginRight: '10px'}}>
+                        <input type="checkbox" name="khoa" value={item.value} onChange={e => {
+                          const listDepart = [...listDepartment]
+                          _.forEach(listDepart, (item) => {
+                            if (item.value === e.target.value) {
+                              if (item.check) {
+                                item.check = false
+                              } else {
+                                item.check = true
+                              }
+                            }
+                          })
+                          setlistDepartment(listDepart)
+                        }} checked={item.check}/>
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: '100', textTransform: 'capitalize', textAlign: 'left'}}>
+                        <label htmlFor="">{item.value}</label>
+                      </div>
+                    </div>
+                  )
+                })
+              }
+              <div style={{ textAlign: 'right' }}>
+                <button style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Ok</button>
+              </div>
+            </div>
+          </div>
+        )
+      },
       dataIndex: 'department',
       key: 'department',
     },
@@ -143,7 +192,8 @@ export default function TableReport({match}) {
           type: LOADING_FULL_SCREEN,
           payload: true,
         })
-        await callAdmin.report(year,semester, pageCurren,pagesize,type, sortField, sort).then(res =>{
+        console.log(sort, sortField)
+        await callAdmin.report(year,semester, pageCurren,pagesize,type, sortField, sort, valuefilter1, valuefilter2).then(res =>{
           setData(res.data.data)
           setTotalData(res.data.total)
           dispatch({
@@ -160,7 +210,7 @@ export default function TableReport({match}) {
       }
     };
     getData();
-  }, [year, semester,pageCurren, pagesize,type,sort, sortField]);
+  }, [year, semester,pageCurren, pagesize,type,sort, sortField, valuefilter1, valuefilter2]);
 
   useEffect(() => {
     const getData = async () => {
@@ -180,8 +230,7 @@ export default function TableReport({match}) {
     };
     getData().then(res =>
       {
-        // setData(res?.data?.data)
-        // setTotalData(res?.data?.total)
+        // year
         const arrYear2 = []
         let arrString = res?.data?.data.map(item => {
           arrYear2.push(item.year)
@@ -194,6 +243,12 @@ export default function TableReport({match}) {
         arr2 && setYear(arr2[0])
         const x = arr && arr[0]?.split(' ');
         x && setSemester(x[0])
+
+        // list department
+        const listDepartments = res?.data?.data.map(item => item.department)
+        let dataDepartment  =  listDepartments?.filter((item, index) => listDepartments.indexOf(item) === index);
+        dataDepartment = dataDepartment.map(item => { return {check: false, value: item}})
+        setlistDepartment(dataDepartment)
         dispatch({
           type: LOADING_FULL_SCREEN,
           payload: false,
@@ -205,7 +260,7 @@ export default function TableReport({match}) {
   function onChange(page, pageSize) {
     setPageCurren(page)
     setPagesize(pageSize)
-    history.push(`/admin/report?year=${year}}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
+    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}`)
   }
   const { Option } = Select;
   return (
@@ -213,24 +268,26 @@ export default function TableReport({match}) {
       <h2 className="title">BÁO CÁO TỔNG HỢP</h2>
       <Row justify="space-between">
         <Col>
-          <label>Báo cáo theo: </label>
           <Select onChange={value => settype(value)} defaultValue={0} style={{ width: 200 }}>
             <Option value={0}>Theo học kỳ</Option>
             <Option value={1}>Theo năm học</Option>
             <Option value={2}>Theo năm tài chính</Option>
           </Select>
         </Col>
-        <Col>
-          <span onClick={() => downloadFile({year: year, semester: semester, type: type, sort: sort, sortField: sortField})}>Export file</span>
-        </Col>
         {
           useMemo(() => 
           <Col>
-          { type==0 && <SelectY options={yearShow} onChangeYear={onChangeYear}></SelectY>}
+          { type==0 && <SelectSemester options={yearShow} onChangeYear={onChangeYear}></SelectSemester>}
           { Number(type) ? <SelectYear options={yearShow2} onChangeYear={onChangeYear}></SelectYear> : ''}
         </Col>
           , [type, yearShow, yearShow2])
         }
+        <Col>
+          Search
+        </Col>
+        <Col>
+          <span onClick={() => downloadFile({year: year, semester: semester, type: type, sort: sort, sortField: sortField})}>Export file</span>
+        </Col>
       </Row>
       <br/>
       <Table

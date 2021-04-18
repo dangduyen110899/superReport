@@ -41,3 +41,7 @@ thead[class*="ant-table-thead"] th{
 .ant-pagination { 
     margin-top: 15px;
 }
+
+.ant-table-header {
+    overflow: unset !important;
+}

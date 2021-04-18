@@ -7,12 +7,10 @@ export const downloadFile = (data) => {
     try {
       await report.download(data).then((res) => {
         toast.success("Download file success");
-        const url = window.URL.createObjectURL(new Blob([res.data]), {
-          type: res.headers["content-type"],
-        });
+        const url = window.URL.createObjectURL(new Blob([res.data]));
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", `${report}`);
+        link.setAttribute("download", `Report.xlsx`);
         document.body.appendChild(link);
         link.click();
       });

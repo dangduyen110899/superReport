@@ -131,10 +131,19 @@ report.updateHour = async ( year, semester, name, gvId) => {
 
 report.list = async (req, res) => {
   const year = req.query.year;
+  const fieldfilter = req.query.fieldfilter;
+  const valuefilter = req.query.valuefilter;
   const semester = req.query.semester;
   const page = Number(req.query.page);
   const size = Number(req.query.size);
   const type = Number(req.query.type);
+  function nextYear(year) {
+    const temp = year.slice(0,4)
+    console.log(temp)
+    const ntYear = Number(temp) + 1
+    return `${ntYear}-${ntYear+1}` 
+  }
+  // sort
   let sort = req.query.sort=='tang' ? 'ASC' : 'DESC';
   const sortField = req.query.sortField ? req.query.sortField : 'id' ;
   if (sortField==='id') {
@@ -143,20 +152,20 @@ report.list = async (req, res) => {
   let response1;
   let count1;
 
-  function nextYear(year) {
-    const temp = year.slice(0,4)
-    console.log(temp)
-    const ntYear = Number(temp) + 1
-    return `${ntYear}-${ntYear+1}` 
+  // check field filter
+  let condition = []
+  if (fieldfilter && valuefilter) {
+    condition.push({
+      [fieldfilter]: valuefilter
+    })
   }
 
   if (Boolean(year) && Boolean(semester) && type===0) {
+    condition.push( { year: year },
+      { semester: Number(semester) })
     const { count, rows } = await ReportHour.findAndCountAll({
       where: {
-        [Op.and]: [
-          { year: year },
-          { semester: Number(semester) }
-        ]
+        [Op.and]: condition
       },
       offset: Number((page-1)*size), 
       limit: Number(size),
@@ -167,6 +176,7 @@ report.list = async (req, res) => {
     response1 = rows
     count1 = count
   } else if (Boolean(year) && Boolean(semester) && type===1) {
+
     const { count, rows } = await ReportHour.findAndCountAll({
       where:  { year: year },
       offset: Number((page-1)*size), 
@@ -434,7 +444,7 @@ report.export = async (req, res) => {
   }
 
   let workbook = new excel.Workbook();
-  let worksheet = workbook.addWorksheet("Tutorials");
+  let worksheet = workbook.addWorksheet("Report");
 
 
   worksheet.columns = header
