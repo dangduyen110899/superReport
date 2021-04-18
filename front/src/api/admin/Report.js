@@ -28,6 +28,10 @@ const tkb=(year, semester)=>{
   return http.get(`${dbName}/tkb?year=&&semester=`, { headers: authHeader() })
 }
 
+const download=(data)=>{
+  return http.post(`${dbName}/report/export`, data, { headers: authHeader(), responseType: "blob" })
+}
+
 
 // eslint-disable-next-line
-export default {report, tkb};
+export default {report, tkb, download};

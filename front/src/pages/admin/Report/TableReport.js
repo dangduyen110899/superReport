@@ -14,6 +14,7 @@ import SelectYear from './SelectYear';
 import { useDispatch } from 'store/index';
 import { LOADING_FULL_SCREEN } from 'store/action-types';
 import LoadingFullScreen from '../component/LoadingFullScreen';
+import { downloadFile } from './DowloadFile';
 
 export default function TableReport({match}) {
   const dispatch = useDispatch()
@@ -80,7 +81,7 @@ export default function TableReport({match}) {
     //   key: 'programs',
     // },
     {
-      title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy trên lớp <i class="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy trên lớp <i className="fas fa-sort"></i></div>},
       dataIndex: 'hourSchedule',
       key: 'hourSchedule',
       width: 150,
@@ -88,7 +89,7 @@ export default function TableReport({match}) {
       render: (value, item) => <Link to={`/admin/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
     {
-      title: () => { return <div onClick={() => sortHour('hourThesis')}>Giờ hd khóa luận <i class="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('hourThesis')}>HD khóa luận <i className="fas fa-sort"></i></div>},
       dataIndex: 'hourThesis',
       key: 'hourThesis',
       width: 150,
@@ -96,21 +97,21 @@ export default function TableReport({match}) {
       render: (value, item) => <Link to={`/admin/report/thesis/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
     {
-      title: () => { return <div onClick={() => sortHour('hourProject')}>Giờ hd đồ án <i class="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('hourProject')}>HD đồ án <i className="fas fa-sort"></i></div>},
       dataIndex: 'hourProject',
       key: 'hourProject',
       width: 130,
       align: 'center'
     },
     {
-      title: () => { return <div onClick={() => sortHour('hourTTCN')}>Giờ hd thực tập <i class="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('hourTTCN')}>HD thực tập <i className="fas fa-sort"></i></div>},
       dataIndex: 'hourTTCN',
       key: 'hourTTCN',
       width: 130,
       align: 'center'
     },
     {
-      title: () => { return <div onClick={() => sortHour('total')}>Tổng số giờ <i class="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('total')}>Tổng số giờ <i className="fas fa-sort"></i></div>},
       dataIndex: 'total',
       key: 'total',
       width: 130,
@@ -121,7 +122,7 @@ export default function TableReport({match}) {
   if(type) {
     columns.push(
       {
-        title: () => { return <div onClick={() => sortHour('total')}>Tỷ lệ <i class="fas fa-sort"></i></div>},
+        title: () => { return <div onClick={() => sortHour('total')}>Tỷ lệ <i className="fas fa-sort"></i></div>},
         dataIndex: 'rate',
         key: "rate",
         width: 100,
@@ -218,6 +219,9 @@ export default function TableReport({match}) {
             <Option value={1}>Theo năm học</Option>
             <Option value={2}>Theo năm tài chính</Option>
           </Select>
+        </Col>
+        <Col>
+          <span onClick={() => downloadFile({year: year, semester: semester, type: type, sort: sort, sortField: sortField})}>Export file</span>
         </Col>
         {
           useMemo(() => 
