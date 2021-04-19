@@ -6,7 +6,7 @@ import {
   Col, Pagination,Select
 } from 'antd';
 import callAdmin from 'api/admin/Report';
-import SelectY from '../component/Select';
+import {FilterOutlined} from '@ant-design/icons';
 import { useHistory, Link } from "react-router-dom";
 import queryString from 'query-string'
 import Cookies from "js-cookie";
@@ -35,10 +35,20 @@ export default function TableReport({match}) {
   const [yearShow2, setYearShow2] = useState([])
   const [sort, setSort] = useState('')
   const [sortField, setSortField] = useState('')
+  // filter 
   const [valuefilter1, setvaluefilter1] = useState([])
   const [valuefilter2, setvaluefilter2] = useState([])
   const [listDepartment, setlistDepartment] = useState([])
+  const [listSubject, setlistSubject] = useState([])
+  const [visibleModal1, setvisibleModal1] = useState(false)
+  const [visibleModal2, setvisibleModal2] = useState(false)
+  const onFilter1 = () => {
+    setvisibleModal1(!visibleModal1)
+  }
 
+  const onFilter2 = () => {
+    setvisibleModal2(!visibleModal2)
+  }
 
   const sortHour = (field) => {
     if (sortField=='') {
@@ -64,6 +74,42 @@ export default function TableReport({match}) {
     }
   }
 
+  const handleFilter = (field) => {
+    if (field === 'khoa') {
+      const departmentCheck = listDepartment.filter(item => item.check)
+      const fitler1List = departmentCheck.map(item => item.value)
+      setvaluefilter1(fitler1List)
+      setvisibleModal1(false)
+    } else {
+      const subjectCheck = listSubject.filter(item => item.check)
+      const fitler2List = subjectCheck.map(item => item.value)
+      setvaluefilter2(fitler2List)
+      setvisibleModal2(false)
+    }
+  }
+
+  const handleResetModal1 = () => {
+    const departments = listDepartment.map(item => {
+      return {
+        value: item.value,
+        check: false
+      }
+    })
+    setlistDepartment(departments)
+    setvaluefilter1([])
+  }
+
+  const handleResetModal2 = () => {
+    const subjects = listSubject.map(item => {
+      return {
+        value: item.value,
+        check: false
+      }
+    })
+    setlistSubject(subjects)
+    setvaluefilter2([])
+  }
+
   let columns = [
     {
       title: "Số thứ tự",
@@ -81,8 +127,10 @@ export default function TableReport({match}) {
       title: () => {
         return (
           <div style={{position: 'relative'}}>
-            <div>Khoa</div>
-            <div style={{boxShadow: '0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%)', padding: '10px', position: 'absolute', top: '50px', right: '-15px', zIndex: '999', background: '#fff', borderRadius: '2px', width: '250px', overflow: 'auto'}}>
+            <div>Khoa <span style={{cursor: 'pointer', color: `${valuefilter1.length>0 ? 'blue' : ''}`}} onClick={() => onFilter1()}><FilterOutlined /></span></div>
+            {
+              visibleModal1 &&
+              <div style={{boxShadow: '0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%)', padding: '10px', position: 'absolute', top: '50px', right: '-15px', zIndex: '999', background: '#fff', borderRadius: '2px', width: '250px', overflow: 'auto'}}>
               {
                 listDepartment.map(item => {
                   return (
@@ -110,9 +158,12 @@ export default function TableReport({match}) {
                 })
               }
               <div style={{ textAlign: 'right' }}>
-                <button style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Ok</button>
+                <button onClick={() => handleFilter('khoa')} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Ok</button>
+                <button onClick={() => setvisibleModal1(false)} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Cancel</button>
+                <button onClick={() => handleResetModal1()} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Reset</button>
               </div>
             </div>
+            }
           </div>
         )
       },
@@ -120,7 +171,49 @@ export default function TableReport({match}) {
       key: 'department',
     },
     {
-      title: 'Bộ môn',
+      title: () => {
+        return (
+          <div style={{position: 'relative'}}>
+            <div>Bộ môn<span style={{cursor: 'pointer', color: `${valuefilter2.length>0 ? 'blue' : ''}`}} onClick={() => onFilter2()}><FilterOutlined /></span></div>
+            {
+              visibleModal2 &&
+              <div style={{boxShadow: '0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%)', padding: '10px', position: 'absolute', top: '50px', right: '-15px', zIndex: '999', background: '#fff', borderRadius: '2px', width: '250px', overflow: 'auto'}}>
+              {
+                listSubject.map(item => {
+                  return (
+                    <div className="d-flex">
+                      <div style={{ marginRight: '10px'}}>
+                        <input type="checkbox" name="khoa" value={item.value} onChange={e => {
+                          const listSub = [...listSubject]
+                          _.forEach(listSub, (item) => {
+                            if (item.value === e.target.value) {
+                              if (item.check) {
+                                item.check = false
+                              } else {
+                                item.check = true
+                              }
+                            }
+                          })
+                          setlistSubject(listSub)
+                        }} checked={item.check}/>
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: '100', textTransform: 'capitalize', textAlign: 'left'}}>
+                        <label htmlFor="">{item.value}</label>
+                      </div>
+                    </div>
+                  )
+                })
+              }
+              <div style={{ textAlign: 'right' }}>
+                <button onClick={() => handleFilter('bomon')} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Ok</button>
+                <button onClick={() => setvisibleModal2(false)} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Cancel</button>
+                <button onClick={() => handleResetModal2()} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Reset</button>
+              </div>
+            </div>
+            }
+          </div>
+        )
+      },
       dataIndex: 'subject',
       key: 'subject',
     },
@@ -193,7 +286,7 @@ export default function TableReport({match}) {
           payload: true,
         })
         console.log(sort, sortField)
-        await callAdmin.report(year,semester, pageCurren,pagesize,type, sortField, sort, valuefilter1, valuefilter2).then(res =>{
+        await callAdmin.report(year,semester, pageCurren,pagesize,type, sortField, sort ,valuefilter1, valuefilter2).then(res =>{
           setData(res.data.data)
           setTotalData(res.data.total)
           dispatch({
@@ -249,6 +342,13 @@ export default function TableReport({match}) {
         let dataDepartment  =  listDepartments?.filter((item, index) => listDepartments.indexOf(item) === index);
         dataDepartment = dataDepartment.map(item => { return {check: false, value: item}})
         setlistDepartment(dataDepartment)
+
+        //list subject
+        const listSubjects = res?.data?.data.map(item => item.subject)
+        let dataSubject  =  listSubjects?.filter((item, index) => listSubjects.indexOf(item) === index);
+        dataSubject = dataSubject.map(item => { return {check: false, value: item}})
+        setlistSubject(dataSubject)
+
         dispatch({
           type: LOADING_FULL_SCREEN,
           payload: false,
@@ -286,7 +386,7 @@ export default function TableReport({match}) {
           Search
         </Col>
         <Col>
-          <span onClick={() => downloadFile({year: year, semester: semester, type: type, sort: sort, sortField: sortField})}>Export file</span>
+          <span onClick={() => downloadFile({year: year, semester: semester, type: type, sort: sort, sortField: sortField, valuefilter1: valuefilter1, valuefilter2: valuefilter2})}>Export file</span>
         </Col>
       </Row>
       <br/>

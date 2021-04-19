@@ -43,9 +43,9 @@ export default function LayoutAdmin({children, match}) {
     }}
       trigger={null} collapsible collapsed={collapsed}
     >
-      <div className="logo"><img style={{width: `${collapsed ? '63%' : '27%'}`, 
-      height: "25px", margin: `${collapsed ? "13px -6px 15px 16px" : "18px -8px 21px 4px"}`}} src={logo}/>
-        <span style={{color: "#fff", fontFamily: "system-ui", fontWeight: "bold"}}>
+      <div className="logo"><img style={{width: `${collapsed ? '63%' : '40%'}`, 
+      height: "60px", margin: `${collapsed ? "13px -6px 15px 16px" : "18px -8px 21px 4px"}`}} src={logo}/>
+        <span style={{color: "#6c757d", fontFamily: "system-ui", fontWeight: "bold", fontSize: "24px"}}>
           {collapsed ? '' : 'SUPER-REPORT'}
         </span>
       </div>

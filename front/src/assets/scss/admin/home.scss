@@ -1,3 +1,86 @@
 .form_email-validate {
   color: #df3449;
 }
+
+.button-all {
+  padding: 1px 12px;
+  height: 40px;
+  background-color: #1890ff;
+  border-color: #1890ff;
+  color: rgb(255, 255, 255);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.select_all {
+  select {
+    font-size: 14px;
+    padding: 8px 12px;
+    border: 1px solid #edf1f7;
+    background-color: #fff;
+    border-radius: 6px;
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+.ant-layout-header {
+  height: 90px !important;
+}
+
+.ant-layout-sider-dark {
+  height: auto !important;
+  flex: 0 0 300px !important;
+  max-width: 300px !important;
+  min-width: 300px !important;
+  width: 300px !important;
+}
+
+.logo {
+  margin-bottom: 20px;
+}
+
+.header-report {
+  margin: 20px;
+  .bell {
+    margin-right: 15px;
+  }
+}
+
+// .anticon {
+//   svg {
+//     font-size: 24px !important;
+//   }
+// }
+
+.ant-menu-item {
+  border-bottom: 1px solid #edf1f7;
+  margin: 0 !important;
+  padding: 0 20px !important;
+  height: auto !important;
+  line-height: 60px !important;
+  .anticon-database {
+    color: #222b45 !important;
+  }
+
+  span {
+    a {
+      font-size: .8125rem;
+      font-weight: 600;
+      line-height: 1.5rem;
+      color: #222b45 !important;
+    }
+  }
+}
+
+.ant-menu-inline-collapsed {
+  width: 0 !important;
+}
+
+.ant-layout-sider-children,
+.ant-menu-inline {
+  background-color: #fff !important;
+}

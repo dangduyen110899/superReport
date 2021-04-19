@@ -292,7 +292,7 @@ export default function TableTkb({match}) {
           user && (user.roles === 'ADMIN') && 
           <Col>
           <Space>
-            <Button type="primary" onClick={() =>  {setIsModalVisible(true)}}>
+            <Button className="button-all">
               Thêm thời khóa biểu
             </Button>
           </Space>

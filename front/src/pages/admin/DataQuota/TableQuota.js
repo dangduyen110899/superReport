@@ -220,7 +220,7 @@ export default function TableQuota({match}) {
           user && (user.roles === 'ADMIN') &&
           <Col>
           <input type="file" onChange={e => handleAddquotas(e.target.files[0])}/>
-          <Button type="primary" onClick={() => setIsModalVisible(true)}>
+          <Button className="button-all" onClick={() => setIsModalVisible(true)}>
             + Thêm định mức
           </Button>
           <Modal

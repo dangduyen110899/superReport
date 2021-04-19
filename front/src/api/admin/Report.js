@@ -6,13 +6,13 @@ const dbName='admin'
 const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
 
 
-const report = (year, semester, page, size,type, sortField='', sort='',fieldfilter='', valuefilter='') => {
+const report = (year, semester, page, size,type, sortField='', sort='',valuefilter1='', valuefilter2='') => {
   if (year&&semester) {
     if(user?.roles==='ADMIN' || user?.roles==='LEADER') {
-      return http.get(`${dbName}/report?year=${year}&&semester=${semester}&&page=${page}&&size=${size}&&type=${type}&&sortField=${sortField}&&sort=${sort}&&fieldfilter=${fieldfilter}&&valuefilter=${valuefilter}`, { headers: authHeader() })
+      return http.get(`${dbName}/report?year=${year}&&semester=${semester}&&page=${page}&&size=${size}&&type=${type}&&sortField=${sortField}&&sort=${sort}&&valuefilter1=${valuefilter1}&&valuefilter2=${valuefilter2}`, { headers: authHeader() })
     }
     else {
-      return http.get(`lecturer/report?year=${year}&&semester=${semester}&&page=${page}&&size=${size}&&type=${type}&&sortField=${sortField}&&sort=${sort}&&fieldfilter=${fieldfilter}`, { headers: authHeader() })
+      return http.get(`lecturer/report?year=${year}&&semester=${semester}&&page=${page}&&size=${size}&&type=${type}&&sortField=${sortField}&&sort=${sort}&&valuefilter1=${valuefilter1}&&valuefilter2=${valuefilter2}`, { headers: authHeader() })
     }
   }
   else {

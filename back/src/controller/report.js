@@ -131,15 +131,14 @@ report.updateHour = async ( year, semester, name, gvId) => {
 
 report.list = async (req, res) => {
   const year = req.query.year;
-  const fieldfilter = req.query.fieldfilter;
-  const valuefilter = req.query.valuefilter;
+  const valuefilter2= req.query.valuefilter2
+  const valuefilter1 = req.query.valuefilter1
   const semester = req.query.semester;
   const page = Number(req.query.page);
   const size = Number(req.query.size);
   const type = Number(req.query.type);
   function nextYear(year) {
     const temp = year.slice(0,4)
-    console.log(temp)
     const ntYear = Number(temp) + 1
     return `${ntYear}-${ntYear+1}` 
   }
@@ -154,19 +153,33 @@ report.list = async (req, res) => {
 
   // check field filter
   let condition = []
-  if (fieldfilter && valuefilter) {
-    condition.push({
-      [fieldfilter]: valuefilter
+  const arrFitlerDepartment1 = valuefilter1 && valuefilter1.split(',') || []
+  const arrFitlerDepartment2 = valuefilter2 && valuefilter2.split(',') || []
+
+  if (arrFitlerDepartment1.length>0) {
+    arrFitlerDepartment1.forEach(item => {
+      condition.push({
+        'department': item
+      })
+    })
+  }
+
+  if (arrFitlerDepartment2.length>0) {
+    arrFitlerDepartment2.forEach(item => {
+      condition.push({
+        'subject': item
+      })
     })
   }
 
   if (Boolean(year) && Boolean(semester) && type===0) {
-    condition.push( { year: year },
-      { semester: Number(semester) })
+    const conbo = {
+      [Op.and]: [{ year: year },
+        { semester: Number(semester) }]
+    }
+    const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
     const { count, rows } = await ReportHour.findAndCountAll({
-      where: {
-        [Op.and]: condition
-      },
+      where: conditions,
       offset: Number((page-1)*size), 
       limit: Number(size),
       order: [
@@ -176,9 +189,12 @@ report.list = async (req, res) => {
     response1 = rows
     count1 = count
   } else if (Boolean(year) && Boolean(semester) && type===1) {
-
+    const conbo = {
+      [Op.and]: [{ year: year }]
+    }
+    const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
     const { count, rows } = await ReportHour.findAndCountAll({
-      where:  { year: year },
+      where: conditions,
       offset: Number((page-1)*size), 
       limit: Number(size),
       attributes: ['year', 'lecturerId', 
@@ -193,13 +209,13 @@ report.list = async (req, res) => {
     response1 = rows
     count1 = count
   } else if (Boolean(year) && Boolean(semester) && type===2) {
-    const { count, rows } = await ReportHour.findAndCountAll({
-      where:  { 
-        [Op.or]: [
-          { year: year, semester: 2},
+    const conbo = [
+      { year: year, semester: 2},
           { year: nextYear(year), semester: 1 }
-        ]
-       },
+    ]
+    const conditions = condition.length>0 ? {[Op.or] : [...condition, ...conbo]} : {[Op.or]: conbo}
+    const { count, rows } = await ReportHour.findAndCountAll({
+      where:  conditions,
       offset: Number((page-1)*size), 
       limit: Number(size),
       attributes: ['year', 'lecturerId', 
@@ -304,6 +320,31 @@ report.listIdlecturer = async (req, res) => {
 }
 
 report.export = async (req, res) => {
+  const valuefilter2= req.body.valuefilter2
+  const valuefilter1 = req.body.valuefilter1
+
+  // check field filter
+  let condition = []
+  const arrFitlerDepartment1 = valuefilter1 
+  // && valuefilter1.split(',') || []
+  const arrFitlerDepartment2 = valuefilter2
+  //  && valuefilter2.split(',') || []
+
+  if (arrFitlerDepartment1.length>0) {
+    arrFitlerDepartment1.forEach(item => {
+      condition.push({
+        'department': item
+      })
+    })
+  }
+
+  if (arrFitlerDepartment2.length>0) {
+    arrFitlerDepartment2.forEach(item => {
+      condition.push({
+        'subject': item
+      })
+    })
+  }
 
   const year = req.body.year;
   const semester = req.body.semester;
@@ -323,13 +364,13 @@ report.export = async (req, res) => {
   }
 
   if (Boolean(year) && Boolean(semester) && type===0) {
+    const conbo = {
+      [Op.and]: [{ year: year },
+        { semester: Number(semester) }]
+    }
+    const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
     const { count, rows } = await ReportHour.findAndCountAll({
-      where: {
-        [Op.and]: [
-          { year: year },
-          { semester: Number(semester) }
-        ]
-      },
+      where: conditions,
       order: [
         [sortField, sort]
     ],
@@ -337,8 +378,12 @@ report.export = async (req, res) => {
     response1 = rows
     count1 = count
   } else if (Boolean(year) && Boolean(semester) && type===1) {
+    const conbo = {
+      [Op.and]: [{ year: year }]
+    }
+    const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
     const { count, rows } = await ReportHour.findAndCountAll({
-      where:  { year: year },
+      where:  conditions,
       attributes: ['lecturerName','department','programs','subject',
       [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
       [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
@@ -351,13 +396,13 @@ report.export = async (req, res) => {
     response1 = rows
     count1 = count
   } else if (Boolean(year) && Boolean(semester) && type===2) {
-    const { count, rows } = await ReportHour.findAndCountAll({
-      where:  { 
-        [Op.or]: [
-          { year: year, semester: 2},
+    const conbo = [
+      { year: year, semester: 2},
           { year: nextYear(year), semester: 1 }
-        ]
-       },
+    ]
+    const conditions = condition.length>0 ? {[Op.or] : [...condition, ...conbo]} : {[Op.or]: conbo}
+    const { count, rows } = await ReportHour.findAndCountAll({
+      where:  conditions,
       attributes: ['lecturerName','department','programs','subject',
       [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
       [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
@@ -370,12 +415,12 @@ report.export = async (req, res) => {
     response1 = rows
     count1 = count
   } else {
+    console.log("xxx2")
     const { count, rows } = await ReportHour.findAndCountAll()
     response1 = rows
     count1 = count
   }
 
-  console.log(response1)
   let tutorials = []
   let header = []
 

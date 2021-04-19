@@ -251,7 +251,7 @@ export default function TableLecturer({match}) {
           user && (user.roles === 'ADMIN') &&
           <Col>
           <input type="file" onChange={e => handleAddLecturers(e.target.files[0])}/>
-          <Button type="primary" onClick={() => setIsModalVisible(true)}>
+          <Button className="button-all" onClick={() => setIsModalVisible(true)}>
             + Thêm giảng viên
           </Button>
           <Modal

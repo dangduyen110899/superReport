@@ -292,7 +292,7 @@ export default function TableThesic({match}) {
   return (
     <LayoutAdmin match={match}>
       <h2 className="title">QUẢN LÝ KHÓA LUẬN TỐT NGHIỆP</h2>
-      <Row justify="space-between">
+      <Row justify="space-between select_all">
         <Col>
           {
             useMemo(() => {
@@ -306,7 +306,7 @@ export default function TableThesic({match}) {
          user && user.roles === 'ADMIN' &&
          <Col>
          <Space>
-           <Button type="primary" onClick={() => setIsModalVisible(true)}>
+           <Button className="button-all" onClick={() => setIsModalVisible(true)}>
              Thêm quản lý khóa luận tốt nghiệp
            </Button>
          </Space>
