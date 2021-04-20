@@ -19,6 +19,7 @@ module.exports = (sequelize, Sequelize) => {
     hourTTCN: { type: Sequelize.FLOAT, defaultValue: 0},
     total: { type: Sequelize.FLOAT, defaultValue: 0},
     rate: { type: Sequelize.FLOAT, defaultValue: 0},
+    quota: { type: Sequelize.FLOAT, defaultValue: 0},
   },{
     timestamps: false
   });

@@ -1,14 +1,14 @@
 .ant-table-thead > tr > th
 {
-    font-size: 14px;
+    font-size: 12px;
     background: #f2f9ff !important;
-    // text-transform: uppercase;
-    padding: 10px !important;
-    color: #707070;
+    text-transform: uppercase;
+    padding: 15px !important;
+    color: #333333;
     text-align: left !important;
 }
 .ant-table-tbody > tr > td {
-    font-size: 14px;
+    font-size: 15px;
     cursor: pointer;
     padding: 10px !important;
     // color: #707070;

@@ -49,7 +49,7 @@ export default function LayoutAdmin({children, match}) {
           {collapsed ? '' : 'SUPER-REPORT'}
         </span>
       </div>
-      <Menu theme="dark" mode="inline" defaultSelectedKeys={[match.match.path==="/admin/tkb" ? "1" : match.match.path==="/admin/kltn" ? "2" : match.match.path==="/admin/lecturer" ? "3" : match.match.path==="/admin/student" ? "4" :  match.match.path==="/admin/report" ? "5" : "10" ]}>
+      <Menu mode="inline" defaultSelectedKeys={[match.match.path==="/admin/tkb" ? "1" : match.match.path==="/admin/kltn" ? "2" : match.match.path==="/admin/lecturer" ? "3" : match.match.path==="/admin/student" ? "4" :  match.match.path==="/admin/report" ? "5" : "10" ]}>
         {
           (user?.roles === 'ADMIN') 
           && 

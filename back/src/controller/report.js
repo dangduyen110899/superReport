@@ -42,12 +42,12 @@ report.updateHour = async ( year, semester, name, gvId) => {
         where: { position: response3[0].dataValues.position || 'GV' }
       })
 
-      const rate = 270*(100 - response4[0].dataValues.rate)
+      const rate = 270*(response4[0].dataValues.rate || 1)
 
       if (response2.length>0) {
         // update report hour
         const total = response2[0].dataValues.total + response1[0].dataValues.hourSchedule - response2[0].dataValues.hourSchedule
-        await ReportHour.update({...response2[0].dataValues, ...response1[0].dataValues, total: total, rate: Math.round(total*10000/rate)},{
+        await ReportHour.update({...response2[0].dataValues, ...response1[0].dataValues, total: total, rate: Math.round(total*10000/rate), quota: response4[0].dataValues.rate},{
           where: { id: response2[0].dataValues.id}
           })
       } else {
@@ -62,7 +62,7 @@ report.updateHour = async ( year, semester, name, gvId) => {
         }
         try {
           const total = response1[0].dataValues.hourSchedule
-          await ReportHour.create({...response1[0].dataValues, ...dataGv, total: total, rate: Math.round(total*10000/rate)})
+          await ReportHour.create({...response1[0].dataValues, ...dataGv, total: total, rate: Math.round(total*10000/rate), quota: response4[0].dataValues.rate})
         } catch (error) {
           console.log(error)
         }
@@ -98,12 +98,12 @@ report.updateHour = async ( year, semester, name, gvId) => {
           where: { position: response3[0].dataValues.position || 'GV' }
         })
 
-        const rate = 270*(100 - response4[0].dataValues.rate)
+        const rate = 270*(response4[0].dataValues.rate || 1)
 
         if (response2.length>0) {
           // update report hour
           const total = response2[0].dataValues.total  + response1[0].dataValues.hourThesis - response2[0].dataValues.hourThesis
-          await ReportHour.update( {...response2[0].dataValues, ...response1[0].dataValues, total: total, rate: Math.round(total*10000/rate)},{
+          await ReportHour.update( {...response2[0].dataValues, ...response1[0].dataValues, total: total, rate: Math.round(total*10000/rate), quota: response4[0].dataValues.rate},{
             where: { id: response2[0].dataValues.id}
           })
         } else {
@@ -118,7 +118,7 @@ report.updateHour = async ( year, semester, name, gvId) => {
             subject: response3[0].dataValues.subject
           }
           const total = response1[0].dataValues.hourThesis
-          await ReportHour.create({...response1[0].dataValues, ...dataGv, total: total, rate: Math.round(total*10000/rate)})
+          await ReportHour.create({...response1[0].dataValues, ...dataGv, total: total, rate: Math.round(total*10000/rate), quota: response4[0].dataValues.rate})
         }
       }
       updateHourThesis()
@@ -203,7 +203,7 @@ report.list = async (req, res) => {
       [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
       [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
       [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
-      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject'],
+      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject','quota'],
       group : ['year', 'lecturerId']
     })
     response1 = rows
@@ -224,7 +224,7 @@ report.list = async (req, res) => {
       [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
       [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
       [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
-      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject'],
+      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject','quota'],
       group : ['lecturerId']
     })
     response1 = rows
@@ -282,7 +282,7 @@ report.listIdlecturer = async (req, res) => {
       [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
       [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
       [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
-      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject'],
+      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject','quota'],
       group : ['year', 'lecturerId']
     })
     response1 = rows
@@ -304,7 +304,7 @@ report.listIdlecturer = async (req, res) => {
       [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
       [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
       [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
-      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject'],
+      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject','quota'],
       group : ['lecturerId']
     })
     response1 = rows
@@ -388,7 +388,7 @@ report.export = async (req, res) => {
       [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
       [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
       [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
-      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],'quota',
       [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
       [sequelize.fn('sum', sequelize.col('total')), 'total']],
       group : ['year', 'lecturerId']
@@ -407,7 +407,7 @@ report.export = async (req, res) => {
       [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
       [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
       [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
-      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],'quota',
       [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
       [sequelize.fn('sum', sequelize.col('total')), 'total']],
       group : ['lecturerId']

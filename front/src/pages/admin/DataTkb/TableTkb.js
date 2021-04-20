@@ -149,20 +149,6 @@ export default function TableTkb({match}) {
       align: 'center'
     }
   ];
-  if(!year && !semester) {
-    columns.unshift(
-      {
-        title: 'Năm học',
-        dataIndex: 'year',
-        key: 'year',
-      },
-      {
-        title: 'Học kỳ',
-        dataIndex: 'semester',
-        key: 'semester',
-        width: 100,
-      align: 'center'
-      }) }
 
   if(user && (user.roles === 'ADMIN')) { 
     columns.push(
@@ -226,7 +212,13 @@ export default function TableTkb({match}) {
     };
     getData().then(res =>
       {
-        let arrString = res.data.data.map(item => item.semester + ' ' + item.year)
+        let arrString = res.data.data.map((item, index) => {
+          if (index===0) {
+            setYear(item.year)
+            setSemester(item.semester)
+          }
+          return item.semester + ' ' + item.year
+        })
         const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
         setYearShow([...arr])
         dispatch({
@@ -271,14 +263,16 @@ export default function TableTkb({match}) {
   }
 
   const onChangeYear = (item1, item2) => {
+    history.push(`/admin/tkb?year=${item1}&&semester=${item2}&&page=${1}&&size=${pagesize}&&keyword=${'ddd'}`)
+    setPageCurren(1)
     setYear(item1);
     setSemester(item2);
   }
 
   function onChange(page, pageSize) {
+    history.push(`/admin/tkb?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
     setPageCurren(page)
     setPagesize(pageSize)
-    history.push(`/admin/tkb?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
   }
 
   return (
@@ -319,7 +313,7 @@ export default function TableTkb({match}) {
          />
          
          {
-        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
+        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize} current={pageCurren}
         defaultCurrent={pageCurren}/>
       }
       <LoadingFullScreen/>

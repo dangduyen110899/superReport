@@ -36,11 +36,15 @@ body {
 }
 
 .ant-layout-sider-dark {
-  height: auto !important;
-  flex: 0 0 300px !important;
-  max-width: 300px !important;
+  // height: auto !important;
+  // flex: 0 0 300px !important;
+  // max-width: 300px !important;
   min-width: 300px !important;
-  width: 300px !important;
+  // width: 300px !important;
+}
+
+.ant-layout-sider-collapsed {
+  min-width: 0 !important;
 }
 
 .logo {

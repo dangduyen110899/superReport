@@ -95,13 +95,6 @@ export default function TableThesic({match}) {
   }
 
   let  columns = [
-    // {
-    //   title: "Số thứ tự",
-    //   key: "index",
-    //   render: (value, item, index) => (pageCurren - 1) *pagesize  + index + 1,
-    //   width: 60,
-    //   align: 'center'
-    // },
     {
       title: 'Mã SV',
       dataIndex: 'studentCode',
@@ -159,24 +152,6 @@ export default function TableThesic({match}) {
       align: 'center'
     }
   ];
-  if(!year && !semester) {
-    columns.unshift(
-      {
-        title: 'Năm học',
-        dataIndex: 'year',
-        key: 'year',
-        align: 'center',
-        width: 130,
-      },
-      {
-        title: 'Học kỳ',
-        dataIndex: 'semester',
-        key: 'semester',
-        width: 70,
-      align: 'center'
-      }
-    )
-  }
 
   if(user && (user.roles === 'ADMIN')) { 
     columns.push({
@@ -241,9 +216,15 @@ export default function TableThesic({match}) {
           type: LOADING_FULL_SCREEN,
           payload: false,
         })
-        let arrString = res.data.data.map(item => item.semester + ' ' + item.year)
+        let arrString = res.data.data.map((item, index) => {
+          if (index===0) {
+            setYear(item.year)
+            setSemester(item.semester)
+          }
+          return item.semester + ' ' + item.year
+        })
         const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
-        setYearShow([...arr])
+        setYearShow([...arr])      
       }
     )
   }, [load]);
@@ -279,14 +260,16 @@ export default function TableThesic({match}) {
   }
 
   const onChangeYear = (item1, item2) => {
+    history.push(`/admin/kltn?year=${item1}&&semester=${item2}&&page=${1}&&size=${pagesize}&&keyword=${'ddd'}`)
+    setPageCurren(1)
     setYear(item1);
     setSemester(item2);
   }
 
   function onChange(page, pageSize) {
+    history.push(`/admin/kltn?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
     setPageCurren(page)
     setPagesize(pageSize)
-    history.push(`/admin/kltn?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
   }
 
   return (
@@ -333,8 +316,12 @@ export default function TableThesic({match}) {
          />
 
       {
-        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
-        defaultCurrent={pageCurren}/>
+        useMemo(() => {
+          return (
+            totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize} current={pageCurren}
+              defaultCurrent={pageCurren}/>
+                )
+        }, [pageCurren,totalData,pagesize])
       }
        <LoadingFullScreen/>
     </LayoutAdmin>

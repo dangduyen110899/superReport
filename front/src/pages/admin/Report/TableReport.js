@@ -25,19 +25,19 @@ export default function TableReport({match}) {
   const history = useHistory()
   const [data, setData] = useState([])
   const [yearShow, setYearShow] = useState([])
-  const [year, setYear] = useState('');
-  const [semester, setSemester] = useState('')
+  const [year, setYear] = useState(value?.year ||'');
+  const [semester, setSemester] = useState(value?.semester || '')
   const [pageCurren, setPageCurren] = useState(value?.page || 1)
   const [pagesize, setPagesize] = useState(value?.size || 20)
   const [totalData, setTotalData] = useState(0)
   const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
-  const [type, settype] = useState(0)
+  const [type, settype] = useState(value?.type || 0)
   const [yearShow2, setYearShow2] = useState([])
-  const [sort, setSort] = useState('')
-  const [sortField, setSortField] = useState('')
+  const [sort, setSort] = useState(value?.sort ||'')
+  const [sortField, setSortField] = useState(value?.sortField || '')
   // filter 
-  const [valuefilter1, setvaluefilter1] = useState([])
-  const [valuefilter2, setvaluefilter2] = useState([])
+  const [valuefilter1, setvaluefilter1] = useState(value?.valuefilter1?.split(',') || [])
+  const [valuefilter2, setvaluefilter2] = useState(value?.valuefilter2?.split(',') || [])
   const [listDepartment, setlistDepartment] = useState([])
   const [listSubject, setlistSubject] = useState([])
   const [visibleModal1, setvisibleModal1] = useState(false)
@@ -51,41 +51,43 @@ export default function TableReport({match}) {
   }
 
   const sortHour = (field) => {
+    let x , y = field
     if (sortField=='') {
       setSort('tang');
       setSortField(field)
-      return true
+      x='tang'
     }
-    else if (sort=='' && field!==sortField) {
-      setSortField(field)
+    else if (sort=='giam') {
       setSort("tang")
-      return true
-    } if (sort=='giam' && field==sortField) {
-      setSort("tang")
-      return true
+      x='tang'
     }
     else if (sort=='tang') {
       setSort('giam')
-      return true
-    } else {
-      setSort('')
-      setSortField('')
-      return true
+      x='giam'
     }
+    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${'ddd'}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${y}&&sort=${x}`)
+    setPageCurren(1)
   }
+
+
 
   const handleFilter = (field) => {
     if (field === 'khoa') {
       const departmentCheck = listDepartment.filter(item => item.check)
       const fitler1List = departmentCheck.map(item => item.value)
+      history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${'ddd'}&&valuefilter2=${valuefilter2}&&valuefilter1=${fitler1List}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
       setvaluefilter1(fitler1List)
       setvisibleModal1(false)
+      setPageCurren(1)
     } else {
       const subjectCheck = listSubject.filter(item => item.check)
       const fitler2List = subjectCheck.map(item => item.value)
+      history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${'ddd'}&&valuefilter2=${fitler2List}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
       setvaluefilter2(fitler2List)
       setvisibleModal2(false)
+      setPageCurren(1)
     }
+
   }
 
   const handleResetModal1 = () => {
@@ -127,7 +129,10 @@ export default function TableReport({match}) {
       title: () => {
         return (
           <div style={{position: 'relative'}}>
-            <div>Khoa <span style={{cursor: 'pointer', color: `${valuefilter1.length>0 ? 'blue' : ''}`}} onClick={() => onFilter1()}><FilterOutlined /></span></div>
+            <div className="d-flex justify-content-between">
+              <div>Khoa</div> 
+              <div style={{cursor: 'pointer', color: `${valuefilter1.length>0 ? 'blue' : ''}`}} 
+              onClick={() => onFilter1()}><FilterOutlined /></div></div>
             {
               visibleModal1 &&
               <div style={{boxShadow: '0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%)', padding: '10px', position: 'absolute', top: '50px', right: '-15px', zIndex: '999', background: '#fff', borderRadius: '2px', width: '250px', overflow: 'auto'}}>
@@ -174,7 +179,12 @@ export default function TableReport({match}) {
       title: () => {
         return (
           <div style={{position: 'relative'}}>
-            <div>Bộ môn<span style={{cursor: 'pointer', color: `${valuefilter2.length>0 ? 'blue' : ''}`}} onClick={() => onFilter2()}><FilterOutlined /></span></div>
+            <div className="d-flex justify-content-between">
+              <div>Bộ môn</div>
+              <div style={{cursor: 'pointer', color: `${valuefilter2.length>0 ? 'blue' : ''}`}} 
+              onClick={() => onFilter2()}><FilterOutlined />
+              </div>
+            </div>
             {
               visibleModal2 &&
               <div style={{boxShadow: '0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%)', padding: '10px', position: 'absolute', top: '50px', right: '-15px', zIndex: '999', background: '#fff', borderRadius: '2px', width: '250px', overflow: 'auto'}}>
@@ -264,6 +274,14 @@ export default function TableReport({match}) {
   if(type) {
     columns.push(
       {
+        title: () => { return <div onClick={() => sortHour('quota')}>Định mức<i className="fas fa-sort"></i></div>},
+        dataIndex: 'quota',
+        key: "quota",
+        width: 100,
+        align: 'center',
+        render: (value, item) => <span>{value} %</span>
+      },
+      {
         title: () => { return <div onClick={() => sortHour('total')}>Tỷ lệ <i className="fas fa-sort"></i></div>},
         dataIndex: 'rate',
         key: "rate",
@@ -274,6 +292,8 @@ export default function TableReport({match}) {
     )
   }
   const onChangeYear = (item1, item2) => {
+    history.push(`/admin/report?year=${item1}&&semester=${item2}&&page=${1}&&size=${pagesize}&&keyword=${'ddd'}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+    setPageCurren(1)
     setYear(item1);
     setSemester(item2);
   }
@@ -285,7 +305,6 @@ export default function TableReport({match}) {
           type: LOADING_FULL_SCREEN,
           payload: true,
         })
-        console.log(sort, sortField)
         await callAdmin.report(year,semester, pageCurren,pagesize,type, sortField, sort ,valuefilter1, valuefilter2).then(res =>{
           setData(res.data.data)
           setTotalData(res.data.total)
@@ -340,7 +359,20 @@ export default function TableReport({match}) {
         // list department
         const listDepartments = res?.data?.data.map(item => item.department)
         let dataDepartment  =  listDepartments?.filter((item, index) => listDepartments.indexOf(item) === index);
-        dataDepartment = dataDepartment.map(item => { return {check: false, value: item}})
+        dataDepartment = dataDepartment.map(item => { 
+          if (valuefilter1.length>0) {
+            let check = false
+            valuefilter1.filter(
+              item1 => {
+                if (item1===item) {
+                  check= true
+                }
+              }
+            )
+            return {check: check, value: item}
+          }
+          return {check: false, value: item}
+        })
         setlistDepartment(dataDepartment)
 
         //list subject
@@ -360,7 +392,7 @@ export default function TableReport({match}) {
   function onChange(page, pageSize) {
     setPageCurren(page)
     setPagesize(pageSize)
-    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}`)
+    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
   }
   const { Option } = Select;
   return (
@@ -399,7 +431,7 @@ export default function TableReport({match}) {
          />
       <br/>
       {
-        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
+        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize} current={pageCurren}
         defaultCurrent={pageCurren}/>
       }
       <LoadingFullScreen/>
