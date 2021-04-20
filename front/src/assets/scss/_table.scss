@@ -1,14 +1,32 @@
 .ant-table-thead > tr > th
 {
     font-size: 14px;
-    text-transform: uppercase;
+    background: #f2f9ff !important;
+    // text-transform: uppercase;
+    padding: 10px !important;
+    color: #707070;
+    text-align: left !important;
 }
 .ant-table-tbody > tr > td {
-    font-size: 18px;
+    font-size: 14px;
     cursor: pointer;
+    padding: 10px !important;
+    // color: #707070;
+    color: #000;
+    text-align: left !important;
 }
 tr:nth-child(odd){ 
-    background: #eaeaea;
+    background: #f2f9ff;
+}
+tr {
+    &:hover {
+        background: none !important;
+    }
+    td {
+        &:hover {
+            background: none !important;
+        }
+    }
 }
 tr:nth-child(even){
     background: white;
@@ -23,8 +41,13 @@ thead[class*="ant-table-thead"] th{
 
   .title {
     font-weight: bold;
-    font-family: cursive;
-    margin: 10px 0 40px;
+    // font-family: cursive;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #edf1f7;
+    margin: 10px 0 25px;
+    font-size: 18px;
+    color: #192038;
+    text-align: left;
   }
 
 .tab-lecturer {
@@ -44,4 +67,8 @@ thead[class*="ant-table-thead"] th{
 
 .ant-table-header {
     overflow: unset !important;
+}
+
+.ant-table-measure-row {
+    opacity: 0;
 }

@@ -78,7 +78,7 @@ export default function LayoutAdmin({children, match}) {
         </Menu.Item>
         }
       </Menu>
-      <span onClick={toggle} style={{color: "#fff", float: "right", margin: "30px"}}>{
+      <span onClick={toggle} style={{color: "#222b45", float: "right", margin: "30px", fontSize: '24px'}}>{
         collapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>
       }</span>
     </Sider>
@@ -98,7 +98,7 @@ export default function LayoutAdmin({children, match}) {
     </Header>
       
       <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-        <div className="site-layout-background" style={{ padding: 30, textAlign: 'center', background: "#fff", boxShadow: "0px 15px 13px -15px #b1b1b1"}}>
+        <div className="site-layout-background" style={{ padding: 30, textAlign: 'center', background: "#fff", boxShadow: "0px 15px 13px -15px #b1b1b1", borderRadius: '10px'}}>
         {
           children
         }

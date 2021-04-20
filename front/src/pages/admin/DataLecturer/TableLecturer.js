@@ -237,7 +237,7 @@ export default function TableLecturer({match}) {
 
   return (
     <LayoutAdmin match={match}>
-      <h2 className="title">QUẢN LÝ DANH SÁCH GIẢNG VIÊN</h2>
+      <h2 className="title">Quản lý danh sách giảng viên</h2>
       <Row justify="space-between">
         <Col>
         <div className="tab-lecturer">

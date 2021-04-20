@@ -283,7 +283,7 @@ export default function TableTkb({match}) {
 
   return (
     <LayoutAdmin match={match}>
-      <h2 className="title">QUẢN LÝ THỜI KHÓA BIỂU</h2>
+      <h2 className="title">Quản lý thời khóa biểu</h2>
       <Row justify="space-between">
         <Col>
           <Select options={yearShow} defaultVl={''} onChangeYear={onChangeYear}></Select>

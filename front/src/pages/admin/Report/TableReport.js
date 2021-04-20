@@ -365,7 +365,7 @@ export default function TableReport({match}) {
   const { Option } = Select;
   return (
     <LayoutAdmin match={match}>
-      <h2 className="title">BÁO CÁO TỔNG HỢP</h2>
+      <h2 className="title">Báo cáo tổng hợp</h2>
       <Row justify="space-between">
         <Col>
           <Select onChange={value => settype(value)} defaultValue={0} style={{ width: 200 }}>

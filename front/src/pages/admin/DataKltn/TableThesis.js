@@ -291,7 +291,7 @@ export default function TableThesic({match}) {
 
   return (
     <LayoutAdmin match={match}>
-      <h2 className="title">QUẢN LÝ KHÓA LUẬN TỐT NGHIỆP</h2>
+      <h2 className="title">Quản lý khóa luận tốt nghiệp</h2>
       <Row justify="space-between select_all">
         <Col>
           {
