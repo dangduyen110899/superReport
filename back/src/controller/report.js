@@ -130,6 +130,7 @@ report.updateHour = async ( year, semester, name, gvId) => {
 }
 
 report.list = async (req, res) => {
+  const keyword = req.query.keyword || '';
   const year = req.query.year;
   const valuefilter2= req.query.valuefilter2
   const valuefilter1 = req.query.valuefilter1
@@ -175,7 +176,7 @@ report.list = async (req, res) => {
   if (Boolean(year) && Boolean(semester) && type===0) {
     const conbo = {
       [Op.and]: [{ year: year },
-        { semester: Number(semester) }]
+        { semester: Number(semester) }, {lecturerName: {[Op.like]: `%${keyword}%`}}]
     }
     const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
     const { count, rows } = await ReportHour.findAndCountAll({
@@ -190,7 +191,7 @@ report.list = async (req, res) => {
     count1 = count
   } else if (Boolean(year) && Boolean(semester) && type===1) {
     const conbo = {
-      [Op.and]: [{ year: year }]
+      [Op.and]: [{ year: year },{lecturerName: {[Op.like]: `%${keyword}%`}}]
     }
     const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
     const { count, rows } = await ReportHour.findAndCountAll({
@@ -215,7 +216,7 @@ report.list = async (req, res) => {
     ]
     const conditions = condition.length>0 ? {[Op.or] : [...condition, ...conbo]} : {[Op.or]: conbo}
     const { count, rows } = await ReportHour.findAndCountAll({
-      where:  conditions,
+      where:  { lecturerName: {[Op.like]: `%${keyword}%`}, conditions } ,
       offset: Number((page-1)*size), 
       limit: Number(size),
       attributes: ['year', 'lecturerId', 
@@ -322,6 +323,7 @@ report.listIdlecturer = async (req, res) => {
 report.export = async (req, res) => {
   const valuefilter2= req.body.valuefilter2
   const valuefilter1 = req.body.valuefilter1
+  const keyword = req.body.keyword || ''
 
   // check field filter
   let condition = []
@@ -366,11 +368,12 @@ report.export = async (req, res) => {
   if (Boolean(year) && Boolean(semester) && type===0) {
     const conbo = {
       [Op.and]: [{ year: year },
-        { semester: Number(semester) }]
+        { semester: Number(semester) }, { lecturerName: {[Op.like]: `%${keyword}%`} }]
     }
     const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
     const { count, rows } = await ReportHour.findAndCountAll({
       where: conditions,
+      attributes: ["lecturerName","department","subject","hourThesis","hourSchedule","hourProject","hourTTCN","total"],
       order: [
         [sortField, sort]
     ],
@@ -379,7 +382,7 @@ report.export = async (req, res) => {
     count1 = count
   } else if (Boolean(year) && Boolean(semester) && type===1) {
     const conbo = {
-      [Op.and]: [{ year: year }]
+      [Op.and]: [{ year: year }, {lecturerName: {[Op.like]: `%${keyword}%`}}]
     }
     const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
     const { count, rows } = await ReportHour.findAndCountAll({
@@ -388,9 +391,10 @@ report.export = async (req, res) => {
       [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
       [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
       [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
-      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],'quota',
-      [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
-      [sequelize.fn('sum', sequelize.col('total')), 'total']],
+      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+      [sequelize.fn('sum', sequelize.col('total')), 'total'],
+      'quota',
+      [sequelize.fn('sum', sequelize.col('rate')), 'rate']],
       group : ['year', 'lecturerId']
     })
     response1 = rows
@@ -402,14 +406,15 @@ report.export = async (req, res) => {
     ]
     const conditions = condition.length>0 ? {[Op.or] : [...condition, ...conbo]} : {[Op.or]: conbo}
     const { count, rows } = await ReportHour.findAndCountAll({
-      where:  conditions,
+      where:  { lecturerName: {[Op.like]: `%${keyword}%`}, conditions },
       attributes: ['lecturerName','department','programs','subject',
       [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
       [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
       [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
-      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],'quota',
-      [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
-      [sequelize.fn('sum', sequelize.col('total')), 'total']],
+      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+      [sequelize.fn('sum', sequelize.col('total')), 'total'],
+      'quota',
+      [sequelize.fn('sum', sequelize.col('rate')), 'rate']],
       group : ['lecturerId']
     })
     response1 = rows

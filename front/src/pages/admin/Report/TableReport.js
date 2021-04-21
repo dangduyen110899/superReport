@@ -3,7 +3,7 @@ import LayoutAdmin from '../Layout';
 import {
   Table,
   Row,
-  Col, Pagination,Select
+  Col, Pagination,Select, Input
 } from 'antd';
 import callAdmin from 'api/admin/Report';
 import {FilterOutlined} from '@ant-design/icons';
@@ -17,6 +17,7 @@ import LoadingFullScreen from '../component/LoadingFullScreen';
 import { downloadFile } from './DowloadFile';
 import SelectSemester from './SelectSemester';
 import * as _ from 'lodash';
+const { Search } = Input;
 
 
 export default function TableReport({match}) {
@@ -42,6 +43,8 @@ export default function TableReport({match}) {
   const [listSubject, setlistSubject] = useState([])
   const [visibleModal1, setvisibleModal1] = useState(false)
   const [visibleModal2, setvisibleModal2] = useState(false)
+  // search
+  const [keyword, setKeyword] = useState(value?.keyword || '')
   const onFilter1 = () => {
     setvisibleModal1(!visibleModal1)
   }
@@ -65,7 +68,13 @@ export default function TableReport({match}) {
       setSort('giam')
       x='giam'
     }
-    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${'ddd'}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${y}&&sort=${x}`)
+    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${y}&&sort=${x}`)
+    setPageCurren(1)
+  }
+
+  const onSearch = value => {
+    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${value}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+    setKeyword(value)
     setPageCurren(1)
   }
 
@@ -75,14 +84,14 @@ export default function TableReport({match}) {
     if (field === 'khoa') {
       const departmentCheck = listDepartment.filter(item => item.check)
       const fitler1List = departmentCheck.map(item => item.value)
-      history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${'ddd'}&&valuefilter2=${valuefilter2}&&valuefilter1=${fitler1List}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+      history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${fitler1List}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
       setvaluefilter1(fitler1List)
       setvisibleModal1(false)
       setPageCurren(1)
     } else {
       const subjectCheck = listSubject.filter(item => item.check)
       const fitler2List = subjectCheck.map(item => item.value)
-      history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${'ddd'}&&valuefilter2=${fitler2List}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+      history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${fitler2List}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
       setvaluefilter2(fitler2List)
       setvisibleModal2(false)
       setPageCurren(1)
@@ -292,7 +301,7 @@ export default function TableReport({match}) {
     )
   }
   const onChangeYear = (item1, item2) => {
-    history.push(`/admin/report?year=${item1}&&semester=${item2}&&page=${1}&&size=${pagesize}&&keyword=${'ddd'}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+    history.push(`/admin/report?year=${item1}&&semester=${item2}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
     setPageCurren(1)
     setYear(item1);
     setSemester(item2);
@@ -305,7 +314,7 @@ export default function TableReport({match}) {
           type: LOADING_FULL_SCREEN,
           payload: true,
         })
-        await callAdmin.report(year,semester, pageCurren,pagesize,type, sortField, sort ,valuefilter1, valuefilter2).then(res =>{
+        await callAdmin.report(year,semester, pageCurren,pagesize,type, sortField, sort ,valuefilter1, valuefilter2,keyword).then(res =>{
           setData(res.data.data)
           setTotalData(res.data.total)
           dispatch({
@@ -322,7 +331,7 @@ export default function TableReport({match}) {
       }
     };
     getData();
-  }, [year, semester,pageCurren, pagesize,type,sort, sortField, valuefilter1, valuefilter2]);
+  }, [year, semester,pageCurren, pagesize,type,sort, sortField, valuefilter1, valuefilter2,keyword]);
 
   useEffect(() => {
     const getData = async () => {
@@ -392,7 +401,18 @@ export default function TableReport({match}) {
   function onChange(page, pageSize) {
     setPageCurren(page)
     setPagesize(pageSize)
-    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+  }
+
+  function onChangeType(value) {
+    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=&&valuefilter2=&&valuefilter1=&&type=${value}&&sortField=&&sort=`)
+    settype(value)
+    setPageCurren(1)
+    setvaluefilter1([])
+    setvaluefilter2([])
+    setSort('')
+    setSortField('')
+    setKeyword('')
   }
   const { Option } = Select;
   return (
@@ -400,7 +420,7 @@ export default function TableReport({match}) {
       <h2 className="title">Báo cáo tổng hợp</h2>
       <Row justify="space-between">
         <Col>
-          <Select onChange={value => settype(value)} defaultValue={0} style={{ width: 200 }}>
+          <Select onChange={value => onChangeType(value)} defaultValue={0} value={Number(type)} style={{ width: 200 }}>
             <Option value={0}>Theo học kỳ</Option>
             <Option value={1}>Theo năm học</Option>
             <Option value={2}>Theo năm tài chính</Option>
@@ -415,10 +435,16 @@ export default function TableReport({match}) {
           , [type, yearShow, yearShow2])
         }
         <Col>
-          Search
+          {
+            useMemo(() => {
+              return (
+                <Search placeholder="input search text" onSearch={onSearch} defaultValue={keyword} style={{ width: 200 }} />
+              )
+            }, [type, keyword])
+          }
         </Col>
         <Col>
-          <span onClick={() => downloadFile({year: year, semester: semester, type: type, sort: sort, sortField: sortField, valuefilter1: valuefilter1, valuefilter2: valuefilter2})}>Export file</span>
+          <span onClick={() => downloadFile({year: year, semester: semester, type: type, sort: sort, sortField: sortField, valuefilter1: valuefilter1, valuefilter2: valuefilter2, keyword: keyword})}>Export file</span>
         </Col>
       </Row>
       <br/>
