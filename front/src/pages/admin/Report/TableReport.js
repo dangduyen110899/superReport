@@ -255,9 +255,9 @@ export default function TableReport({match}) {
       render: (value, item) => <Link to={`/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
     {
-      title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy sau đh<i className="fas fa-sort"></i></div>},
-      dataIndex: 'hourSchedule',
-      key: 'hourSchedule',
+      title: () => { return <div onClick={() => sortHour('hourScheduleAfter')}>Giờ dạy sau đh<i className="fas fa-sort"></i></div>},
+      dataIndex: 'hourScheduleAfter',
+      key: 'hourScheduleAfter',
       width: 150,
       align: 'center',
       render: (value, item) => <Link to={`/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>

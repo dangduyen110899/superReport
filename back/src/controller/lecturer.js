@@ -88,14 +88,18 @@ lecturer.creates = async (req, res) => {
           position: rows[i][5] || '',
           ...program
         }
-        if (res1 && res1[0].dataValues) {
+        if (res1 && res1[0] && res1[0].dataValues) {
           // update
           Lecturer.update( {...res1.dataValues, ...program},{
             where: { id: res1[0].dataValues.id}
           })
         } else  {
           //create
-          await Lecturer.create(request)
+          try {
+            await Lecturer.create(request)
+          } catch (error) {
+            console.log(error)
+          }
         }
       }
       res.json()
