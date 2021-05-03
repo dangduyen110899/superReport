@@ -418,7 +418,7 @@ export default function TableReport({match}) {
   return (
     <LayoutAdmin match={match}>
       <h2 className="title">Báo cáo tổng hợp</h2>
-      <Row justify="space-between">
+      <Row>
         <Col>
           <Select onChange={value => onChangeType(value)} defaultValue={0} value={Number(type)} style={{ width: 200 }}>
             <Option value={0}>Theo học kỳ</Option>
@@ -434,19 +434,22 @@ export default function TableReport({match}) {
         </Col>
           , [type, yearShow, yearShow2])
         }
-        <Col>
+      </Row>
+      <Row justify="space-between">
+          <Col flex='5'>
           {
             useMemo(() => {
               return (
-                <Search placeholder="input search text" onSearch={onSearch} defaultValue={keyword} style={{ width: 200 }} />
+                <Search placeholder="input search text" onChange={e => onSearch(e.target.value)} value={keyword}/>
               )
             }, [type, keyword])
           }
+          </Col>
+          <Col flex='4'></Col>
+          <Col flex='1'>
+          <span onClick={() => downloadFile({year: year, semester: semester, type: type, sort: sort, sortField: sortField, valuefilter1: valuefilter1, valuefilter2: valuefilter2, keyword: keyword})} className="download">Export file</span>
         </Col>
-        <Col>
-          <span onClick={() => downloadFile({year: year, semester: semester, type: type, sort: sort, sortField: sortField, valuefilter1: valuefilter1, valuefilter2: valuefilter2, keyword: keyword})}>Export file</span>
-        </Col>
-      </Row>
+        </Row>
       <br/>
       <Table
         columns={columns}
