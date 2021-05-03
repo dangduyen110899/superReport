@@ -51,18 +51,16 @@ export default function LayoutAdmin({children, match}) {
       </div>
       <Menu mode="inline" defaultSelectedKeys={[match.match.path==="/admin/tkb" ? "1" : match.match.path==="/admin/kltn" ? "2" : match.match.path==="/admin/lecturer" ? "3" : match.match.path==="/admin/student" ? "4" :  match.match.path==="/admin/quota" ? "10" : "5" ]}>
         {
+          (user?.roles === 'ADMIN' || user?.roles === 'ADMIN1') 
+          && 
+          <Menu.Item key="3" icon={<DatabaseOutlined />}>
+          <Link to="/admin/lecturer">Quản lý giảng viên</Link>
+        </Menu.Item>
+        }
+        {
           (user?.roles === 'ADMIN') 
           && 
           <>
-            <Menu.Item key="1" icon={<DatabaseOutlined />}>
-            <Link to="/admin/tkb">Quản lý TKB</Link>
-            </Menu.Item>
-            <Menu.Item key="2" icon={<DatabaseOutlined />}>
-              <Link to="/admin/kltn">Quản lý KLTN</Link>
-            </Menu.Item>
-            <Menu.Item key="3" icon={<DatabaseOutlined />}>
-              <Link to="/admin/lecturer">Quản lý giảng viên</Link>
-            </Menu.Item>
             <Menu.Item key="4" icon={<DatabaseOutlined />}>
               <Link to="/admin/student">Quản lý sinh viên</Link>
             </Menu.Item>
@@ -72,9 +70,23 @@ export default function LayoutAdmin({children, match}) {
           </>
         }
         {
-          (user?.roles === 'ADMIN' || user?.roles === 'LEADER' || user?.roles === 'USER') && 
+          (user?.roles === 'ADMIN' || user?.roles === 'ADMIN1') 
+          && 
+            <Menu.Item key="1" icon={<DatabaseOutlined />}>
+            <Link to="/admin/tkb">Quản lý TKB</Link>
+            </Menu.Item>
+        }
+         {
+          (user?.roles === 'ADMIN') 
+          && 
+          <Menu.Item key="2" icon={<DatabaseOutlined />}>
+          <Link to="/admin/kltn">Quản lý KLTN</Link>
+        </Menu.Item>
+        }
+        {
+          (user?.roles === 'ADMIN' || user?.roles === 'ADMIN1' || user?.roles === 'LEADER' || user?.roles === 'USER') && 
           <Menu.Item key="5" icon={<DatabaseOutlined />}>
-          <Link to="/admin/report">Báo cáo</Link>
+          <Link to="/report">Báo cáo</Link>
         </Menu.Item>
         }
       </Menu>

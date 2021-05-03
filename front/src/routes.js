@@ -31,7 +31,7 @@ export const routes = [
     path: "/admin/lecturer",
     exact: true,
     components: match => <TableLecturer match={match}/>,
-    role: ['ADMIN']
+    role: ['ADMIN', 'ADMIN1']
   },
   {
     path: "/admin/student",
@@ -43,19 +43,19 @@ export const routes = [
     path: "/admin/tkb",
     exact: true,
     components: match => <TableTkb match={match}/>,
-    role: ['ADMIN']
+    role: ['ADMIN', 'ADMIN1']
   },
   {
     path: "/admin/kltn",
     exact: true,
     components: match => <TableThesic match={match}/>,
-    role: ['ADMIN']
+    role: ['ADMIN', 'ADMIN1']
   },
   {
-    path: "/admin/report",
+    path: "/report",
     exact: true,
     components: match => <TableReport match={match}/>,
-    role: ['ADMIN', 'LEADER', 'LECTURER']
+    role: ['ADMIN', 'ADMIN1','LĐK','LĐBM', 'LĐCC','USER']
   },
   {
     path: "/admin/quota",
@@ -64,15 +64,15 @@ export const routes = [
     role: ['ADMIN']
   },
   {
-    path: "/admin/report/schedules/:lecturerId",
+    path: "/report/schedules/:lecturerId",
     exact: true,
     components: match => <ReportDetailTkb match={match}/>,
-    role: ['ADMIN', 'LEADER', 'LECTURER']
+    role: ['ADMIN', 'ADMIN1','LĐK','LĐBM', 'LĐCC','USER']
   },
   {
-    path: "/admin/report/thesis/:lecturerId",
+    path: "/report/thesis/:lecturerId",
     exact: true,
     components: match => <ReportDetailThesis match={match}/>,
-    role: ['ADMIN', 'LEADER', 'LECTURER']
+    role: ['ADMIN', 'ADMIN1','LĐK','LĐBM', 'LĐCC','USER']
   }
 ];

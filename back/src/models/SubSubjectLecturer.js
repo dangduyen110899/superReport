@@ -21,6 +21,7 @@ module.exports = (sequelize, Sequelize) => {
     lecturerName: Sequelize.STRING,
     language: Sequelize.INTEGER,
     hour: Sequelize.FLOAT,
+    program: { type: Sequelize.INTEGER, defaultValue: 0},
     nameSubject: Sequelize.STRING,
     subjectCode: Sequelize.STRING,
   },{

@@ -150,7 +150,7 @@ export default function TableTkb({match}) {
     }
   ];
 
-  if(user && (user.roles === 'ADMIN')) { 
+  if(user && (user.roles === 'ADMIN' || user.roles === 'ADMIN1')) { 
     columns.push(
       {
         title: 'Action',
@@ -283,10 +283,10 @@ export default function TableTkb({match}) {
           <Select options={yearShow} defaultVl={''} onChangeYear={onChangeYear}></Select>
         </Col>
         {
-          user && (user.roles === 'ADMIN') && 
+          user && (user.roles === 'ADMIN' || user.roles === 'ADMIN1') && 
           <Col>
           <Space>
-            <Button className="button-all">
+            <Button className="button-all" onClick={() => setIsModalVisible(true)}>
               Thêm thời khóa biểu
             </Button>
           </Space>

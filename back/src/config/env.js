@@ -1,7 +1,7 @@
 const env = {
   database: 'kltn',
   username: 'root',
-  password: 'desktop',
+  password: '',
   host: 'localhost',
   dialect: 'mysql',
   pool: {

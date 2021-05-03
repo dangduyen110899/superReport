@@ -136,6 +136,8 @@ subSubjectLecturer.checkYear = async (req, res) => {
   }
 
 subSubjectLecturer.creates = async (req, res) => {
+  console.log(req.user)
+  let program = req.user.role==='ADMIN' ? 0 : 1
   const year = req.body.year;
   const semester = req.body.semester;
 
@@ -176,6 +178,7 @@ subSubjectLecturer.creates = async (req, res) => {
                 subjectCode: rows[i][0],
                 job: jobTkb,
                 nameSubject: rows[i][1],
+                program: program
               }
               subSubjectLecturer.hour = getHourItem(subSubjectLecturer, (rows[i][9] === "CL" || rows[i][9]==="TA") ? 0 : 1, 'tkb',1)
               tkbs.push(subSubjectLecturer);
@@ -213,6 +216,7 @@ subSubjectLecturer.creates = async (req, res) => {
                     subjectCode: rows[i][0],
                     job: jobTkb,
                     nameSubject: rows[i][1],
+                    program: program
                   }
                   subSubjectLecturer1.hour = getHourItem(subSubjectLecturer1, (rows[i][9] === "CL" || rows[i][9]==="TA") ? 0 : 1, 'tkb', 2)
                   tkbs.push(subSubjectLecturer1);
@@ -225,14 +229,14 @@ subSubjectLecturer.creates = async (req, res) => {
       fetchApi().then( async() => {
 
         await SubSubjectLecturer.bulkCreate(tkbs).then( () =>{
-          res.json(tkbs);
+          // res.json(tkbs);
         })
         const lecturerIdTkb = Array.from(new Set(tkbs.map(item => item.lecturerId)))
 
         for (let i = 0; i < lecturerIdTkb.length; i++) {
-          await report.updateHour(year, semester, 'tkb', lecturerIdTkb[i])
+          await report.updateHour(year, semester, program ? 'tkb sau đh' : 'tkb trong đh', lecturerIdTkb[i])
         }
-
+        res.json(tkbs);
       })
     });
   }

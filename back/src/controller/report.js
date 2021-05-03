@@ -12,14 +12,16 @@ const { Op } = require("sequelize");
 
 report.updateHour = async ( year, semester, name, gvId) => {
   switch (name) {
-    case "tkb":
+    // tkb đh
+    case "tkb trong đh":
 
       const response1 = await SubSubjectLecturer.findAll({
         where: {
           [Op.and]: [
             { year: year },
             { semester: Number(semester) },
-            { lecturerId: gvId }
+            { lecturerId: gvId },
+            {program : 0}
           ]
         },
         attributes: ['lecturerId','lecturerName', 'year', 'semester',[sequelize.fn('sum', sequelize.col('hour')), 'hourSchedule']],
@@ -58,7 +60,9 @@ report.updateHour = async ( year, semester, name, gvId) => {
           name: response3[0].dataValues.name,
           programs: response3[0].dataValues.programs,
           status: response3[0].dataValues.status,
-          subject: response3[0].dataValues.subject
+          subject: response3[0].dataValues.subject,
+          đh : response3[0].dataValues.đh,
+          sđh :  response3[0].dataValues.sđh
         }
         try {
           const total = response1[0].dataValues.hourSchedule
@@ -69,6 +73,68 @@ report.updateHour = async ( year, semester, name, gvId) => {
       }
       break;
 
+      // tkb sau đh
+    case "tkb sau đh":
+
+      const response10 = await SubSubjectLecturer.findAll({
+        where: {
+          [Op.and]: [
+            { year: year },
+            { semester: Number(semester) },
+            { lecturerId: gvId },
+            {program : 1}
+          ]
+        },
+        attributes: ['lecturerId','lecturerName', 'year', 'semester',[sequelize.fn('sum', sequelize.col('hour')), 'hourScheduleAfter']],
+      })
+      const response20 = await ReportHour.findAll({
+        where: {
+          [Op.and]: [
+            { year: year },
+            { semester: Number(semester) },
+            { lecturerId: gvId }
+          ]
+        }
+      })
+
+      const response30 = await Lecturer.findAll({
+        where: { id: gvId }
+      })
+
+      const response40 = await Quota.findAll({
+        where: { position: response30[0].dataValues.position || 'GV' }
+      })
+
+      const rate0 = 270*(response40[0].dataValues.rate || 1)
+
+      if (response20.length>0) {
+        // update report hour
+        const total = response20[0].dataValues.total + response10[0].dataValues.hourScheduleAfter - response20[0].dataValues.hourScheduleAfter
+        await ReportHour.update({...response20[0].dataValues, ...response10[0].dataValues, total: total, rate: Math.round(total*10000/rate0), quota: response40[0].dataValues.rate},{
+          where: { id: response20[0].dataValues.id}
+          })
+      } else {
+        // create report hour
+        const dataGv = {
+          department: response30[0].dataValues.department,
+          email: response30[0].dataValues.email,
+          name: response30[0].dataValues.name,
+          programs: response30[0].dataValues.programs,
+          status: response30[0].dataValues.status,
+          subject: response30[0].dataValues.subject,
+          đh : response30[0].dataValues.đh,
+          sđh :  response30[0].dataValues.sđh
+        }
+        try {
+          const total = response10[0].dataValues.hourScheduleAfter
+          await ReportHour.create({...response10[0].dataValues, ...dataGv, total: total, rate: Math.round(total*10000/rate0), quota: response40[0].dataValues.rate})
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      break;
+
+      // kltn
     case "kltn":
       const updateHourThesis = async () => {
         const response1 = await Thesis.findAll({
@@ -115,7 +181,9 @@ report.updateHour = async ( year, semester, name, gvId) => {
             name: response3[0].dataValues.name,
             programs: response3[0].dataValues.programs,
             status: response3[0].dataValues.status,
-            subject: response3[0].dataValues.subject
+            subject: response3[0].dataValues.subject,
+            đh : response3[0].dataValues.đh,
+            sđh :  response3[0].dataValues.sđh
           }
           const total = response1[0].dataValues.hourThesis
           await ReportHour.create({...response1[0].dataValues, ...dataGv, total: total, rate: Math.round(total*10000/rate), quota: response4[0].dataValues.rate})
@@ -130,9 +198,24 @@ report.updateHour = async ( year, semester, name, gvId) => {
 }
 
 report.list = async (req, res) => {
+  console.log(req.user)
+  async function getDepartmentUser(name) {
+    const response3 = await Lecturer.findAll({
+      where: { email:  req.user.email}
+    })
+    if(name==='LĐK') {
+      console.log(response3[0].dataValues.department)
+      return response3[0].dataValues.department
+    } else {
+      console.log(response3[0].dataValues.subject)
+      return response3[0].dataValues.subject
+    }
+  }
   const keyword = req.query.keyword || '';
   const year = req.query.year;
-  const valuefilter2= req.query.valuefilter2
+  // khoa
+  const valuefilter2= req.query.valuefilter2   
+  // bộ môn
   const valuefilter1 = req.query.valuefilter1
   const semester = req.query.semester;
   const page = Number(req.query.page);
@@ -157,6 +240,33 @@ report.list = async (req, res) => {
   const arrFitlerDepartment1 = valuefilter1 && valuefilter1.split(',') || []
   const arrFitlerDepartment2 = valuefilter2 && valuefilter2.split(',') || []
 
+  let condition1 = []
+  // check role
+  switch (req.user.role) {
+    case 'ADMIN':
+      // gv day trong dh
+      condition1.push({đh: 1})
+      break;
+    case 'ADMIN1':
+      // gv day sau dh
+      condition1.push({sđh: 1})
+      break;
+    case 'LĐK':
+      arrFitlerDepartment2 = [getDepartmentUser('LĐK')]
+      break;
+    case 'LĐBM':
+      arrFitlerDepartment2 = []
+      arrFitlerDepartment1 = [getDepartmentUser('LĐBM')]
+      break;
+    case 'USER':
+      arrFitlerDepartment2 = []
+      arrFitlerDepartment1 = []
+      break;
+    default:
+      break;
+  }
+
+
   if (arrFitlerDepartment1.length>0) {
     arrFitlerDepartment1.forEach(item => {
       condition.push({
@@ -174,11 +284,14 @@ report.list = async (req, res) => {
   }
 
   if (Boolean(year) && Boolean(semester) && type===0) {
-    const conbo = {
-      [Op.and]: [{ year: year },
-        { semester: Number(semester) }, {lecturerName: {[Op.like]: `%${keyword}%`}}]
+
+    const conbo = [{ year: year },
+      { semester: Number(semester) }, {lecturerName: {[Op.like]: `%${keyword}%`}}]
+    if (req.user.role==='ADMIN' || req.user.role==='ADMIN1' ) {
+      conbo.push(...condition1)
     }
-    const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
+    console.log(conbo)
+    const conditions = condition.length>0 ? {[Op.and]: conbo, [Op.or] : condition} : {[Op.and]: conbo}
     const { count, rows } = await ReportHour.findAndCountAll({
       where: conditions,
       offset: Number((page-1)*size), 
@@ -190,10 +303,13 @@ report.list = async (req, res) => {
     response1 = rows
     count1 = count
   } else if (Boolean(year) && Boolean(semester) && type===1) {
-    const conbo = {
-      [Op.and]: [{ year: year },{lecturerName: {[Op.like]: `%${keyword}%`}}]
+    const conbo = [{ year: year },{lecturerName: {[Op.like]: `%${keyword}%`}}]
+
+    if (req.user.role==='ADMIN' || req.user.role==='ADMIN1' ) {
+      conbo.push(...condition1)
     }
-    const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
+        
+    const conditions = condition.length>0 ? {[Op.and]: conbo, [Op.or] : condition} : {[Op.and]: conbo}
     const { count, rows } = await ReportHour.findAndCountAll({
       where: conditions,
       offset: Number((page-1)*size), 

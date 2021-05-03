@@ -14,6 +14,8 @@ module.exports = (sequelize, Sequelize) => {
     subject: Sequelize.STRING,
     mode: Sequelize.STRING,
     position: Sequelize.STRING,
+    đh: { type: Sequelize.INTEGER, defaultValue: 1},
+    sđh: { type: Sequelize.INTEGER, defaultValue: 0},
   },{
     timestamps: false
   });

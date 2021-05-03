@@ -13,7 +13,7 @@ const tkb=(year, semester, page, size)=>{
 }
 
 const detailTkb=(year, semester, lecturerId, type, page, size)=>{
-  return http.get(`${dbName}/detailTkb?year=${year}&&semester=${semester}&&page=${page}&&size=${size}&&lecturerId=${lecturerId}&&type=${type}`, { headers: authHeader() })
+  return http.get(`detailTkb?year=${year}&&semester=${semester}&&page=${page}&&size=${size}&&lecturerId=${lecturerId}&&type=${type}`, { headers: authHeader() })
 }
 
 const addTkb=(data)=>{

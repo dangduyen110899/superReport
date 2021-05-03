@@ -14,6 +14,7 @@ module.exports = (sequelize, Sequelize) => {
     programs: Sequelize.STRING,
     subject: Sequelize.STRING,
     hourSchedule: { type: Sequelize.FLOAT, defaultValue: 0},
+    hourScheduleAfter: { type: Sequelize.FLOAT, defaultValue: 0},
     hourThesis: { type: Sequelize.FLOAT, defaultValue: 0},
     hourProject: { type: Sequelize.FLOAT, defaultValue: 0},
     hourTTCN: { type: Sequelize.FLOAT, defaultValue: 0},

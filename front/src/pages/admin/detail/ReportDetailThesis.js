@@ -152,7 +152,7 @@ export default function ReportDetailThesis({match}) {
   function onChange(page, pageSize) {
     setPageCurren(page)
     setPagesize(pageSize)
-    history.push(`/admin/report/thesis/${lecturerId}?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&type=${type}`)
+    history.push(`/report/thesis/${lecturerId}?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&type=${type}`)
   }
  
   return (

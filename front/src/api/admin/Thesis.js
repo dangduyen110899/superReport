@@ -12,7 +12,7 @@ const thesis=(year, semester, page, size)=>{
 }
 
 const detailThesis=(year, semester, lecturerId, type, page, size)=>{
-  return http.get(`${dbName}/detailThesis?year=${year}&&semester=${semester}&&page=${page}&&size=${size}&&lecturerId=${lecturerId}&&type=${type}`, { headers: authHeader() })
+  return http.get(`detailThesis?year=${year}&&semester=${semester}&&page=${page}&&size=${size}&&lecturerId=${lecturerId}&&type=${type}`, { headers: authHeader() })
 }
 
 

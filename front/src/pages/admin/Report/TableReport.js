@@ -68,12 +68,12 @@ export default function TableReport({match}) {
       setSort('giam')
       x='giam'
     }
-    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${y}&&sort=${x}`)
+    history.push(`/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${y}&&sort=${x}`)
     setPageCurren(1)
   }
 
   const onSearch = value => {
-    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${value}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+    history.push(`/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${value}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
     setKeyword(value)
     setPageCurren(1)
   }
@@ -84,14 +84,14 @@ export default function TableReport({match}) {
     if (field === 'khoa') {
       const departmentCheck = listDepartment.filter(item => item.check)
       const fitler1List = departmentCheck.map(item => item.value)
-      history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${fitler1List}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+      history.push(`/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${fitler1List}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
       setvaluefilter1(fitler1List)
       setvisibleModal1(false)
       setPageCurren(1)
     } else {
       const subjectCheck = listSubject.filter(item => item.check)
       const fitler2List = subjectCheck.map(item => item.value)
-      history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${fitler2List}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+      history.push(`/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${fitler2List}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
       setvaluefilter2(fitler2List)
       setvisibleModal2(false)
       setPageCurren(1)
@@ -140,13 +140,16 @@ export default function TableReport({match}) {
           <div style={{position: 'relative'}}>
             <div className="d-flex justify-content-between">
               <div>Khoa</div> 
-              <div style={{cursor: 'pointer', color: `${valuefilter1.length>0 ? 'blue' : ''}`}} 
-              onClick={() => onFilter1()}><FilterOutlined /></div></div>
+              {
+                (user.role!=='LĐK' || user.role!=='LĐBM') && <div style={{cursor: 'pointer', color: `${valuefilter1.length>0 ? 'blue' : ''}`}} 
+                onClick={() => onFilter1()}><FilterOutlined /></div>
+              }
+            </div>
             {
               visibleModal1 &&
               <div style={{boxShadow: '0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%)', padding: '10px', position: 'absolute', top: '50px', right: '-15px', zIndex: '999', background: '#fff', borderRadius: '2px', width: '250px', overflow: 'auto'}}>
               {
-                listDepartment.map(item => {
+                listDepartment && listDepartment.map(item => {
                   return (
                     <div className="d-flex">
                       <div style={{ marginRight: '10px'}}>
@@ -190,9 +193,11 @@ export default function TableReport({match}) {
           <div style={{position: 'relative'}}>
             <div className="d-flex justify-content-between">
               <div>Bộ môn</div>
-              <div style={{cursor: 'pointer', color: `${valuefilter2.length>0 ? 'blue' : ''}`}} 
+              {
+                user.role!=='LĐBM' &&  <div style={{cursor: 'pointer', color: `${valuefilter2.length>0 ? 'blue' : ''}`}} 
               onClick={() => onFilter2()}><FilterOutlined />
               </div>
+              }
             </div>
             {
               visibleModal2 &&
@@ -242,12 +247,20 @@ export default function TableReport({match}) {
     //   key: 'programs',
     // },
     {
-      title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy trên lớp <i className="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy trong đh<i className="fas fa-sort"></i></div>},
       dataIndex: 'hourSchedule',
       key: 'hourSchedule',
       width: 150,
       align: 'center',
-      render: (value, item) => <Link to={`/admin/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
+      render: (value, item) => <Link to={`/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
+    },
+    {
+      title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy sau đh<i className="fas fa-sort"></i></div>},
+      dataIndex: 'hourSchedule',
+      key: 'hourSchedule',
+      width: 150,
+      align: 'center',
+      render: (value, item) => <Link to={`/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
     {
       title: () => { return <div onClick={() => sortHour('hourThesis')}>HD khóa luận <i className="fas fa-sort"></i></div>},
@@ -255,7 +268,7 @@ export default function TableReport({match}) {
       key: 'hourThesis',
       width: 150,
       align: 'center',
-      render: (value, item) => <Link to={`/admin/report/thesis/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
+      render: (value, item) => <Link to={`/report/thesis/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
     {
       title: () => { return <div onClick={() => sortHour('hourProject')}>HD đồ án <i className="fas fa-sort"></i></div>},
@@ -301,7 +314,7 @@ export default function TableReport({match}) {
     )
   }
   const onChangeYear = (item1, item2) => {
-    history.push(`/admin/report?year=${item1}&&semester=${item2}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+    history.push(`/report?year=${item1}&&semester=${item2}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
     setPageCurren(1)
     setYear(item1);
     setSemester(item2);
@@ -368,7 +381,7 @@ export default function TableReport({match}) {
         // list department
         const listDepartments = res?.data?.data.map(item => item.department)
         let dataDepartment  =  listDepartments?.filter((item, index) => listDepartments.indexOf(item) === index);
-        dataDepartment = dataDepartment.map(item => { 
+        dataDepartment = dataDepartment?.map(item => { 
           if (valuefilter1.length>0) {
             let check = false
             valuefilter1.filter(
@@ -387,7 +400,7 @@ export default function TableReport({match}) {
         //list subject
         const listSubjects = res?.data?.data.map(item => item.subject)
         let dataSubject  =  listSubjects?.filter((item, index) => listSubjects.indexOf(item) === index);
-        dataSubject = dataSubject.map(item => { return {check: false, value: item}})
+        dataSubject = dataSubject?.map(item => { return {check: false, value: item}})
         setlistSubject(dataSubject)
 
         dispatch({
@@ -401,11 +414,11 @@ export default function TableReport({match}) {
   function onChange(page, pageSize) {
     setPageCurren(page)
     setPagesize(pageSize)
-    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+    history.push(`/report?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
   }
 
   function onChangeType(value) {
-    history.push(`/admin/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=&&valuefilter2=&&valuefilter1=&&type=${value}&&sortField=&&sort=`)
+    history.push(`/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=&&valuefilter2=&&valuefilter1=&&type=${value}&&sortField=&&sort=`)
     settype(value)
     setPageCurren(1)
     setvaluefilter1([])
