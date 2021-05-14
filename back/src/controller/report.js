@@ -197,163 +197,443 @@ report.updateHour = async ( year, semester, name, gvId) => {
   }
 }
 
-report.list = async (req, res) => {
-  console.log(req.user)
-  async function getDepartmentUser(name) {
-    const response3 = await Lecturer.findAll({
-      where: { email:  req.user.email}
-    })
-    if(name==='LĐK') {
-      console.log(response3[0].dataValues.department)
-      return response3[0].dataValues.department
+
+report.base = async (req, res) => {
+
+    // get department or Subject user
+    async function getDepartmentUser(name) {
+      const infor = await Lecturer.findAll({
+        where: { email:  req.user.email}
+      })
+      if(name==='LĐK') {
+        return infor[0].dataValues.department
+      } else if (name==='LĐBM') {
+        return infor[0].dataValues.subject
+      } else {
+        return infor[0].dataValues.name
+      }
+    }
+
+    // get year next 
+    function nextYear(year) {
+      const temp = year.slice(0,4)
+      const ntYear = Number(temp) + 1
+      return `${ntYear}-${ntYear+1}` 
+    }
+
+    // some proper
+    const year = req.query.year;
+    const semester = req.query.semester;
+    const page = req.check=='export' ? 1 : Number(req.query.page) || 1;
+    const size = req.check=='export' ? 100000000000 : Number(req.query.size) || 10;
+    const type = Number(req.query.type) || 0;
+  
+    const bomon = req.query.valuefilter1
+    const khoa= req.query.valuefilter2 
+    const arrBomon = bomon && bomon.split(',') || []
+    const  arrKhoa = khoa && khoa.split(',') || []
+    const keyword = req.query.keyword || '';
+    let sort = req.query.sort=='tang' ? 'ASC' : 'DESC';
+    const sortField = req.query.sortField ? req.query.sortField : 'id' ;
+    if (sortField==='id') {
+      sort = 'ASC'
+    }
+
+    let response1;
+    let count1;
+  
+    // check field filter khoa hoac bo mon
+    let condition = []
+    // check dai hoc hay sau dai hoc
+    let checkAdmin = []
+
+    switch (req.user.role) {
+      case 'ADMIN':
+        // gv day trong dh
+        checkAdmin.push({đh: 1})
+        break;
+      case 'ADMIN1':
+        // gv day sau dh
+        checkAdmin.push({sđh: 1})
+        break;
+      case 'LĐK':
+        arrKhoa = [getDepartmentUser('LĐK')]
+        arrBomon = []
+        break;
+      case 'LĐBM':
+        arrKhoa = []
+        arrBomon = [getDepartmentUser('LĐBM')]
+        break;
+      case 'USER':
+        keyword = getDepartmentUser('GV')
+        arrBomon = []
+        arrKhoa = []
+        break;
+      default:
+        break;
+    }
+  
+    // add filter khoa and bo mon
+    if (arrKhoa.length>0) {
+      arrKhoa.forEach(item => {
+        condition.push({
+          'department': item
+        })
+      })
+    }
+  
+    if (arrBomon.length>0) {
+      arrBomon.forEach(item => {
+        condition.push({
+          'subject': item
+        })
+      })
+    }
+  
+    // check hoc ky trong nam hoc
+    if (Boolean(year) && Boolean(semester) && type===0) {
+      const conbo = [{ year: year },{ semester: Number(semester) }, {lecturerName: {[Op.like]: `%${keyword}%`}}]
+      if (req.user.role==='ADMIN' || req.user.role==='ADMIN1' ) {
+        conbo.push(...checkAdmin)
+      }
+
+      const conditions = condition.length>0 ? {[Op.and]: conbo, [Op.or] : condition} : {[Op.and]: conbo}
+      const { count, rows } = await ReportHour.findAndCountAll({
+        where: conditions,
+        offset: Number((page-1)*size), 
+        limit: Number(size),
+        order: [
+          [sortField, sort]
+      ],
+      })
+      response1 = rows
+      count1 = count
+
+      // check nam hoc
+    } else if (Boolean(year) && Boolean(semester) && type===1) {
+      const conbo = [{ year: year },{lecturerName: {[Op.like]: `%${keyword}%`}}]
+  
+      if (req.user.role==='ADMIN' || req.user.role==='ADMIN1' ) {
+        conbo.push(...checkAdmin)
+      }
+          
+      const conditions = condition.length>0 ? {[Op.and]: conbo, [Op.or] : condition} : {[Op.and]: conbo}
+      const { count, rows } = await ReportHour.findAndCountAll({
+        where: conditions,
+        offset: Number((page-1)*size), 
+        limit: Number(size),
+        attributes: ['year', 'lecturerId', 
+        [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
+        [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
+        [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
+        [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+        [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
+        [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject','quota'],
+        group : ['year', 'lecturerId']
+      })
+      response1 = rows
+      count1 = count
+    } else if (Boolean(year) && Boolean(semester) && type===2) {
+      const conbo = [{ year: year, semester: 2},
+      { year: nextYear(year), semester: 1 }]
+
+      const conditions = condition.length>0 ? {[Op.or] : condition, [Op.or] : conbo} : {[Op.or]: conbo}
+      const { count, rows } = await ReportHour.findAndCountAll({
+        where:  { lecturerName: {[Op.like]: `%${keyword}%`}, conditions } ,
+        offset: Number((page-1)*size), 
+        limit: Number(size),
+        attributes: ['year', 'lecturerId', 
+        [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
+        [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
+        [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
+        [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+        [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
+        [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject','quota'],
+        group : ['lecturerId']
+      })
+      response1 = rows
+      count1 = count
     } else {
-      console.log(response3[0].dataValues.subject)
-      return response3[0].dataValues.subject
+      const { count, rows } = await ReportHour.findAndCountAll()
+      response1 = rows
+      count1 = count
     }
-  }
-  const keyword = req.query.keyword || '';
-  const year = req.query.year;
-  // khoa
-  const valuefilter2= req.query.valuefilter2   
-  // bộ môn
-  const valuefilter1 = req.query.valuefilter1
-  const semester = req.query.semester;
-  const page = Number(req.query.page);
-  const size = Number(req.query.size);
-  const type = Number(req.query.type);
-  function nextYear(year) {
-    const temp = year.slice(0,4)
-    const ntYear = Number(temp) + 1
-    return `${ntYear}-${ntYear+1}` 
-  }
-  // sort
-  let sort = req.query.sort=='tang' ? 'ASC' : 'DESC';
-  const sortField = req.query.sortField ? req.query.sortField : 'id' ;
-  if (sortField==='id') {
-    sort = 'ASC'
-  }
-  let response1;
-  let count1;
-
-  // check field filter
-  let condition = []
-  const arrFitlerDepartment1 = valuefilter1 && valuefilter1.split(',') || []
-  const arrFitlerDepartment2 = valuefilter2 && valuefilter2.split(',') || []
-
-  let condition1 = []
-  // check role
-  switch (req.user.role) {
-    case 'ADMIN':
-      // gv day trong dh
-      condition1.push({đh: 1})
-      break;
-    case 'ADMIN1':
-      // gv day sau dh
-      condition1.push({sđh: 1})
-      break;
-    case 'LĐK':
-      arrFitlerDepartment2 = [getDepartmentUser('LĐK')]
-      break;
-    case 'LĐBM':
-      arrFitlerDepartment2 = []
-      arrFitlerDepartment1 = [getDepartmentUser('LĐBM')]
-      break;
-    case 'USER':
-      arrFitlerDepartment2 = []
-      arrFitlerDepartment1 = []
-      break;
-    default:
-      break;
+    return {data: response1, total: count1}
+  
   }
 
-
-  if (arrFitlerDepartment1.length>0) {
-    arrFitlerDepartment1.forEach(item => {
-      condition.push({
-        'department': item
-      })
-    })
-  }
-
-  if (arrFitlerDepartment2.length>0) {
-    arrFitlerDepartment2.forEach(item => {
-      condition.push({
-        'subject': item
-      })
-    })
-  }
-
-  if (Boolean(year) && Boolean(semester) && type===0) {
-
-    const conbo = [{ year: year },
-      { semester: Number(semester) }, {lecturerName: {[Op.like]: `%${keyword}%`}}]
-    if (req.user.role==='ADMIN' || req.user.role==='ADMIN1' ) {
-      conbo.push(...condition1)
-    }
-    console.log(conbo)
-    const conditions = condition.length>0 ? {[Op.and]: conbo, [Op.or] : condition} : {[Op.and]: conbo}
-    const { count, rows } = await ReportHour.findAndCountAll({
-      where: conditions,
-      offset: Number((page-1)*size), 
-      limit: Number(size),
-      order: [
-        [sortField, sort]
-    ],
-    })
-    response1 = rows
-    count1 = count
-  } else if (Boolean(year) && Boolean(semester) && type===1) {
-    const conbo = [{ year: year },{lecturerName: {[Op.like]: `%${keyword}%`}}]
-
-    if (req.user.role==='ADMIN' || req.user.role==='ADMIN1' ) {
-      conbo.push(...condition1)
-    }
-        
-    const conditions = condition.length>0 ? {[Op.and]: conbo, [Op.or] : condition} : {[Op.and]: conbo}
-    const { count, rows } = await ReportHour.findAndCountAll({
-      where: conditions,
-      offset: Number((page-1)*size), 
-      limit: Number(size),
-      attributes: ['year', 'lecturerId', 
-      [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
-      [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
-      [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
-      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
-      [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
-      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject','quota'],
-      group : ['year', 'lecturerId']
-    })
-    response1 = rows
-    count1 = count
-  } else if (Boolean(year) && Boolean(semester) && type===2) {
-    const conbo = [
-      { year: year, semester: 2},
-          { year: nextYear(year), semester: 1 }
-    ]
-    const conditions = condition.length>0 ? {[Op.or] : [...condition, ...conbo]} : {[Op.or]: conbo}
-    const { count, rows } = await ReportHour.findAndCountAll({
-      where:  { lecturerName: {[Op.like]: `%${keyword}%`}, conditions } ,
-      offset: Number((page-1)*size), 
-      limit: Number(size),
-      attributes: ['year', 'lecturerId', 
-      [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
-      [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
-      [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
-      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
-      [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
-      [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject','quota'],
-      group : ['lecturerId']
-    })
-    response1 = rows
-    count1 = count
-  } else {
-    const { count, rows } = await ReportHour.findAndCountAll()
-    response1 = rows
-    count1 = count
-  }
-  res.json({data: response1, total: count1});
-
+report.list = (req,res) => {
+  res.json(report.base(req,res))
 }
+  
+report.export = (req,res) => {
+  req.check = 'export'
+  const {data: response1} = report.base(req,res)
+  let tutorials = []
+  let header = []
+
+  response1.forEach((item) => {
+    tutorials.push(item.dataValues);
+  });
+
+  function getTitle(key) {
+    switch (key) {
+      case 'id':
+        return 'ID'
+        break;
+
+      case 'lecturerName':
+        return 'Giảng viên'
+        break;
+
+      case 'department':
+        return 'Khoa'
+        break;
+
+      case 'subject':
+        return 'Bộ môn'
+        break;
+      
+      case 'hourSchedule':
+        return 'Giờ dạy trên lớp'
+        break;
+
+        case 'hourThesis':
+      return 'HD khóa luận'
+      break;
+
+      case 'hourProject':
+      return 'HD đồ án '
+      break;
+
+      case 'hourConsultant':
+      return 'Cố vấn học tap'
+      break;
+
+      case 'hourProject':
+      return 'HD đồ án '
+      break;
+
+      case 'hourProject':
+      return 'HD đồ án '
+      break;
+
+      case 'hourProject':
+      return 'HD đồ án '
+      break;
+
+      case 'hourTTCN':
+      return 'HD thực tập'
+      break;
+
+      case 'total':
+      return 'Tổng số giờ'
+      break;
+
+      case 'rate':
+      return 'Tỷ lệ'
+      break;
+
+      case 'quota':
+      return 'Định mức'
+      break;
+
+
+      case 'id':
+      return 'ID'
+      break;
+
+      default:
+        break;
+    }
+  }
+
+  for (const [key, value] of Object.entries(tutorials[0])) {
+    header.push( { header: getTitle(`${key}`), key: `${key}`})
+  }
+
+  let workbook = new excel.Workbook();
+  let worksheet = workbook.addWorksheet("Report");
+
+
+  worksheet.columns = header
+  // Add Array Rows
+  worksheet.addRows(tutorials);
+
+  res.setHeader(
+    "Content-Type",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  );
+  res.setHeader(
+    "Content-Disposition",
+    "attachment; filename=" + "tutorials.xlsx"
+  );
+
+  return workbook.xlsx.write(res).then(function () {
+    res.status(200).end();
+  });
+}
+
+
+
+
+// report.list = async (req, res) => {
+//   console.log(req.user)
+//   async function getDepartmentUser(name) {
+//     const response3 = await Lecturer.findAll({
+//       where: { email:  req.user.email}
+//     })
+//     if(name==='LĐK') {
+//       console.log(response3[0].dataValues.department)
+//       return response3[0].dataValues.department
+//     } else {
+//       console.log(response3[0].dataValues.subject)
+//       return response3[0].dataValues.subject
+//     }
+//   }
+//   const keyword = req.query.keyword || '';
+//   const year = req.query.year;
+//   // khoa
+//   const valuefilter2= req.query.valuefilter2   
+//   // bộ môn
+//   const valuefilter1 = req.query.valuefilter1
+//   const semester = req.query.semester;
+//   const page = Number(req.query.page);
+//   const size = Number(req.query.size);
+//   const type = Number(req.query.type);
+//   function nextYear(year) {
+//     const temp = year.slice(0,4)
+//     const ntYear = Number(temp) + 1
+//     return `${ntYear}-${ntYear+1}` 
+//   }
+//   // sort
+//   let sort = req.query.sort=='tang' ? 'ASC' : 'DESC';
+//   const sortField = req.query.sortField ? req.query.sortField : 'id' ;
+//   if (sortField==='id') {
+//     sort = 'ASC'
+//   }
+//   let response1;
+//   let count1;
+
+//   // check field filter
+//   let condition = []
+//   const arrFitlerDepartment1 = valuefilter1 && valuefilter1.split(',') || []
+//   const arrFitlerDepartment2 = valuefilter2 && valuefilter2.split(',') || []
+
+//   let condition1 = []
+//   // check role
+//   switch (req.user.role) {
+//     case 'ADMIN':
+//       // gv day trong dh
+//       condition1.push({đh: 1})
+//       break;
+//     case 'ADMIN1':
+//       // gv day sau dh
+//       condition1.push({sđh: 1})
+//       break;
+//     case 'LĐK':
+//       arrFitlerDepartment2 = [getDepartmentUser('LĐK')]
+//       break;
+//     case 'LĐBM':
+//       arrFitlerDepartment2 = []
+//       arrFitlerDepartment1 = [getDepartmentUser('LĐBM')]
+//       break;
+//     case 'USER':
+//       arrFitlerDepartment2 = []
+//       arrFitlerDepartment1 = []
+//       break;
+//     default:
+//       break;
+//   }
+
+
+//   if (arrFitlerDepartment1.length>0) {
+//     arrFitlerDepartment1.forEach(item => {
+//       condition.push({
+//         'department': item
+//       })
+//     })
+//   }
+
+//   if (arrFitlerDepartment2.length>0) {
+//     arrFitlerDepartment2.forEach(item => {
+//       condition.push({
+//         'subject': item
+//       })
+//     })
+//   }
+
+//   if (Boolean(year) && Boolean(semester) && type===0) {
+
+//     const conbo = [{ year: year },
+//       { semester: Number(semester) }, {lecturerName: {[Op.like]: `%${keyword}%`}}]
+//     if (req.user.role==='ADMIN' || req.user.role==='ADMIN1' ) {
+//       conbo.push(...condition1)
+//     }
+//     console.log(conbo)
+//     const conditions = condition.length>0 ? {[Op.and]: conbo, [Op.or] : condition} : {[Op.and]: conbo}
+//     const { count, rows } = await ReportHour.findAndCountAll({
+//       where: conditions,
+//       offset: Number((page-1)*size), 
+//       limit: Number(size),
+//       order: [
+//         [sortField, sort]
+//     ],
+//     })
+//     response1 = rows
+//     count1 = count
+//   } else if (Boolean(year) && Boolean(semester) && type===1) {
+//     const conbo = [{ year: year },{lecturerName: {[Op.like]: `%${keyword}%`}}]
+
+//     if (req.user.role==='ADMIN' || req.user.role==='ADMIN1' ) {
+//       conbo.push(...condition1)
+//     }
+        
+//     const conditions = condition.length>0 ? {[Op.and]: conbo, [Op.or] : condition} : {[Op.and]: conbo}
+//     const { count, rows } = await ReportHour.findAndCountAll({
+//       where: conditions,
+//       offset: Number((page-1)*size), 
+//       limit: Number(size),
+//       attributes: ['year', 'lecturerId', 
+//       [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
+//       [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
+//       [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
+//       [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+//       [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
+//       [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject','quota'],
+//       group : ['year', 'lecturerId']
+//     })
+//     response1 = rows
+//     count1 = count
+//   } else if (Boolean(year) && Boolean(semester) && type===2) {
+//     const conbo = [
+//       { year: year, semester: 2},
+//           { year: nextYear(year), semester: 1 }
+//     ]
+//     const conditions = condition.length>0 ? {[Op.or] : [...condition, ...conbo]} : {[Op.or]: conbo}
+//     const { count, rows } = await ReportHour.findAndCountAll({
+//       where:  { lecturerName: {[Op.like]: `%${keyword}%`}, conditions } ,
+//       offset: Number((page-1)*size), 
+//       limit: Number(size),
+//       attributes: ['year', 'lecturerId', 
+//       [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
+//       [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
+//       [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
+//       [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+//       [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
+//       [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject','quota'],
+//       group : ['lecturerId']
+//     })
+//     response1 = rows
+//     count1 = count
+//   } else {
+//     const { count, rows } = await ReportHour.findAndCountAll()
+//     response1 = rows
+//     count1 = count
+//   }
+//   res.json({data: response1, total: count1});
+
+// }
 
 report.listIdlecturer = async (req, res) => {
   const year = req.query.year;
@@ -436,199 +716,199 @@ report.listIdlecturer = async (req, res) => {
 
 }
 
-report.export = async (req, res) => {
-  const valuefilter2= req.body.valuefilter2
-  const valuefilter1 = req.body.valuefilter1
-  const keyword = req.body.keyword || ''
+// report.export = async (req, res) => {
+//   const valuefilter2= req.body.valuefilter2
+//   const valuefilter1 = req.body.valuefilter1
+//   const keyword = req.body.keyword || ''
 
-  // check field filter
-  let condition = []
-  const arrFitlerDepartment1 = valuefilter1 
-  // && valuefilter1.split(',') || []
-  const arrFitlerDepartment2 = valuefilter2
-  //  && valuefilter2.split(',') || []
+//   // check field filter
+//   let condition = []
+//   const arrFitlerDepartment1 = valuefilter1 
+//   // && valuefilter1.split(',') || []
+//   const arrFitlerDepartment2 = valuefilter2
+//   //  && valuefilter2.split(',') || []
 
-  if (arrFitlerDepartment1.length>0) {
-    arrFitlerDepartment1.forEach(item => {
-      condition.push({
-        'department': item
-      })
-    })
-  }
+//   if (arrFitlerDepartment1.length>0) {
+//     arrFitlerDepartment1.forEach(item => {
+//       condition.push({
+//         'department': item
+//       })
+//     })
+//   }
 
-  if (arrFitlerDepartment2.length>0) {
-    arrFitlerDepartment2.forEach(item => {
-      condition.push({
-        'subject': item
-      })
-    })
-  }
+//   if (arrFitlerDepartment2.length>0) {
+//     arrFitlerDepartment2.forEach(item => {
+//       condition.push({
+//         'subject': item
+//       })
+//     })
+//   }
 
-  const year = req.body.year;
-  const semester = req.body.semester;
-  const type = Number(req.body.type);
-  let sort = req.body.sort=='tang' ? 'ASC' : 'DESC';
-  const sortField = req.body.sortField ? req.body.sortField : 'id' ;
-  if (sortField==='id') {
-    sort = 'ASC'
-  }
-  let response1;
-  let count1;
+//   const year = req.body.year;
+//   const semester = req.body.semester;
+//   const type = Number(req.body.type);
+//   let sort = req.body.sort=='tang' ? 'ASC' : 'DESC';
+//   const sortField = req.body.sortField ? req.body.sortField : 'id' ;
+//   if (sortField==='id') {
+//     sort = 'ASC'
+//   }
+//   let response1;
+//   let count1;
 
-  function nextYear(year) {
-    const temp = year.slice(0,4)
-    const ntYear = Number(temp) + 1
-    return `${ntYear}-${ntYear+1}` 
-  }
+//   function nextYear(year) {
+//     const temp = year.slice(0,4)
+//     const ntYear = Number(temp) + 1
+//     return `${ntYear}-${ntYear+1}` 
+//   }
 
-  if (Boolean(year) && Boolean(semester) && type===0) {
-    const conbo = {
-      [Op.and]: [{ year: year },
-        { semester: Number(semester) }, { lecturerName: {[Op.like]: `%${keyword}%`} }]
-    }
-    const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
-    const { count, rows } = await ReportHour.findAndCountAll({
-      where: conditions,
-      attributes: ["lecturerName","department","subject","hourThesis","hourSchedule","hourProject","hourTTCN","total"],
-      order: [
-        [sortField, sort]
-    ],
-    })
-    response1 = rows
-    count1 = count
-  } else if (Boolean(year) && Boolean(semester) && type===1) {
-    const conbo = {
-      [Op.and]: [{ year: year }, {lecturerName: {[Op.like]: `%${keyword}%`}}]
-    }
-    const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
-    const { count, rows } = await ReportHour.findAndCountAll({
-      where:  conditions,
-      attributes: ['lecturerName','department','programs','subject',
-      [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
-      [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
-      [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
-      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
-      [sequelize.fn('sum', sequelize.col('total')), 'total'],
-      'quota',
-      [sequelize.fn('sum', sequelize.col('rate')), 'rate']],
-      group : ['year', 'lecturerId']
-    })
-    response1 = rows
-    count1 = count
-  } else if (Boolean(year) && Boolean(semester) && type===2) {
-    const conbo = [
-      { year: year, semester: 2},
-          { year: nextYear(year), semester: 1 }
-    ]
-    const conditions = condition.length>0 ? {[Op.or] : [...condition, ...conbo]} : {[Op.or]: conbo}
-    const { count, rows } = await ReportHour.findAndCountAll({
-      where:  { lecturerName: {[Op.like]: `%${keyword}%`}, conditions },
-      attributes: ['lecturerName','department','programs','subject',
-      [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
-      [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
-      [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
-      [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
-      [sequelize.fn('sum', sequelize.col('total')), 'total'],
-      'quota',
-      [sequelize.fn('sum', sequelize.col('rate')), 'rate']],
-      group : ['lecturerId']
-    })
-    response1 = rows
-    count1 = count
-  } else {
-    console.log("xxx2")
-    const { count, rows } = await ReportHour.findAndCountAll()
-    response1 = rows
-    count1 = count
-  }
+//   if (Boolean(year) && Boolean(semester) && type===0) {
+//     const conbo = {
+//       [Op.and]: [{ year: year },
+//         { semester: Number(semester) }, { lecturerName: {[Op.like]: `%${keyword}%`} }]
+//     }
+//     const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
+//     const { count, rows } = await ReportHour.findAndCountAll({
+//       where: conditions,
+//       attributes: ["lecturerName","department","subject","hourThesis","hourSchedule","hourProject","hourTTCN","total"],
+//       order: [
+//         [sortField, sort]
+//     ],
+//     })
+//     response1 = rows
+//     count1 = count
+//   } else if (Boolean(year) && Boolean(semester) && type===1) {
+//     const conbo = {
+//       [Op.and]: [{ year: year }, {lecturerName: {[Op.like]: `%${keyword}%`}}]
+//     }
+//     const conditions = condition.length>0 ? {...conbo, [Op.or] : condition} : conbo
+//     const { count, rows } = await ReportHour.findAndCountAll({
+//       where:  conditions,
+//       attributes: ['lecturerName','department','programs','subject',
+//       [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
+//       [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
+//       [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
+//       [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+//       [sequelize.fn('sum', sequelize.col('total')), 'total'],
+//       'quota',
+//       [sequelize.fn('sum', sequelize.col('rate')), 'rate']],
+//       group : ['year', 'lecturerId']
+//     })
+//     response1 = rows
+//     count1 = count
+//   } else if (Boolean(year) && Boolean(semester) && type===2) {
+//     const conbo = [
+//       { year: year, semester: 2},
+//           { year: nextYear(year), semester: 1 }
+//     ]
+//     const conditions = condition.length>0 ? {[Op.or] : [...condition, ...conbo]} : {[Op.or]: conbo}
+//     const { count, rows } = await ReportHour.findAndCountAll({
+//       where:  { lecturerName: {[Op.like]: `%${keyword}%`}, conditions },
+//       attributes: ['lecturerName','department','programs','subject',
+//       [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
+//       [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
+//       [sequelize.fn('sum', sequelize.col('hourProject')), 'hourProject'],
+//       [sequelize.fn('sum', sequelize.col('hourTTCN')), 'hourTTCN'],
+//       [sequelize.fn('sum', sequelize.col('total')), 'total'],
+//       'quota',
+//       [sequelize.fn('sum', sequelize.col('rate')), 'rate']],
+//       group : ['lecturerId']
+//     })
+//     response1 = rows
+//     count1 = count
+//   } else {
+//     console.log("xxx2")
+//     const { count, rows } = await ReportHour.findAndCountAll()
+//     response1 = rows
+//     count1 = count
+//   }
 
-  let tutorials = []
-  let header = []
+//   let tutorials = []
+//   let header = []
 
-  response1.forEach((item) => {
-    tutorials.push(item.dataValues);
-  });
+//   response1.forEach((item) => {
+//     tutorials.push(item.dataValues);
+//   });
 
-  function getTitle(key) {
-    switch (key) {
-      case 'id':
-        return 'ID'
-        break;
+//   function getTitle(key) {
+//     switch (key) {
+//       case 'id':
+//         return 'ID'
+//         break;
 
-      case 'lecturerName':
-        return 'Giảng viên'
-        break;
+//       case 'lecturerName':
+//         return 'Giảng viên'
+//         break;
 
-      case 'department':
-        return 'Khoa'
-        break;
+//       case 'department':
+//         return 'Khoa'
+//         break;
 
-      case 'subject':
-        return 'Bộ môn'
-        break;
+//       case 'subject':
+//         return 'Bộ môn'
+//         break;
       
-        case 'hourSchedule':
-          return 'Giờ dạy trên lớp'
-          break;
+//         case 'hourSchedule':
+//           return 'Giờ dạy trên lớp'
+//           break;
 
-          case 'hourThesis':
-        return 'HD khóa luận'
-        break;
+//           case 'hourThesis':
+//         return 'HD khóa luận'
+//         break;
 
-        case 'hourProject':
-        return 'HD đồ án '
-        break;
+//         case 'hourProject':
+//         return 'HD đồ án '
+//         break;
 
-        case 'hourTTCN':
-        return 'HD thực tập'
-        break;
+//         case 'hourTTCN':
+//         return 'HD thực tập'
+//         break;
 
-        case 'total':
-        return 'Tổng số giờ'
-        break;
+//         case 'total':
+//         return 'Tổng số giờ'
+//         break;
 
-        case 'rate':
-        return 'Tỷ lệ'
-        break;
+//         case 'rate':
+//         return 'Tỷ lệ'
+//         break;
 
-        case 'quota':
-        return 'Định mức'
-        break;
-
-
-        case 'id':
-        return 'ID'
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  for (const [key, value] of Object.entries(tutorials[0])) {
-    header.push( { header: getTitle(`${key}`), key: `${key}`})
-  }
-
-  let workbook = new excel.Workbook();
-  let worksheet = workbook.addWorksheet("Report");
+//         case 'quota':
+//         return 'Định mức'
+//         break;
 
 
-  worksheet.columns = header
-  // Add Array Rows
-  worksheet.addRows(tutorials);
+//         case 'id':
+//         return 'ID'
+//         break;
 
-  res.setHeader(
-    "Content-Type",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-  );
-  res.setHeader(
-    "Content-Disposition",
-    "attachment; filename=" + "tutorials.xlsx"
-  );
+//       default:
+//         break;
+//     }
+//   }
 
-  return workbook.xlsx.write(res).then(function () {
-    res.status(200).end();
-  });
-};
+//   for (const [key, value] of Object.entries(tutorials[0])) {
+//     header.push( { header: getTitle(`${key}`), key: `${key}`})
+//   }
+
+//   let workbook = new excel.Workbook();
+//   let worksheet = workbook.addWorksheet("Report");
+
+
+//   worksheet.columns = header
+//   // Add Array Rows
+//   worksheet.addRows(tutorials);
+
+//   res.setHeader(
+//     "Content-Type",
+//     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+//   );
+//   res.setHeader(
+//     "Content-Disposition",
+//     "attachment; filename=" + "tutorials.xlsx"
+//   );
+
+//   return workbook.xlsx.write(res).then(function () {
+//     res.status(200).end();
+//   });
+// };
 
 module.exports = report;

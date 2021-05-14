@@ -1,12 +1,14 @@
+// luận án tiến sĩ
+
 module.exports = (sequelize, Sequelize) => {
 
-  const Consultant = sequelize.define('consultant', {
+  var PhdThesis = sequelize.define('phdThesis', {
     id: {
-      type: Sequelize.STRING,
+      type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    nameConsultant: Sequelize.STRING,
+    namePhdThesis: Sequelize.STRING,
     semester: Sequelize.INTEGER,
     year: Sequelize.STRING,
     classCode: Sequelize.STRING,
@@ -19,7 +21,5 @@ module.exports = (sequelize, Sequelize) => {
   },{
     timestamps: false
   });
-
-  return Consultant;
+  return PhdThesis;
 }
-

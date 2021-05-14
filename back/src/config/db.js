@@ -26,6 +26,13 @@ db.subject = require('../models/Subject')(sequelize, Sequelize);
 // db.classSubject = require('../models/ClassSubject')(sequelize, Sequelize);
 db.subSubjectLecturer = require('../models/SubSubjectLecturer')(sequelize, Sequelize);
 db.reportHour = require('../models/ReportHour')(sequelize, Sequelize);
+// bổ sung danh sách hd
+db.project = require('../models/Project')(sequelize, Sequelize);
+db.phdThesis = require('../models/PhdThesis')(sequelize, Sequelize);
+db.dissertation = require('../models/Dissertation')(sequelize, Sequelize);
+db.consultant = require('../models/Consultant')(sequelize, Sequelize);
+db.practice = require('../models/Practice')(sequelize, Sequelize);
+
 // authenti
 db.user = require('../models/User')(sequelize, Sequelize);
 db.quota = require('../models/Quota')(sequelize, Sequelize);
