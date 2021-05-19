@@ -3,10 +3,10 @@ import LayoutAdmin from '../Layout';
 import {
   Table,
   Row,
-  Col, Pagination,Select
+  Col, Pagination,Select, Input
 } from 'antd';
 import callAdmin from 'api/admin/Report';
-import SelectY from '../component/Select';
+import {FilterOutlined} from '@ant-design/icons';
 import { useHistory, Link } from "react-router-dom";
 import queryString from 'query-string'
 import Cookies from "js-cookie";
@@ -14,6 +14,11 @@ import SelectYear from './SelectYear';
 import { useDispatch } from 'store/index';
 import { LOADING_FULL_SCREEN } from 'store/action-types';
 import LoadingFullScreen from '../component/LoadingFullScreen';
+import { downloadFile } from './DowloadFile';
+import SelectSemester from './SelectSemester';
+import * as _ from 'lodash';
+const { Search } = Input;
+
 
 export default function TableReport({match}) {
   const dispatch = useDispatch()
@@ -21,34 +26,99 @@ export default function TableReport({match}) {
   const history = useHistory()
   const [data, setData] = useState([])
   const [yearShow, setYearShow] = useState([])
-  const [year, setYear] = useState('');
-  const [semester, setSemester] = useState('')
+  const [year, setYear] = useState(value?.year ||'');
+  const [semester, setSemester] = useState(value?.semester || '')
   const [pageCurren, setPageCurren] = useState(value?.page || 1)
   const [pagesize, setPagesize] = useState(value?.size || 20)
   const [totalData, setTotalData] = useState(0)
   const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
-  const [type, settype] = useState(0)
+  const [type, settype] = useState(value?.type || 0)
   const [yearShow2, setYearShow2] = useState([])
-  const [sort, setSort] = useState('')
-  const [sortField, setSortField] = useState('')
+  const [sort, setSort] = useState(value?.sort ||'')
+  const [sortField, setSortField] = useState(value?.sortField || '')
+  // filter 
+  const [valuefilter1, setvaluefilter1] = useState(value?.valuefilter1?.split(',') || [])
+  const [valuefilter2, setvaluefilter2] = useState(value?.valuefilter2?.split(',') || [])
+  const [listDepartment, setlistDepartment] = useState([])
+  const [listSubject, setlistSubject] = useState([])
+  const [visibleModal1, setvisibleModal1] = useState(false)
+  const [visibleModal2, setvisibleModal2] = useState(false)
+  // search
+  const [keyword, setKeyword] = useState(value?.keyword || '')
+  const onFilter1 = () => {
+    setvisibleModal1(!visibleModal1)
+  }
+
+  const onFilter2 = () => {
+    setvisibleModal2(!visibleModal2)
+  }
 
   const sortHour = (field) => {
+    let x , y = field
     if (sortField=='') {
       setSort('tang');
       setSortField(field)
+      x='tang'
     }
-    else if (sort=='' && field!==sortField) {
-      setSortField(field)
+    else if (sort=='giam') {
       setSort("tang")
-    } if (sort=='giam' && field==sortField) {
-      setSort("tang")
+      x='tang'
     }
     else if (sort=='tang') {
       setSort('giam')
-    } else {
-      setSort('')
-      setSortField('')
+      x='giam'
     }
+    history.push(`/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${y}&&sort=${x}`)
+    setPageCurren(1)
+  }
+
+  const onSearch = value => {
+    history.push(`/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${value}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+    setKeyword(value)
+    setPageCurren(1)
+  }
+
+
+
+  const handleFilter = (field) => {
+    if (field === 'khoa') {
+      const departmentCheck = listDepartment.filter(item => item.check)
+      const fitler1List = departmentCheck.map(item => item.value)
+      history.push(`/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${fitler1List}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+      setvaluefilter1(fitler1List)
+      setvisibleModal1(false)
+      setPageCurren(1)
+    } else {
+      const subjectCheck = listSubject.filter(item => item.check)
+      const fitler2List = subjectCheck.map(item => item.value)
+      history.push(`/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${fitler2List}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+      setvaluefilter2(fitler2List)
+      setvisibleModal2(false)
+      setPageCurren(1)
+    }
+
+  }
+
+  const handleResetModal1 = () => {
+    const departments = listDepartment.map(item => {
+      return {
+        value: item.value,
+        check: false
+      }
+    })
+    setlistDepartment(departments)
+    setvaluefilter1([])
+  }
+
+  const handleResetModal2 = () => {
+    const subjects = listSubject.map(item => {
+      return {
+        value: item.value,
+        check: false
+      }
+    })
+    setlistSubject(subjects)
+    setvaluefilter2([])
   }
 
   let columns = [
@@ -65,12 +135,109 @@ export default function TableReport({match}) {
       key: 'lecturerName',
     },
     {
-      title: 'Khoa',
+      title: () => {
+        return (
+          <div style={{position: 'relative'}}>
+            <div className="d-flex justify-content-between">
+              <div>Khoa</div> 
+              {
+                (user.role!=='LĐK' || user.role!=='LĐBM') && <div style={{cursor: 'pointer', color: `${valuefilter1.length>0 ? 'blue' : ''}`}} 
+                onClick={() => onFilter1()}><FilterOutlined /></div>
+              }
+            </div>
+            {
+              visibleModal1 &&
+              <div style={{boxShadow: '0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%)', padding: '10px', position: 'absolute', top: '50px', right: '-15px', zIndex: '999', background: '#fff', borderRadius: '2px', width: '250px', overflow: 'auto'}}>
+              {
+                listDepartment && listDepartment.map(item => {
+                  return (
+                    <div className="d-flex">
+                      <div style={{ marginRight: '10px'}}>
+                        <input type="checkbox" name="khoa" value={item.value} onChange={e => {
+                          const listDepart = [...listDepartment]
+                          _.forEach(listDepart, (item) => {
+                            if (item.value === e.target.value) {
+                              if (item.check) {
+                                item.check = false
+                              } else {
+                                item.check = true
+                              }
+                            }
+                          })
+                          setlistDepartment(listDepart)
+                        }} checked={item.check}/>
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: '100', textTransform: 'capitalize', textAlign: 'left'}}>
+                        <label htmlFor="">{item.value}</label>
+                      </div>
+                    </div>
+                  )
+                })
+              }
+              <div style={{ textAlign: 'right' }}>
+                <button onClick={() => handleFilter('khoa')} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Ok</button>
+                <button onClick={() => setvisibleModal1(false)} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Cancel</button>
+                <button onClick={() => handleResetModal1()} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Reset</button>
+              </div>
+            </div>
+            }
+          </div>
+        )
+      },
       dataIndex: 'department',
       key: 'department',
     },
     {
-      title: 'Bộ môn',
+      title: () => {
+        return (
+          <div style={{position: 'relative'}}>
+            <div className="d-flex justify-content-between">
+              <div>Bộ môn</div>
+              {
+                user.role!=='LĐBM' &&  <div style={{cursor: 'pointer', color: `${valuefilter2.length>0 ? 'blue' : ''}`}} 
+              onClick={() => onFilter2()}><FilterOutlined />
+              </div>
+              }
+            </div>
+            {
+              visibleModal2 &&
+              <div style={{boxShadow: '0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%)', padding: '10px', position: 'absolute', top: '50px', right: '-15px', zIndex: '999', background: '#fff', borderRadius: '2px', width: '250px', overflow: 'auto'}}>
+              {
+                listSubject.map(item => {
+                  return (
+                    <div className="d-flex">
+                      <div style={{ marginRight: '10px'}}>
+                        <input type="checkbox" name="khoa" value={item.value} onChange={e => {
+                          const listSub = [...listSubject]
+                          _.forEach(listSub, (item) => {
+                            if (item.value === e.target.value) {
+                              if (item.check) {
+                                item.check = false
+                              } else {
+                                item.check = true
+                              }
+                            }
+                          })
+                          setlistSubject(listSub)
+                        }} checked={item.check}/>
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: '100', textTransform: 'capitalize', textAlign: 'left'}}>
+                        <label htmlFor="">{item.value}</label>
+                      </div>
+                    </div>
+                  )
+                })
+              }
+              <div style={{ textAlign: 'right' }}>
+                <button onClick={() => handleFilter('bomon')} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Ok</button>
+                <button onClick={() => setvisibleModal2(false)} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Cancel</button>
+                <button onClick={() => handleResetModal2()} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Reset</button>
+              </div>
+            </div>
+            }
+          </div>
+        )
+      },
       dataIndex: 'subject',
       key: 'subject',
     },
@@ -80,37 +247,45 @@ export default function TableReport({match}) {
     //   key: 'programs',
     // },
     {
-      title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy trên lớp <i class="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy trong đh<i className="fas fa-sort"></i></div>},
       dataIndex: 'hourSchedule',
       key: 'hourSchedule',
       width: 150,
       align: 'center',
-      render: (value, item) => <Link to={`/admin/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
+      render: (value, item) => <Link to={`/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
     {
-      title: () => { return <div onClick={() => sortHour('hourThesis')}>Giờ hd khóa luận <i class="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('hourScheduleAfter')}>Giờ dạy sau đh<i className="fas fa-sort"></i></div>},
+      dataIndex: 'hourScheduleAfter',
+      key: 'hourScheduleAfter',
+      width: 150,
+      align: 'center',
+      render: (value, item) => <Link to={`/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
+    },
+    {
+      title: () => { return <div onClick={() => sortHour('hourThesis')}>HD khóa luận <i className="fas fa-sort"></i></div>},
       dataIndex: 'hourThesis',
       key: 'hourThesis',
       width: 150,
       align: 'center',
-      render: (value, item) => <Link to={`/admin/report/thesis/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
+      render: (value, item) => <Link to={`/report/thesis/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
     {
-      title: () => { return <div onClick={() => sortHour('hourProject')}>Giờ hd đồ án <i class="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('hourProject')}>HD đồ án <i className="fas fa-sort"></i></div>},
       dataIndex: 'hourProject',
       key: 'hourProject',
       width: 130,
       align: 'center'
     },
     {
-      title: () => { return <div onClick={() => sortHour('hourTTCN')}>Giờ hd thực tập <i class="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('hourTTCN')}>HD thực tập <i className="fas fa-sort"></i></div>},
       dataIndex: 'hourTTCN',
       key: 'hourTTCN',
       width: 130,
       align: 'center'
     },
     {
-      title: () => { return <div onClick={() => sortHour('total')}>Tổng số giờ <i class="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('total')}>Tổng số giờ <i className="fas fa-sort"></i></div>},
       dataIndex: 'total',
       key: 'total',
       width: 130,
@@ -121,7 +296,15 @@ export default function TableReport({match}) {
   if(type) {
     columns.push(
       {
-        title: () => { return <div onClick={() => sortHour('total')}>Tỷ lệ <i class="fas fa-sort"></i></div>},
+        title: () => { return <div onClick={() => sortHour('quota')}>Định mức<i className="fas fa-sort"></i></div>},
+        dataIndex: 'quota',
+        key: "quota",
+        width: 100,
+        align: 'center',
+        render: (value, item) => <span>{value} %</span>
+      },
+      {
+        title: () => { return <div onClick={() => sortHour('total')}>Tỷ lệ <i className="fas fa-sort"></i></div>},
         dataIndex: 'rate',
         key: "rate",
         width: 100,
@@ -131,6 +314,8 @@ export default function TableReport({match}) {
     )
   }
   const onChangeYear = (item1, item2) => {
+    history.push(`/report?year=${item1}&&semester=${item2}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+    setPageCurren(1)
     setYear(item1);
     setSemester(item2);
   }
@@ -142,7 +327,7 @@ export default function TableReport({match}) {
           type: LOADING_FULL_SCREEN,
           payload: true,
         })
-        await callAdmin.report(year,semester, pageCurren,pagesize,type, sortField, sort).then(res =>{
+        await callAdmin.report(year,semester, pageCurren,pagesize,type, sortField, sort ,valuefilter1, valuefilter2,keyword).then(res =>{
           setData(res.data.data)
           setTotalData(res.data.total)
           dispatch({
@@ -159,7 +344,7 @@ export default function TableReport({match}) {
       }
     };
     getData();
-  }, [year, semester,pageCurren, pagesize,type,sort, sortField]);
+  }, [year, semester,pageCurren, pagesize,type,sort, sortField, valuefilter1, valuefilter2,keyword]);
 
   useEffect(() => {
     const getData = async () => {
@@ -179,8 +364,7 @@ export default function TableReport({match}) {
     };
     getData().then(res =>
       {
-        // setData(res?.data?.data)
-        // setTotalData(res?.data?.total)
+        // year
         const arrYear2 = []
         let arrString = res?.data?.data.map(item => {
           arrYear2.push(item.year)
@@ -193,6 +377,32 @@ export default function TableReport({match}) {
         arr2 && setYear(arr2[0])
         const x = arr && arr[0]?.split(' ');
         x && setSemester(x[0])
+
+        // list department
+        const listDepartments = res?.data?.data.map(item => item.department)
+        let dataDepartment  =  listDepartments?.filter((item, index) => listDepartments.indexOf(item) === index);
+        dataDepartment = dataDepartment?.map(item => { 
+          if (valuefilter1.length>0) {
+            let check = false
+            valuefilter1.filter(
+              item1 => {
+                if (item1===item) {
+                  check= true
+                }
+              }
+            )
+            return {check: check, value: item}
+          }
+          return {check: false, value: item}
+        })
+        setlistDepartment(dataDepartment)
+
+        //list subject
+        const listSubjects = res?.data?.data.map(item => item.subject)
+        let dataSubject  =  listSubjects?.filter((item, index) => listSubjects.indexOf(item) === index);
+        dataSubject = dataSubject?.map(item => { return {check: false, value: item}})
+        setlistSubject(dataSubject)
+
         dispatch({
           type: LOADING_FULL_SCREEN,
           payload: false,
@@ -204,16 +414,26 @@ export default function TableReport({match}) {
   function onChange(page, pageSize) {
     setPageCurren(page)
     setPagesize(pageSize)
-    history.push(`/admin/report?year=${year}}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
+    history.push(`/report?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${sortField}&&sort=${sort}`)
+  }
+
+  function onChangeType(value) {
+    history.push(`/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=&&valuefilter2=&&valuefilter1=&&type=${value}&&sortField=&&sort=`)
+    settype(value)
+    setPageCurren(1)
+    setvaluefilter1([])
+    setvaluefilter2([])
+    setSort('')
+    setSortField('')
+    setKeyword('')
   }
   const { Option } = Select;
   return (
     <LayoutAdmin match={match}>
-      <h2 className="title">BÁO CÁO TỔNG HỢP</h2>
-      <Row justify="space-between">
+      <h2 className="title">Báo cáo tổng hợp</h2>
+      <Row>
         <Col>
-          <label>Báo cáo theo: </label>
-          <Select onChange={value => settype(value)} defaultValue={0} style={{ width: 200 }}>
+          <Select onChange={value => onChangeType(value)} defaultValue={0} value={Number(type)} style={{ width: 200 }}>
             <Option value={0}>Theo học kỳ</Option>
             <Option value={1}>Theo năm học</Option>
             <Option value={2}>Theo năm tài chính</Option>
@@ -222,12 +442,27 @@ export default function TableReport({match}) {
         {
           useMemo(() => 
           <Col>
-          { type==0 && <SelectY options={yearShow} onChangeYear={onChangeYear}></SelectY>}
+          { type==0 && <SelectSemester options={yearShow} onChangeYear={onChangeYear}></SelectSemester>}
           { Number(type) ? <SelectYear options={yearShow2} onChangeYear={onChangeYear}></SelectYear> : ''}
         </Col>
           , [type, yearShow, yearShow2])
         }
       </Row>
+      <Row justify="space-between">
+          <Col flex='5'>
+          {
+            useMemo(() => {
+              return (
+                <Search placeholder="input search text" onChange={e => onSearch(e.target.value)} value={keyword}/>
+              )
+            }, [type, keyword])
+          }
+          </Col>
+          <Col flex='4'></Col>
+          <Col flex='1'>
+          <span onClick={() => downloadFile({year: year, semester: semester, type: type, sort: sort, sortField: sortField, valuefilter1: valuefilter1, valuefilter2: valuefilter2, keyword: keyword})} className="download">Export file</span>
+        </Col>
+        </Row>
       <br/>
       <Table
         columns={columns}
@@ -238,7 +473,7 @@ export default function TableReport({match}) {
          />
       <br/>
       {
-        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize}
+        totalData>1 && <Pagination onChange={onChange} total={totalData} defaultPageSize={pagesize} current={pageCurren}
         defaultCurrent={pageCurren}/>
       }
       <LoadingFullScreen/>

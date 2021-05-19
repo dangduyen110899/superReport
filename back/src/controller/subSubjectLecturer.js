@@ -11,6 +11,7 @@ const report = require('./report');
 const getHourItem = require('./getHourItem');
 
 subSubjectLecturer.list = async (req, res) => {
+  let program = req.user.role==='ADMIN' ? 0 : 1
   const year = req.query.year;
   const semester = req.query.semester;
   let response, countx
@@ -21,7 +22,8 @@ subSubjectLecturer.list = async (req, res) => {
       where: {
         [Op.and]: [
           { year: year },
-          { semester: Number(semester) }
+          { semester: Number(semester) },
+          {program: program}
         ]
       },
       offset: (page-1)*size, 
@@ -32,12 +34,15 @@ subSubjectLecturer.list = async (req, res) => {
   } else if (page && size) {
     const { count, rows } = await SubSubjectLecturer.findAndCountAll({
       offset: (page-1)*size, 
-      limit: size
+      limit: size,
+      program: program
     })
     response = rows
     countx = count
   } else {
-    const { count, rows } = await SubSubjectLecturer.findAndCountAll()
+    const { count, rows } = await SubSubjectLecturer.findAndCountAll({
+      program: program
+    })
     response = rows  
     countx = count
   }
@@ -136,6 +141,9 @@ subSubjectLecturer.checkYear = async (req, res) => {
   }
 
 subSubjectLecturer.creates = async (req, res) => {
+  
+  // trong ddh: 0, sau dh: 1
+  let program = req.user.role==='ADMIN' ? 0 : 1
   const year = req.body.year;
   const semester = req.body.semester;
 
@@ -176,8 +184,9 @@ subSubjectLecturer.creates = async (req, res) => {
                 subjectCode: rows[i][0],
                 job: jobTkb,
                 nameSubject: rows[i][1],
+                program: program
               }
-              subSubjectLecturer.hour = getHourItem(subSubjectLecturer, (rows[i][9] === "CL" || rows[i][9]==="TA") ? 0 : 1, 'tkb',1)
+              subSubjectLecturer.hour = Math.round(getHourItem(subSubjectLecturer, (rows[i][9] === "CL" || rows[i][9]==="TA") ? 0 : 1, 'tkb trong dh',1))
               tkbs.push(subSubjectLecturer);
             } else {
               await Promise.all(
@@ -213,8 +222,9 @@ subSubjectLecturer.creates = async (req, res) => {
                     subjectCode: rows[i][0],
                     job: jobTkb,
                     nameSubject: rows[i][1],
+                    program: program
                   }
-                  subSubjectLecturer1.hour = getHourItem(subSubjectLecturer1, (rows[i][9] === "CL" || rows[i][9]==="TA") ? 0 : 1, 'tkb', 2)
+                  subSubjectLecturer1.hour = Math.round(getHourItem(subSubjectLecturer, (rows[i][9] === "CL" || rows[i][9]==="TA") ? 0 : 1, 'tkb sau dh',res02.length))
                   tkbs.push(subSubjectLecturer1);
                 }
               })
@@ -223,16 +233,13 @@ subSubjectLecturer.creates = async (req, res) => {
         }
       }
       fetchApi().then( async() => {
-
-        await SubSubjectLecturer.bulkCreate(tkbs).then( () =>{
-          res.json(tkbs);
-        })
+        await SubSubjectLecturer.bulkCreate(tkbs)
         const lecturerIdTkb = Array.from(new Set(tkbs.map(item => item.lecturerId)))
 
         for (let i = 0; i < lecturerIdTkb.length; i++) {
-          await report.updateHour(year, semester, 'tkb', lecturerIdTkb[i])
+          await report.updateHour(year, semester, program ? 'tkb sau đh' : 'tkb trong đh', lecturerIdTkb[i])
         }
-
+        res.json(tkbs);
       })
     });
   }

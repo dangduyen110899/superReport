@@ -9,7 +9,7 @@ module.exports = (sequelize, Sequelize) => {
         },
       position: {
         type: Sequelize.STRING,
-        defaultValue: 'Giảng viên',
+        defaultValue: 'GV',
         unique: true
       },
       rate: Sequelize.STRING,

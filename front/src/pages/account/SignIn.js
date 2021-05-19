@@ -17,10 +17,10 @@ const SignIn = () => {
       try {
         await account.signIn(data).then( response => {
           Cookies.set("user", JSON.stringify(response.data)) 
-          history.push('/admin/report')
+          window.location.href = "/report"
         })
       } catch (error) {
-        setErrorSignin(error.response.data.message)
+        setErrorSignin(error.response?.data?.message)
       }
     };
     signinAcc()

@@ -13,39 +13,53 @@ const verifySignUp = require('../router/verifySignUp');
 function route(app) {
 
 // them dinh muc
-app.get('/api/admin/quota', [authJwt.verifyToken, authJwt.isAdmin],quota.list);
-app.post('/api/admin/quota/create',[authJwt.verifyToken, authJwt.isAdmin],quota.create);
-app.post('/api/admin/quota/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),quota.creates);
-app.put('/api/admin/quota/update',[authJwt.verifyToken, authJwt.isAdmin],quota.update);
+app.get('/api/admin/quota', [authJwt.verifyToken, authJwt.isAdminorAdmin1],quota.list);
+app.post('/api/admin/quota/create',[authJwt.verifyToken, authJwt.isAdminorAdmin1],quota.create);
+app.post('/api/admin/quota/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),quota.creates);
+app.put('/api/admin/quota/update',[authJwt.verifyToken, authJwt.isAdminorAdmin1],quota.update);
 
-//  app.get('/api/lecturer/hehe',function(res,req) {lecturer.hehe});
-app.get('/api/admin/lecturer', [authJwt.verifyToken, authJwt.isAdmin],lecturer.list);
-app.post('/api/admin/lecturer/create',[authJwt.verifyToken, authJwt.isAdmin],lecturer.create);
-app.post('/api/admin/lecturer/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),lecturer.creates);
-app.put('/api/admin/lecturer/update',[authJwt.verifyToken, authJwt.isAdmin],lecturer.update);
+// trong đại học 
+app.get('/api/admin/lecturer', [authJwt.verifyToken, authJwt.isAdminorAdmin1],lecturer.list);
+app.post('/api/admin/lecturer/create',[authJwt.verifyToken, authJwt.isAdminorAdmin1],lecturer.create);
+app.post('/api/admin/lecturer/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),lecturer.creates);
+app.put('/api/admin/lecturer/update',[authJwt.verifyToken, authJwt.isAdminorAdmin1],lecturer.update);
 
-app.get('/api/admin/student', [authJwt.verifyToken, authJwt.isAdmin],student.list);
-app.post('/api/admin/student/create', [authJwt.verifyToken, authJwt.isAdmin],student.create);
-app.post('/api/admin/student/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),student.creates);
-app.put('/api/admin/student/update', [authJwt.verifyToken, authJwt.isAdmin],student.update);
+// // sau đại học
+// app.get('/api/adminAfter/lecturer', [authJwt.verifyToken, authJwt.isAdminorAdmin1],lecturer.list);
+// app.post('/api/adminAfter/lecturer/create',[authJwt.verifyToken, authJwt.isAdminorAdmin1],lecturer.create);
+// app.post('/api/adminAfter/lecturer/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),lecturer.creates);
+// app.put('/api/adminAfter/lecturer/update',[authJwt.verifyToken, authJwt.isAdminorAdmin1],lecturer.update);
 
-app.get('/api/admin/thesis', [authJwt.verifyToken, authJwt.isAdmin], thesis.list);
-app.get('/api/admin/detailThesis', [authJwt.verifyToken, authJwt.isLeaderOrAdmin], thesis.detailList);
+// dai hoc
+app.get('/api/admin/student', [authJwt.verifyToken, authJwt.isAdminorAdmin1],student.list);
+app.post('/api/admin/student/create', [authJwt.verifyToken, authJwt.isAdminorAdmin1],student.create);
+app.post('/api/admin/student/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),student.creates);
+app.put('/api/admin/student/update', [authJwt.verifyToken, authJwt.isAdminorAdmin1],student.update);
+
+// dai hoc
+app.get('/api/admin/thesis', [authJwt.verifyToken, authJwt.isAdminorAdmin1], thesis.list);
 // app.post('/api/admin/thesis/create',thesis.create);
-app.post('/api/admin/thesis/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),thesis.creates);
-app.post('/api/admin/thesis/checkYear', [authJwt.verifyToken, authJwt.isAdmin],thesis.checkYear);
-app.put('/api/admin/thesis/update', [authJwt.verifyToken, authJwt.isAdmin],thesis.update);
+app.post('/api/admin/thesis/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),thesis.creates);
+app.post('/api/admin/thesis/checkYear', [authJwt.verifyToken, authJwt.isAdminorAdmin1],thesis.checkYear);
+app.put('/api/admin/thesis/update', [authJwt.verifyToken, authJwt.isAdminorAdmin1],thesis.update);
 
+// dai hoc
+app.get('/api/admin/tkb', [authJwt.verifyToken, authJwt.isAdminorAdmin1],  subSubjectLecturer.list );
+app.post('/api/admin/tkb/create', [authJwt.verifyToken, authJwt.isAdminorAdmin1],subSubjectLecturer.create);
+app.post('/api/admin/tkb/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),subSubjectLecturer.creates);
+app.post('/api/admin/tkb/checkYear', [authJwt.verifyToken, authJwt.isAdminorAdmin1],subSubjectLecturer.checkYear);
 
-app.get('/api/admin/tkb', [authJwt.verifyToken, authJwt.isAdmin],  subSubjectLecturer.list );
-app.get('/api/admin/detailTkb', [authJwt.verifyToken, authJwt.isLeaderOrAdmin],  subSubjectLecturer.detailList );
-app.post('/api/admin/tkb/create', [authJwt.verifyToken, authJwt.isAdmin],subSubjectLecturer.create);
-app.post('/api/admin/tkb/creates', [authJwt.verifyToken, authJwt.isAdmin],upload.single("file"),subSubjectLecturer.creates);
-app.post('/api/admin/tkb/checkYear', [authJwt.verifyToken, authJwt.isAdmin],subSubjectLecturer.checkYear);
-//app.get('/api/admin/tkb/update',subSubjectLecturer.update);
+// // sau dai hoc
+// app.get('/api/adminAfter/tkb', [authJwt.verifyToken, authJwt.isAdminorAdmin1],  subSubjectLecturer.list );
+// app.post('/api/adminAfter/tkb/create', [authJwt.verifyToken, authJwt.isAdminorAdmin1],subSubjectLecturer.create);
+// app.post('/api/adminAfter/tkb/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),subSubjectLecturer.creates);
+// app.post('/api/adminAfter/tkb/checkYear', [authJwt.verifyToken, authJwt.isAdminorAdmin1],subSubjectLecturer.checkYear);
 
-app.get('/api/admin/report', [authJwt.verifyToken, authJwt.isLeaderOrAdmin],report.list);
-app.get('/api/lecturer/report', [authJwt.verifyToken, authJwt.isUser],report.listIdlecturer);
+app.get('/api/detailThesis', [authJwt.verifyToken, authJwt.isLeaderOrAdminorUser], thesis.detailList);
+app.get('/api/detailTkb', [authJwt.verifyToken, authJwt.isLeaderOrAdminorUser],  subSubjectLecturer.detailList );
+app.get('/api/report', [authJwt.verifyToken, authJwt.isLeaderOrAdminorUser],report.list);
+app.post('/api/report/export', [authJwt.verifyToken, authJwt.isLeaderOrAdminorUser],report.export);
+// app.get('/api/lecturer/report', [authJwt.verifyToken, authJwt.isUser],report.listIdlecturer);
 
 app.post('/api/auth/signup', [verifySignUp.checkDuplicateUserNameOrEmail, verifySignUp.checkRolesExisted], controller.signup);
 	

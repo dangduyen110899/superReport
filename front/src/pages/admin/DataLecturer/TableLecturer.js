@@ -145,7 +145,7 @@ export default function TableLecturer({match}) {
     },
   ];
 
-  if(user && (user.roles === 'ADMIN')) {
+  if(user && (user.roles === 'ADMIN' || user.roles === 'ADMIN1') ) {
     columns.push(
       {
         title: 'Action',
@@ -237,7 +237,7 @@ export default function TableLecturer({match}) {
 
   return (
     <LayoutAdmin match={match}>
-      <h2 className="title">QUẢN LÝ DANH SÁCH GIẢNG VIÊN</h2>
+      <h2 className="title">Quản lý danh sách giảng viên</h2>
       <Row justify="space-between">
         <Col>
         <div className="tab-lecturer">
@@ -248,10 +248,10 @@ export default function TableLecturer({match}) {
       </div>
         </Col>
         {
-          user && (user.roles === 'ADMIN') &&
+          user && (user.roles === 'ADMIN' || user.roles === 'ADMIN1') &&
           <Col>
           <input type="file" onChange={e => handleAddLecturers(e.target.files[0])}/>
-          <Button type="primary" onClick={() => setIsModalVisible(true)}>
+          <Button className="button-all" onClick={() => setIsModalVisible(true)}>
             + Thêm giảng viên
           </Button>
           <Modal

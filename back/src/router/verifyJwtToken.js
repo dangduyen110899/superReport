@@ -24,12 +24,13 @@ verifyToken = (req, res, next) => {
 	});
 }
 
-isAdmin = (req, res, next) => {
+isAdminorAdmin1 = (req, res, next) => {
 	let token = req.headers['x-access-token'];
 	
 	User.findOne({where: {id: req.userId}})
 		.then(user => {
-			if (user.dataValues.role === 'ADMIN') {
+			if (user.dataValues.role === 'ADMIN' || user.dataValues.role === 'ADMIN1') {
+				req.user = user.dataValues
 				next();
 				return;
 			}
@@ -38,12 +39,14 @@ isAdmin = (req, res, next) => {
 		})
 }
 
-isLeaderOrAdmin = (req, res, next) => {
+isLeaderOrAdminorUser = (req, res, next) => {
 	let token = req.headers['x-access-token'];
 	
 	User.findOne({where: {id: req.userId}})
 		.then(user => {
-			if (user.dataValues.role === 'ADMIN' || user.dataValues.role === 'LEADER') {
+			const role = user.dataValues.role
+			if (role === 'ADMIN' ||role === 'ADMIN1' || role === 'LĐCC' || role === 'LĐBM' || role === 'LĐK' || role === 'USER') {
+				req.user = user.dataValues
 				next();
 				return;
 			}
@@ -57,7 +60,7 @@ isLeader = (req, res, next) => {
 	
 	User.findOne({where: {id: req.userId}})
 		.then(user => {
-			if (user.dataValues.role === 'LEADER') {
+			if (user.dataValues.role === 'LĐCC') {
 				next();
 				return;
 			}
@@ -83,8 +86,8 @@ isUser = (req, res, next) => {
 
 const authJwt = {};
 authJwt.verifyToken = verifyToken;
-authJwt.isAdmin = isAdmin;
+authJwt.isAdminorAdmin1 = isAdminorAdmin1;
 authJwt.isUser = isUser;
-authJwt.isLeaderOrAdmin = isLeaderOrAdmin;
+authJwt.isLeaderOrAdminorUser = isLeaderOrAdminorUser;
 
 module.exports = authJwt;

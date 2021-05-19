@@ -43,8 +43,9 @@ db.subSubjectLecturer.belongsTo(db.lecturer);
 db.subject.hasMany(db.subSubjectLecturer);
 db.subSubjectLecturer.belongsTo(db.subject);
 
-db.quota.hasMany(db.lecturer);
-db.lecturer.belongsTo(db.quota);
+// db.quota.hasMany(db.lecturer);
+// db.lecturer.belongsTo(db.quota);
+
 
 // db.role.hasMany(db.user_roles);
 // db.user_roles.belongsTo(db.lecturer);

@@ -221,11 +221,11 @@ export default function TableStudent({match}) {
 
   return (
     <LayoutAdmin match={match}>
-      <h2 className="title">QUẢN LÝ DANH SÁCH SINH VIÊN</h2>
+      <h2 className="title">Quản lý danh sách sinh viên</h2>
       <Row justify="space-between">
         <Col>
           {/* <Search onSearch={onSearch}/> */}
-          <span>search</span>
+          <span style={{fontSize: '14px', textTransform: 'capitalize'}}>search</span>
         </Col>
         { user && (user.roles === 'ADMIN') && 
           <Col>

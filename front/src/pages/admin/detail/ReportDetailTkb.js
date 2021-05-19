@@ -127,7 +127,7 @@ export default function ReportDetailTkb({match}) {
       align: 'center'
       }) }
 
-  if(user && (user.roles === 'ADMIN')) { 
+  if(user && (user.roles === 'ADMIN' || user.roles === 'ADMIN1')) { 
     columns.push(
       {
         title: 'Action',
@@ -166,7 +166,7 @@ export default function ReportDetailTkb({match}) {
   function onChange(page, pageSize) {
     setPageCurren(page)
     setPagesize(pageSize)
-    history.push(`/admin/report/schedules/${lecturerId}?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&type=${type}`)
+    history.push(`/report/schedules/${lecturerId}?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&type=${type}`)
   }
 
   return (

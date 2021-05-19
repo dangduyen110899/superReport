@@ -214,13 +214,13 @@ export default function TableQuota({match}) {
 
   return (
     <LayoutAdmin match={match}>
-      <h2 className="title">QUẢN LÝ ĐỊNH MỨC</h2>
+      <h2 className="title">Quản lý định mức</h2>
       <Row justify="space-between">
         {
           user && (user.roles === 'ADMIN') &&
           <Col>
           <input type="file" onChange={e => handleAddquotas(e.target.files[0])}/>
-          <Button type="primary" onClick={() => setIsModalVisible(true)}>
+          <Button className="button-all" onClick={() => setIsModalVisible(true)}>
             + Thêm định mức
           </Button>
           <Modal

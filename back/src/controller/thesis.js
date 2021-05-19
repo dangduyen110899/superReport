@@ -183,7 +183,7 @@ thesis.creates = async (req, res) => {
       fetchApi().then( async () => {
         try {
           await Thesis.bulkCreate(theses).then(() =>{
-            res.json(theses);
+            // res.json(theses);
            })
         } catch (error) {
           console.log(error)
@@ -193,6 +193,8 @@ thesis.creates = async (req, res) => {
         for (let i = 0; i < lecturerIdKltn.length; i++) {
           await report.updateHour(year, semester, 'kltn', lecturerIdKltn[i])
         }
+
+        res.json(theses);
 
       })
     });

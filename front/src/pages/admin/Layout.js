@@ -43,26 +43,24 @@ export default function LayoutAdmin({children, match}) {
     }}
       trigger={null} collapsible collapsed={collapsed}
     >
-      <div className="logo"><img style={{width: `${collapsed ? '63%' : '27%'}`, 
-      height: "25px", margin: `${collapsed ? "13px -6px 15px 16px" : "18px -8px 21px 4px"}`}} src={logo}/>
-        <span style={{color: "#fff", fontFamily: "system-ui", fontWeight: "bold"}}>
+      <div className="logo"><img style={{width: `${collapsed ? '63%' : '40%'}`, 
+      height: "60px", margin: `${collapsed ? "13px -6px 15px 16px" : "18px -8px 21px 4px"}`}} src={logo}/>
+        <span style={{color: "#6c757d", fontFamily: "system-ui", fontWeight: "bold", fontSize: "24px"}}>
           {collapsed ? '' : 'SUPER-REPORT'}
         </span>
       </div>
-      <Menu theme="dark" mode="inline" defaultSelectedKeys={[match.match.path==="/admin/tkb" ? "1" : match.match.path==="/admin/kltn" ? "2" : match.match.path==="/admin/lecturer" ? "3" : match.match.path==="/admin/student" ? "4" :  match.match.path==="/admin/report" ? "5" : "10" ]}>
+      <Menu mode="inline" defaultSelectedKeys={[match.match.path==="/admin/tkb" ? "1" : match.match.path==="/admin/kltn" ? "2" : match.match.path==="/admin/lecturer" ? "3" : match.match.path==="/admin/student" ? "4" :  match.match.path==="/admin/quota" ? "10" : "5" ]}>
+        {
+          (user?.roles === 'ADMIN' || user?.roles === 'ADMIN1') 
+          && 
+          <Menu.Item key="3" icon={<DatabaseOutlined />}>
+          <Link to="/admin/lecturer">Quản lý giảng viên</Link>
+        </Menu.Item>
+        }
         {
           (user?.roles === 'ADMIN') 
           && 
           <>
-            <Menu.Item key="1" icon={<DatabaseOutlined />}>
-            <Link to="/admin/tkb">Quản lý TKB</Link>
-            </Menu.Item>
-            <Menu.Item key="2" icon={<DatabaseOutlined />}>
-              <Link to="/admin/kltn">Quản lý KLTN</Link>
-            </Menu.Item>
-            <Menu.Item key="3" icon={<DatabaseOutlined />}>
-              <Link to="/admin/lecturer">Quản lý giảng viên</Link>
-            </Menu.Item>
             <Menu.Item key="4" icon={<DatabaseOutlined />}>
               <Link to="/admin/student">Quản lý sinh viên</Link>
             </Menu.Item>
@@ -72,13 +70,27 @@ export default function LayoutAdmin({children, match}) {
           </>
         }
         {
-          (user?.roles === 'ADMIN' || user?.roles === 'LEADER' || user?.roles === 'USER') && 
+          (user?.roles === 'ADMIN' || user?.roles === 'ADMIN1') 
+          && 
+            <Menu.Item key="1" icon={<DatabaseOutlined />}>
+            <Link to="/admin/tkb">Quản lý TKB</Link>
+            </Menu.Item>
+        }
+         {
+          (user?.roles === 'ADMIN') 
+          && 
+          <Menu.Item key="2" icon={<DatabaseOutlined />}>
+          <Link to="/admin/kltn">Quản lý KLTN</Link>
+        </Menu.Item>
+        }
+        {
+          (user?.roles === 'ADMIN' || user?.roles === 'ADMIN1' || user?.roles === 'LEADER' || user?.roles === 'USER') && 
           <Menu.Item key="5" icon={<DatabaseOutlined />}>
-          <Link to="/admin/report">Báo cáo</Link>
+          <Link to="/report">Báo cáo</Link>
         </Menu.Item>
         }
       </Menu>
-      <span onClick={toggle} style={{color: "#fff", float: "right", margin: "30px"}}>{
+      <span onClick={toggle} style={{color: "#222b45", float: "right", margin: "30px", fontSize: '24px'}}>{
         collapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>
       }</span>
     </Sider>
@@ -98,7 +110,7 @@ export default function LayoutAdmin({children, match}) {
     </Header>
       
       <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-        <div className="site-layout-background" style={{ padding: 30, textAlign: 'center', background: "#fff", boxShadow: "0px 15px 13px -15px #b1b1b1"}}>
+        <div className="site-layout-background" style={{ padding: 30, textAlign: 'center', background: "#fff", boxShadow: "0px 15px 13px -15px #b1b1b1", borderRadius: '10px'}}>
         {
           children
         }

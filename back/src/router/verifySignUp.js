@@ -37,6 +37,7 @@ checkPassword = (req, res, next) => {
 
 checkDuplicateUserNameOrEmail = (req, res, next) => {
 	// -> Check Email is already in use
+	console.log("req.body.email",req.body)
 	User.findOne({ 
 		where: {
 			email: req.body.email
