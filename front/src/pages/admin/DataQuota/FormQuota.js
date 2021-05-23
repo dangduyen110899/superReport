@@ -39,14 +39,16 @@ const FormQuota = ({handleOk, handleCancel, itemEdit}) => {
                 name="rate"
                 type="number"
                 className="form-input"
+                style={{width: '90%',
+                  float: 'left'}}
                 ref={register({ required: "This is required message" })}
               />%
               <ErrorMessage errors={errors} name="rate" as="p" className="form_email-validate"/>
             </div>
             <br/>
             <div className="d-flex justify-content-between">
-                <Button type="primary" htmlType="submit">Save</Button>
-              <Button onClick={() => handleCancel()}>Cancel</Button>
+                <Button type="primary" htmlType="submit">Lưu</Button>
+              <Button onClick={() => handleCancel()}>Hủy</Button>
             </div>
           </form>
         </div>

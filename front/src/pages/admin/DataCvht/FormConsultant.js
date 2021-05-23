@@ -4,14 +4,14 @@ import { Select , Space, Row, Button, Input} from 'antd';
 
 const { Option } = Select;
 
-export default function FormThesis({handleOkAddYear, handleCancel}) {
-  const { handleSubmit, control, register } = useForm();
+export default function FormCunsultant({handleOkAddYear, handleCancel}) {
+  const { handleSubmit, control } = useForm();
   const [fileKltn, setFileKltn] = useState()
   return (
     <form onSubmit={handleSubmit(data => handleOkAddYear(data.year, data.semester, fileKltn))}>
       <Space direction="vertical">
         <Row>
-        <Space direction="vertical">
+          <Space direction="vertical">
             <Space>
               <label>Chọn học kỳ</label>
               <Controller
@@ -38,17 +38,17 @@ export default function FormThesis({handleOkAddYear, handleCancel}) {
             </Space>
           </Row>
           <Row>
-          <label htmlFor="actual-btn" class="upload-file" style={{ zIndex: 1}}>Chọn file khóa luận tốt nghiệp</label>
+          <label htmlFor="actual-btn" class="upload-file" style={{ zIndex: 1}}>Chọn file thời khóa biểu</label>
           <input type="file" name="thesis" onChange={e => setFileKltn(e.target.files[0])} id="actual-btn" style={{position: 'absolute',
     top: '192px',
-    left: '193px'}}/>
+    left: '153px'}}/>
           </Row>
         <Row>
     </Row>
     </Space>
     <div  className="d-flex justify-content-between mt-3">
-          <Button type="primary" htmlType="submit">Lưu  </Button>
-          <Button onClick={() => handleCancel()}>Hủy</Button>
+          <Button type="primary" htmlType="submit">Save</Button>
+          <Button onClick={() => handleCancel()}>Cancel</Button>
         </div>
   </form>
   )

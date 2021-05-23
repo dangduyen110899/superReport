@@ -153,6 +153,26 @@ export default function TableThesic({match}) {
     }
   ];
 
+  if(user && (user.roles === 'ADMIN')) { 
+    columns.push({
+      title: 'Action',
+      dataIndex: 'operation',
+      width: 100,
+        align: 'center',
+      render: (_, record) =>
+        data.length >= 1 ? (
+          <Space>
+          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
+            <span><DeleteOutlined /></span>
+          </Popconfirm>
+          <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
+          <EditOutlined />
+          </span>
+          </Space>
+        ) : null,
+    })
+  }
+
   useEffect(() => {
     const getData = async () => {
       dispatch({
@@ -270,11 +290,11 @@ export default function TableThesic({match}) {
          <Col>
          <Space>
            <Button className="button-all" onClick={() => setIsModalVisible(true)}>
-             Thêm khóa luận tốt nghiệp
+             Thêm quản lý khóa luận tốt nghiệp
            </Button>
          </Space>
          <Modal
-           title="Thêm khóa luận tốt nghiệp"
+           title="Select time"
            footer={null}
            destroyOnClose
            onCancel={handleCancel}

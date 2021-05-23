@@ -13,18 +13,7 @@ export default function FormTkb({handleOkAddYear, handleCancel}) {
         <Row>
           <Space direction="vertical">
             <Space>
-              <label >School  Year (format: xxxx-yyyy)</label>
-              <Controller
-                as={
-                  <Input/>
-                }
-                name="year"
-                control={control}
-              />
-            </Space>
-
-            <Space>
-              <label>Semester</label>
+              <label>Chọn học kỳ</label>
               <Controller
                 as={
                   <Select placeholder="Select semester">
@@ -36,18 +25,31 @@ export default function FormTkb({handleOkAddYear, handleCancel}) {
                 control={control}
               />
             </Space>
+            <Space>
+              <label >Chọn năm học <br/>(định dạng: 20xx-20yy)</label>
+              <Controller
+                as={
+                  <Input/>
+                }
+                name="year"
+                control={control}
+              />
+            </Space>
             </Space>
           </Row>
           <Row>
-          <input type="file" name="thesis" onChange={e => setFileKltn(e.target.files[0])}/>
+          <label htmlFor="actual-btn" class="upload-file" style={{ zIndex: 1}}>Chọn file thời khóa biểu</label>
+          <input type="file" name="thesis" onChange={e => setFileKltn(e.target.files[0])} id="actual-btn" style={{position: 'absolute',
+    top: '192px',
+    left: '153px'}}/>
           </Row>
         <Row>
-        <Space>
-          <Button type="primary" htmlType="submit">Save</Button>
-          <Button onClick={() => handleCancel()}>Cancel</Button>
-        </Space>
     </Row>
     </Space>
+    <div  className="d-flex justify-content-between mt-3">
+          <Button type="primary" htmlType="submit">Lưu  </Button>
+          <Button onClick={() => handleCancel()}>Hủy</Button>
+        </div>
   </form>
   )
 }
