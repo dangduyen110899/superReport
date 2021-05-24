@@ -250,12 +250,13 @@ export default function TableLecturer({match}) {
         {
           user && (user.roles === 'ADMIN' || user.roles === 'ADMIN1') &&
           <Col>
-          <input type="file" onChange={e => handleAddLecturers(e.target.files[0])}/>
+          <input id="actual-btn" type="file" onChange={e => handleAddLecturers(e.target.files[0])} hidden/>
+          <label htmlFor="actual-btn" class="upload-file">Chọn file</label>
           <Button className="button-all" onClick={() => setIsModalVisible(true)}>
             + Thêm giảng viên
           </Button>
           <Modal
-            title="THÊM GIẢNG VIÊN"
+            title={itemEdit ? "THAY ĐỔI THÔNG TIN GIẢNG VIÊN" : "THÊM GIẢNG VIÊN"}
             footer={null}
             destroyOnClose
             onCancel={handleCancel}

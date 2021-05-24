@@ -24,12 +24,6 @@ app.post('/api/admin/lecturer/create',[authJwt.verifyToken, authJwt.isAdminorAdm
 app.post('/api/admin/lecturer/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),lecturer.creates);
 app.put('/api/admin/lecturer/update',[authJwt.verifyToken, authJwt.isAdminorAdmin1],lecturer.update);
 
-// // sau đại học
-// app.get('/api/adminAfter/lecturer', [authJwt.verifyToken, authJwt.isAdminorAdmin1],lecturer.list);
-// app.post('/api/adminAfter/lecturer/create',[authJwt.verifyToken, authJwt.isAdminorAdmin1],lecturer.create);
-// app.post('/api/adminAfter/lecturer/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),lecturer.creates);
-// app.put('/api/adminAfter/lecturer/update',[authJwt.verifyToken, authJwt.isAdminorAdmin1],lecturer.update);
-
 // dai hoc
 app.get('/api/admin/student', [authJwt.verifyToken, authJwt.isAdminorAdmin1],student.list);
 app.post('/api/admin/student/create', [authJwt.verifyToken, authJwt.isAdminorAdmin1],student.create);
@@ -46,17 +40,10 @@ app.get('/api/admin/tkb', [authJwt.verifyToken, authJwt.isAdminorAdmin1],  subSu
 app.post('/api/admin/tkb/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),subSubjectLecturer.creates);
 app.post('/api/admin/tkb/checkYear', [authJwt.verifyToken, authJwt.isAdminorAdmin1],subSubjectLecturer.checkYear);
 
-// // sau dai hoc
-// app.get('/api/adminAfter/tkb', [authJwt.verifyToken, authJwt.isAdminorAdmin1],  subSubjectLecturer.list );
-// app.post('/api/adminAfter/tkb/create', [authJwt.verifyToken, authJwt.isAdminorAdmin1],subSubjectLecturer.create);
-// app.post('/api/adminAfter/tkb/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),subSubjectLecturer.creates);
-// app.post('/api/adminAfter/tkb/checkYear', [authJwt.verifyToken, authJwt.isAdminorAdmin1],subSubjectLecturer.checkYear);
-
 app.get('/api/detailThesis', [authJwt.verifyToken, authJwt.isLeaderOrAdminorUser], thesis.detailList);
 app.get('/api/detailTkb', [authJwt.verifyToken, authJwt.isLeaderOrAdminorUser],  subSubjectLecturer.detailList );
 app.get('/api/report', [authJwt.verifyToken, authJwt.isLeaderOrAdminorUser],report.list);
 app.post('/api/report/export', [authJwt.verifyToken, authJwt.isLeaderOrAdminorUser],report.export);
-// app.get('/api/lecturer/report', [authJwt.verifyToken, authJwt.isUser],report.listIdlecturer);
 
 app.post('/api/auth/signup', [verifySignUp.checkDuplicateUserNameOrEmail, verifySignUp.checkRolesExisted], controller.signup);
 	

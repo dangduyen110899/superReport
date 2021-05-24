@@ -366,7 +366,7 @@ export default function TableReport({match}) {
       {
         // year
         const arrYear2 = []
-        let arrString = res?.data?.data.map(item => {
+        let arrString = res?.data?.data?.map(item => {
           arrYear2.push(item.year)
           return item.semester + ' ' + item.year
         })
@@ -379,7 +379,7 @@ export default function TableReport({match}) {
         x && setSemester(x[0])
 
         // list department
-        const listDepartments = res?.data?.data.map(item => item.department)
+        const listDepartments = res?.data?.data?.map(item => item.department)
         let dataDepartment  =  listDepartments?.filter((item, index) => listDepartments.indexOf(item) === index);
         dataDepartment = dataDepartment?.map(item => { 
           if (valuefilter1.length>0) {
@@ -398,7 +398,7 @@ export default function TableReport({match}) {
         setlistDepartment(dataDepartment)
 
         //list subject
-        const listSubjects = res?.data?.data.map(item => item.subject)
+        const listSubjects = res?.data?.data?.map(item => item.subject)
         let dataSubject  =  listSubjects?.filter((item, index) => listSubjects.indexOf(item) === index);
         dataSubject = dataSubject?.map(item => { return {check: false, value: item}})
         setlistSubject(dataSubject)

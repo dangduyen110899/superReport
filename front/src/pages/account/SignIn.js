@@ -29,10 +29,7 @@ const SignIn = () => {
   return (
   <div className="form-login">
     <div className="row justify-content-center">
-      <div className="col-md-12 col-lg-10 col-xl-8 row d-flex pd-none bd-radius">
-        <div className="form-login__image col-md-6">
-          <img src={signin} className="form-login__image-img" alt="Login image"/>
-        </div>
+      <div className="col-md-12 col-lg-10 col-xl-8 row justify-content-center d-flex  bd-radius">
 
         <div className="form-login__content col-md-6">
 
@@ -91,9 +88,9 @@ const SignIn = () => {
           </div>
 
           <div className="form-login__form-help">
-            <div className="text-center">
+            {/* <div className="text-center">
               <a href="" className="forgot-password">Quên mật khẩu?</a>
-            </div>
+            </div> */}
           </div>
 
         </div>

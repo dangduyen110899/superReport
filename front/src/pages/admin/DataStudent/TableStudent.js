@@ -223,15 +223,15 @@ export default function TableStudent({match}) {
     <LayoutAdmin match={match}>
       <h2 className="title">Quản lý danh sách sinh viên</h2>
       <Row justify="space-between">
-        <Col>
-          {/* <Search onSearch={onSearch}/> */}
-          <span style={{fontSize: '14px', textTransform: 'capitalize'}}>search</span>
-        </Col>
         { user && (user.roles === 'ADMIN') && 
           <Col>
-          <input type="file" onChange={e => handleAddStudents(e.target.files[0])}/>
+          <input type="file" onChange={e => handleAddStudents(e.target.files[0])} id="actual-btn" hidden/>
+          <label htmlFor="actual-btn" class="upload-file">Chọn file</label>
+          <Button className="button-all" onClick={() => setIsModalVisible(true)}>
+            + Thêm sinh viên
+          </Button>
           <Modal
-            title="Select time"
+            title={itemEdit ? "Thay đổi sinh viên" : "Thêm sinh viên"}
             footer={null}
             destroyOnClose
             onCancel={handleCancel}

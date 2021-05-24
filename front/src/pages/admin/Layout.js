@@ -54,7 +54,7 @@ export default function LayoutAdmin({children, match}) {
           (user?.roles === 'ADMIN' || user?.roles === 'ADMIN1') 
           && 
           <Menu.Item key="3" icon={<DatabaseOutlined />}>
-          <Link to="/admin/lecturer">Quản lý giảng viên</Link>
+          <Link to="/admin/lecturer">Quản lý danh sách giảng viên</Link>
         </Menu.Item>
         }
         {
@@ -62,10 +62,10 @@ export default function LayoutAdmin({children, match}) {
           && 
           <>
             <Menu.Item key="4" icon={<DatabaseOutlined />}>
-              <Link to="/admin/student">Quản lý sinh viên</Link>
+              <Link to="/admin/student">Quản lý danh sách sinh viên</Link>
             </Menu.Item>
             <Menu.Item key="10" icon={<DatabaseOutlined />}>
-              <Link to="/admin/quota">Quản lý định mức</Link>
+              <Link to="/admin/quota">Quản lý danh sách định mức</Link>
             </Menu.Item>
           </>
         }
@@ -73,20 +73,37 @@ export default function LayoutAdmin({children, match}) {
           (user?.roles === 'ADMIN' || user?.roles === 'ADMIN1') 
           && 
             <Menu.Item key="1" icon={<DatabaseOutlined />}>
-            <Link to="/admin/tkb">Quản lý TKB</Link>
+            <Link to="/admin/tkb">Quản lý thời khóa biểu</Link>
             </Menu.Item>
         }
          {
           (user?.roles === 'ADMIN') 
           && 
+         <>
           <Menu.Item key="2" icon={<DatabaseOutlined />}>
-          <Link to="/admin/kltn">Quản lý KLTN</Link>
-        </Menu.Item>
+            <Link to="/admin/kltn">Quản lý danh sách khóa luận tốt nghiệp</Link>
+          </Menu.Item>
+           <Menu.Item key="15" icon={<DatabaseOutlined />}>
+            <Link to="/admin/kltn">Quản lý danh sách đồ án tốt nghiệp</Link>
+          </Menu.Item>
+          <Menu.Item key="11" icon={<DatabaseOutlined />}>
+            <Link to="/admin/kltn">Quản lý danh sách luận văn thạc sỹ</Link>
+          </Menu.Item>
+          <Menu.Item key="12" icon={<DatabaseOutlined />}>
+            <Link to="/admin/kltn">Quản lý danh sách luận án tiến sĩ</Link>
+          </Menu.Item>
+          <Menu.Item key="13" icon={<DatabaseOutlined />}>
+            <Link to="/admin/kltn">Quản lý danh sách cố vấn học tập</Link>
+          </Menu.Item>
+          <Menu.Item key="14" icon={<DatabaseOutlined />}>
+            <Link to="/admin/kltn">Quản lý danh sách thực tập thực địa</Link>
+          </Menu.Item>
+         </>
         }
         {
           (user?.roles === 'ADMIN' || user?.roles === 'ADMIN1' || user?.roles === 'LEADER' || user?.roles === 'USER') && 
           <Menu.Item key="5" icon={<DatabaseOutlined />}>
-          <Link to="/report">Báo cáo</Link>
+          <Link to="/report">Báo cáo thống kê</Link>
         </Menu.Item>
         }
       </Menu>
