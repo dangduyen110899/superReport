@@ -38,14 +38,11 @@ app.put('/api/admin/student/update', [authJwt.verifyToken, authJwt.isAdminorAdmi
 
 // dai hoc
 app.get('/api/admin/thesis', [authJwt.verifyToken, authJwt.isAdminorAdmin1], thesis.list);
-// app.post('/api/admin/thesis/create',thesis.create);
 app.post('/api/admin/thesis/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),thesis.creates);
 app.post('/api/admin/thesis/checkYear', [authJwt.verifyToken, authJwt.isAdminorAdmin1],thesis.checkYear);
-app.put('/api/admin/thesis/update', [authJwt.verifyToken, authJwt.isAdminorAdmin1],thesis.update);
 
 // dai hoc
 app.get('/api/admin/tkb', [authJwt.verifyToken, authJwt.isAdminorAdmin1],  subSubjectLecturer.list );
-app.post('/api/admin/tkb/create', [authJwt.verifyToken, authJwt.isAdminorAdmin1],subSubjectLecturer.create);
 app.post('/api/admin/tkb/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),subSubjectLecturer.creates);
 app.post('/api/admin/tkb/checkYear', [authJwt.verifyToken, authJwt.isAdminorAdmin1],subSubjectLecturer.checkYear);
 

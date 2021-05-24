@@ -2,7 +2,7 @@ module.exports = (sequelize, Sequelize) => {
 
   const Consultant = sequelize.define('consultant', {
     id: {
-      type: Sequelize.STRING,
+      type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },

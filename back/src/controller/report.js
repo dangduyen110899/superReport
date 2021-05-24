@@ -358,12 +358,15 @@ report.base = async (req, res) => {
       response1 = rows
       count1 = count
     }
-    return {data: response1, total: count1}
+    // console.log({data: response1, total: count1})
+    res.json({data: response1, total: count1})
   
   }
 
 report.list = (req,res) => {
-  res.json(report.base(req,res))
+  report.base(req,res)
+  // console.log(result)
+  // res.json(result)
 }
   
 report.export = (req,res) => {
