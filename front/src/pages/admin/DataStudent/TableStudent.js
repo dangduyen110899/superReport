@@ -131,7 +131,8 @@ export default function TableStudent({match}) {
       dataIndex: 'birthday',
       key: 'birthday',
       width: 200,
-      align: 'center'
+      align: 'center',
+      render: (text) => <span>{text.slice(0,10)}</span>
     },
     {
       title: 'Quê quán',

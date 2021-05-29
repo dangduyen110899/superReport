@@ -250,7 +250,7 @@ export default function TableReport({match}) {
       title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy trong đh<i className="fas fa-sort"></i></div>},
       dataIndex: 'hourSchedule',
       key: 'hourSchedule',
-      width: 150,
+      width: 100,
       align: 'center',
       render: (value, item) => <Link to={`/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
@@ -258,37 +258,58 @@ export default function TableReport({match}) {
       title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy sau đh<i className="fas fa-sort"></i></div>},
       dataIndex: 'hourSchedule',
       key: 'hourSchedule',
-      width: 150,
+      width: 100,
       align: 'center',
       render: (value, item) => <Link to={`/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
-    },
+    },  
     {
-      title: () => { return <div onClick={() => sortHour('hourThesis')}>HD khóa luận <i className="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('hourThesis')}>Giờ hướng dẫn khóa luận tốt nghiệp <i className="fas fa-sort"></i></div>},
       dataIndex: 'hourThesis',
       key: 'hourThesis',
-      width: 150,
+      width: 100,
       align: 'center',
       render: (value, item) => <Link to={`/report/thesis/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
     {
-      title: () => { return <div onClick={() => sortHour('hourProject')}>HD đồ án <i className="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('hourProject')}>Giờ hướng dẫn đồ án tốt nghiệp<i className="fas fa-sort"></i></div>},
       dataIndex: 'hourProject',
       key: 'hourProject',
-      width: 130,
+      width: 100,
       align: 'center'
     },
     {
-      title: () => { return <div onClick={() => sortHour('hourTTCN')}>HD thực tập <i className="fas fa-sort"></i></div>},
-      dataIndex: 'hourTTCN',
-      key: 'hourTTCN',
-      width: 130,
+      title: () => { return <div onClick={() => sortHour('hourPhdThesis')}>Giờ hướng dẫn luận văn thạc sĩ<i className="fas fa-sort"></i></div>},
+      dataIndex: 'hourPhdThesis',
+      key: 'hourPhdThesis',
+      width: 100,
+      align: 'center'
+    },
+    {
+      title: () => { return <div onClick={() => sortHour('hourDissertation')}>Giờ hướng dẫn luận án tiến sĩ<i className="fas fa-sort"></i></div>},
+      dataIndex: 'hourDissertation',
+      key: 'hourDissertation',
+      width: 100,
+      align: 'center'
+    },
+    {
+      title: () => { return <div onClick={() => sortHour('hourConsultant')}>Giờ hướng dẫn cố vấn học tập<i className="fas fa-sort"></i></div>},
+      dataIndex: 'hourConsultant',
+      key: 'hourConsultant',
+      width: 100,
+      align: 'center'
+    },
+    {
+      title: () => { return <div onClick={() => sortHour('hourPractice')}>Giờ hướng dẫn thực tập thực địa<i className="fas fa-sort"></i></div>},
+      dataIndex: 'hourPractice',
+      key: 'hourPractice',
+      width: 100,
       align: 'center'
     },
     {
       title: () => { return <div onClick={() => sortHour('total')}>Tổng số giờ <i className="fas fa-sort"></i></div>},
       dataIndex: 'total',
       key: 'total',
-      width: 130,
+      width: 100,
       align: 'center'
     }
   ];

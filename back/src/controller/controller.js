@@ -31,12 +31,12 @@ exports.signin = (req, res) => {
 		}
 	}).then(user => {
 		if (!user) {
-			return res.status(404).send({message: 'User Not Found.'});
+			return res.status(404).send({message: 'Người dùng không tồn tại'});
 		}
 
 		var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
 		if (!passwordIsValid) {
-			return res.status(401).send({ auth: false, accessToken: null, message: "Invalid Password!" });
+			return res.status(401).send({ auth: false, accessToken: null, message: "Mật khẩu chưa chính xác" });
 		}
 		
 		var token = jwt.sign({ id: user.id }, config.secret, {

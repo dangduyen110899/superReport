@@ -198,7 +198,7 @@ report.updateHour = async ( year, semester, name, gvId) => {
 }
 
 
-report.base = async (req, res) => {
+report.list = async (req, res) => {
 
     // get department or Subject user
     async function getDepartmentUser(name) {
@@ -358,13 +358,13 @@ report.base = async (req, res) => {
       response1 = rows
       count1 = count
     }
-    return {data: response1, total: count1}
+    res.json({data: response1, total: count1})
   
   }
 
-report.list = (req,res) => {
-  res.json(report.base(req,res))
-}
+// report.list = (req,res) => {
+//   res.json(report.base(req,res))
+// }
   
 report.export = (req,res) => {
   req.check = 'export'

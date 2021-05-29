@@ -17,21 +17,24 @@ let db = {}
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-
-db.student = require('../models/Student')(sequelize, Sequelize);
 db.lecturer = require('../models/Lecturer')(sequelize, Sequelize);
+db.reportHour = require('../models/ReportHour')(sequelize, Sequelize);
+db.subSubjectLecturer = require('../models/SubSubjectLecturer')(sequelize, Sequelize);
+
 db.thesis = require('../models/Thesis')(sequelize, Sequelize);
+
 db.class = require('../models/Class')(sequelize, Sequelize);
 db.subject = require('../models/Subject')(sequelize, Sequelize);
 // db.classSubject = require('../models/ClassSubject')(sequelize, Sequelize);
-db.subSubjectLecturer = require('../models/SubSubjectLecturer')(sequelize, Sequelize);
-db.reportHour = require('../models/ReportHour')(sequelize, Sequelize);
 // bổ sung danh sách hd
 db.project = require('../models/Project')(sequelize, Sequelize);
 db.phdThesis = require('../models/PhdThesis')(sequelize, Sequelize);
 db.dissertation = require('../models/Dissertation')(sequelize, Sequelize);
 db.consultant = require('../models/Consultant')(sequelize, Sequelize);
 db.practice = require('../models/Practice')(sequelize, Sequelize);
+
+db.student = require('../models/Student')(sequelize, Sequelize);
+
 
 // authenti
 db.user = require('../models/User')(sequelize, Sequelize);
