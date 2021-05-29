@@ -99,17 +99,6 @@ subSubjectLecturer.detailList = async (req, res) => {
 
 }
 
-subSubjectLecturer.create = async ( req, res) =>{
-  try {
-    req.body.hour = getHourItem(req.body)
-    const response = await SubSubjectLecturer.create(req.body)
-    report.updateHour(req.body.year, req.body.semester, 'tkb')
-    res.json(response);
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 subSubjectLecturer.checkYear = async (req, res) => {
   const year = req.body.year;
   const semester = req.body.semester;

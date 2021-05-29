@@ -37,7 +37,6 @@ app.post('/api/admin/thesis/checkYear', [authJwt.verifyToken, authJwt.isAdminorA
 
 // dai hoc
 app.get('/api/admin/tkb', [authJwt.verifyToken, authJwt.isAdminorAdmin1],  subSubjectLecturer.list );
-app.post('/api/admin/tkb/create', [authJwt.verifyToken, authJwt.isAdminorAdmin1],subSubjectLecturer.create);
 app.post('/api/admin/tkb/creates', [authJwt.verifyToken, authJwt.isAdminorAdmin1],upload.single("file"),subSubjectLecturer.creates);
 app.post('/api/admin/tkb/checkYear', [authJwt.verifyToken, authJwt.isAdminorAdmin1],subSubjectLecturer.checkYear);
 

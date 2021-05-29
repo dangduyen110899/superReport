@@ -175,9 +175,9 @@ export default function TableReport({match}) {
                 })
               }
               <div style={{ textAlign: 'right' }}>
-                <button onClick={() => handleFilter('khoa')} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Ok</button>
-                <button onClick={() => setvisibleModal1(false)} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Cancel</button>
-                <button onClick={() => handleResetModal1()} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Reset</button>
+                <button className="button_ok" onClick={() => handleFilter('khoa')} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Ok</button>
+                <button className="button_cancel" onClick={() => setvisibleModal1(false)} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Cancel</button>
+                <button className="button_reset" onClick={() => handleResetModal1()} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Reset</button>
               </div>
             </div>
             }
@@ -229,9 +229,9 @@ export default function TableReport({match}) {
                 })
               }
               <div style={{ textAlign: 'right' }}>
-                <button onClick={() => handleFilter('bomon')} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Ok</button>
-                <button onClick={() => setvisibleModal2(false)} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Cancel</button>
-                <button onClick={() => handleResetModal2()} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Reset</button>
+                <button className="button_ok" onClick={() => handleFilter('bomon')} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Ok</button>
+                <button className="button_cancel" onClick={() => setvisibleModal2(false)} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Cancel</button>
+                <button className="button_reset" onClick={() => handleResetModal2()} style={{ padding: '0px 15px', border: 'none', borderRadius: '3px', textAlign: 'right', marginTop: '10px'}} type="submit">Reset</button>
               </div>
             </div>
             }
@@ -250,7 +250,7 @@ export default function TableReport({match}) {
       title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy trong đh<i className="fas fa-sort"></i></div>},
       dataIndex: 'hourSchedule',
       key: 'hourSchedule',
-      width: 100,
+      width: 90,
       align: 'center',
       render: (value, item) => <Link to={`/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
@@ -258,15 +258,15 @@ export default function TableReport({match}) {
       title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy sau đh<i className="fas fa-sort"></i></div>},
       dataIndex: 'hourSchedule',
       key: 'hourSchedule',
-      width: 100,
+      width: 90,
       align: 'center',
       render: (value, item) => <Link to={`/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },  
     {
-      title: () => { return <div onClick={() => sortHour('hourThesis')}>Giờ hướng dẫn khóa luận tốt nghiệp <i className="fas fa-sort"></i></div>},
+      title: () => { return <div onClick={() => sortHour('hourThesis')}>Giờ hướng dẫn khóa luận tốt nghiệp<i className="fas fa-sort"></i></div>},
       dataIndex: 'hourThesis',
       key: 'hourThesis',
-      width: 100,
+      width: 90,
       align: 'center',
       render: (value, item) => <Link to={`/report/thesis/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
@@ -274,42 +274,42 @@ export default function TableReport({match}) {
       title: () => { return <div onClick={() => sortHour('hourProject')}>Giờ hướng dẫn đồ án tốt nghiệp<i className="fas fa-sort"></i></div>},
       dataIndex: 'hourProject',
       key: 'hourProject',
-      width: 100,
+      width: 90,
       align: 'center'
     },
     {
       title: () => { return <div onClick={() => sortHour('hourPhdThesis')}>Giờ hướng dẫn luận văn thạc sĩ<i className="fas fa-sort"></i></div>},
       dataIndex: 'hourPhdThesis',
       key: 'hourPhdThesis',
-      width: 100,
+      width: 90,
       align: 'center'
     },
     {
       title: () => { return <div onClick={() => sortHour('hourDissertation')}>Giờ hướng dẫn luận án tiến sĩ<i className="fas fa-sort"></i></div>},
       dataIndex: 'hourDissertation',
       key: 'hourDissertation',
-      width: 100,
+      width: 90,
       align: 'center'
     },
     {
       title: () => { return <div onClick={() => sortHour('hourConsultant')}>Giờ hướng dẫn cố vấn học tập<i className="fas fa-sort"></i></div>},
       dataIndex: 'hourConsultant',
       key: 'hourConsultant',
-      width: 100,
+      width: 90,
       align: 'center'
     },
     {
       title: () => { return <div onClick={() => sortHour('hourPractice')}>Giờ hướng dẫn thực tập thực địa<i className="fas fa-sort"></i></div>},
       dataIndex: 'hourPractice',
       key: 'hourPractice',
-      width: 100,
+      width: 90,
       align: 'center'
     },
     {
       title: () => { return <div onClick={() => sortHour('total')}>Tổng số giờ <i className="fas fa-sort"></i></div>},
       dataIndex: 'total',
       key: 'total',
-      width: 100,
+      width: 90,
       align: 'center'
     }
   ];
@@ -452,38 +452,36 @@ export default function TableReport({match}) {
   return (
     <LayoutAdmin match={match}>
       <h2 className="title">Báo cáo tổng hợp</h2>
-      <Row>
-        <Col>
+      <div className="d-flex">
+        <div style={{marginRight : '5px'}}>
           <Select onChange={value => onChangeType(value)} defaultValue={0} value={Number(type)} style={{ width: 200 }}>
             <Option value={0}>Theo học kỳ</Option>
             <Option value={1}>Theo năm học</Option>
             <Option value={2}>Theo năm tài chính</Option>
           </Select>
-        </Col>
+        </div>
         {
           useMemo(() => 
-          <Col>
+          <div style={{marginRight : '102px'}}>
           { type==0 && <SelectSemester options={yearShow} onChangeYear={onChangeYear}></SelectSemester>}
           { Number(type) ? <SelectYear options={yearShow2} onChangeYear={onChangeYear}></SelectYear> : ''}
-        </Col>
+        </div>
           , [type, yearShow, yearShow2])
         }
-      </Row>
-      <Row justify="space-between">
-          <Col flex='5'>
-          {
-            useMemo(() => {
-              return (
-                <Search placeholder="input search text" onChange={e => onSearch(e.target.value)} value={keyword}/>
-              )
-            }, [type, keyword])
-          }
-          </Col>
-          <Col flex='4'></Col>
-          <Col flex='1'>
-          <span onClick={() => downloadFile({year: year, semester: semester, type: type, sort: sort, sortField: sortField, valuefilter1: valuefilter1, valuefilter2: valuefilter2, keyword: keyword})} className="download">Export file</span>
-        </Col>
-        </Row>
+
+        <div style={{marginRight : '503px'}}>
+        {
+          useMemo(() => {
+            return (
+              <Search placeholder="Tìm kiếm giảng viên" onChange={e => onSearch(e.target.value)} value={keyword}/>
+            )
+          }, [type, keyword])
+        }
+        </div>
+        <div>
+        <span onClick={() => downloadFile({year: year, semester: semester, type: type, sort: sort, sortField: sortField, valuefilter1: valuefilter1, valuefilter2: valuefilter2, keyword: keyword})} className="download">Export file</span>
+      </div>
+      </div>
       <br/>
       <Table
         columns={columns}
