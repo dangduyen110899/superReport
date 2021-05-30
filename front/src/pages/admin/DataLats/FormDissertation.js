@@ -4,7 +4,7 @@ import { Select , Space, Row, Button, Input} from 'antd';
 
 const { Option } = Select;
 
-export default function FormThesis({handleOkAddYear, handleCancel}) {
+export default function FormDissertation({handleOkAddYear, handleCancel}) {
   const { handleSubmit, control, register } = useForm();
   const [fileKltn, setFileKltn] = useState()
   return (

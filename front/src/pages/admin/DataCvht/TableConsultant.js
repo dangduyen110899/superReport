@@ -1,8 +1,6 @@
 import React, {useState, useEffect, useMemo} from 'react';
 import LayoutAdmin from '../Layout';
 import Cookies from "js-cookie";
-import {   DeleteOutlined,
-  EditOutlined } from '@ant-design/icons';
 import {
   Table,
   Row,
@@ -12,7 +10,7 @@ import {
   Modal,
   Space, Pagination
 } from 'antd';
-import callAdmin from 'api/admin/Thesis';
+import callAdmin from 'api/admin/Consultant';
 import { toast } from "react-toastify";
 import FormAddYear from '../component/FormAddYear';
 import Select from '../component/Select';
@@ -48,7 +46,7 @@ export default function TableConsultant({match}) {
     const add = async () => {
       try {
         await callAdmin.checkYear({year: yearItem, semester: semesterItem}).then(() => {
-          handleAddThesiss(fileItem, yearItem, semesterItem)
+          handleAddConsultants(fileItem, yearItem, semesterItem)
         })
       } catch (error) {
         dispatch({
@@ -66,33 +64,6 @@ export default function TableConsultant({match}) {
     setItemEdit(null)
     setIsModalVisible(false);
   };
-
-  const handleDelete = (itemEdit) => {
-    itemEdit.status = 0;
-    dispatch({
-      type: LOADING_FULL_SCREEN,
-      payload: true,
-    })
-    const remove = async () => {
-      try {
-        await callAdmin.editThesis(itemEdit)
-        const res = await callAdmin.thesis(year,semester)
-        setData(res.data)
-        dispatch({
-          type: LOADING_FULL_SCREEN,
-          payload: false,
-        })
-        toast.success("Delete thesic success")
-      } catch (error) {
-        dispatch({
-          type: LOADING_FULL_SCREEN,
-          payload: false,
-        })
-        console.log("failed to request API: ", error)
-      }
-    };
-    remove();
-  }
 
   let  columns = [
     {
@@ -122,28 +93,9 @@ export default function TableConsultant({match}) {
       align: 'center'
     },
     {
-      title: 'Tên đề tài',
-      dataIndex: 'nameThesis',
-      key: 'nameThesis',
-    },
-    {
-      title: 'Giảng viên',
+      title: 'Giảng viên co van hoc tap',
       dataIndex: 'lecturerName',
       key: 'lecturerName',
-    },
-    {
-      title: 'Ngôn ngữ',
-      dataIndex: 'language',
-      key: 'language',
-      render: (text) => <span>{text===0 ? 'Tiếng việt' : 'Tiếng anh'}</span>,
-      align: 'center'
-    },
-    {
-      title: 'Nhiệm vụ chiến lược',
-      dataIndex: 'nvcl',
-      key: 'nvcl',
-      render: (text) => <span>{text===0 ? 'Không' : 'Có'}</span>,
-      align: 'center'
     },
     {
       title: 'Ghi chú',
@@ -160,7 +112,7 @@ export default function TableConsultant({match}) {
         payload: true,
       })
       try {
-        const res = await callAdmin.thesis(year,semester, pageCurren,pagesize)
+        const res = await callAdmin.consultant(year,semester, pageCurren,pagesize)
         setData(res.data.data)
         setTotalData(res.data.total)
         dispatch({
@@ -185,7 +137,7 @@ export default function TableConsultant({match}) {
         payload: true,
       })
       try {
-        return await callAdmin.thesis('','', 0,0)
+        return await callAdmin.consultant('','', 0,0)
       } catch (error) {
         console.log("failed to request API: ", error)
       }
@@ -196,20 +148,20 @@ export default function TableConsultant({match}) {
           type: LOADING_FULL_SCREEN,
           payload: false,
         })
-        let arrString = res.data.data.map((item, index) => {
+        let arrString = res?.data?.data?.map((item, index) => {
           if (index===0) {
             setYear(item.year)
             setSemester(item.semester)
           }
           return item.semester + ' ' + item.year
         })
-        const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
-        setYearShow([...arr])      
+        const arr = arrString?.filter((item, index) => arrString.indexOf(item) === index);
+        arr && setYearShow([...arr])      
       }
     )
   }, [load]);
 
-  const handleAddThesiss = (file,year, semester) => {
+  const handleAddConsultants = (file,year, semester) => {
     setIsModalVisible(false)
     const formData = new FormData()
     formData.append("file", file)
@@ -217,12 +169,12 @@ export default function TableConsultant({match}) {
     formData.append('semester', semester)
     const adds = async () => {
       try {
-        const res = await callAdmin.addThesiss(formData)
+        const res = await callAdmin.addConsultants(formData)
         if(!res.data.length) {
           toast.error(res.data.message);
         }
         setLoad(!load)
-        toast.success("Add Kltn success!");
+        toast.success("Add consultant success!");
         dispatch({
           type: LOADING_FULL_SCREEN,
           payload: false,
@@ -240,21 +192,21 @@ export default function TableConsultant({match}) {
   }
 
   const onChangeYear = (item1, item2) => {
-    history.push(`/admin/kltn?year=${item1}&&semester=${item2}&&page=${1}&&size=${pagesize}&&keyword=${'ddd'}`)
+    history.push(`/admin/cvht?year=${item1}&&semester=${item2}&&page=${1}&&size=${pagesize}&&keyword=${''}`)
     setPageCurren(1)
     setYear(item1);
     setSemester(item2);
   }
 
   function onChange(page, pageSize) {
-    history.push(`/admin/kltn?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
+    history.push(`/admin/cvht?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${''}`)
     setPageCurren(page)
     setPagesize(pageSize)
   }
 
   return (
     <LayoutAdmin match={match}>
-      <h2 className="title">Quản lý đồ án tốt nghiệp</h2>
+      <h2 className="title">Quản lý cố vấn học tập</h2>
       <Row justify="space-between select_all">
         <Col>
           {
@@ -270,7 +222,7 @@ export default function TableConsultant({match}) {
          <Col>
          <Space>
            <Button className="button-all" onClick={() => setIsModalVisible(true)}>
-             Thêm quản lý đồ án tốt nghiệp
+             Thêm cố vấn học tập
            </Button>
          </Space>
          <Modal

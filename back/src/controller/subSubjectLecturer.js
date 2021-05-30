@@ -11,6 +11,8 @@ const report = require('./report');
 const getHourItem = require('./getHourItem');
 
 subSubjectLecturer.list = async (req, res) => {
+  // check dai hoc hay sau dai hoc
+  let program = req.user.role==='ADMIN' ? 0 : 1
   const year = req.query.year;
   const semester = req.query.semester;
   let response, countx
@@ -21,7 +23,8 @@ subSubjectLecturer.list = async (req, res) => {
       where: {
         [Op.and]: [
           { year: year },
-          { semester: Number(semester) }
+          { semester: Number(semester) },
+          {program: program}
         ]
       },
       offset: (page-1)*size, 
@@ -32,12 +35,15 @@ subSubjectLecturer.list = async (req, res) => {
   } else if (page && size) {
     const { count, rows } = await SubSubjectLecturer.findAndCountAll({
       offset: (page-1)*size, 
-      limit: size
+      limit: size,
+      where: {program: program}
     })
     response = rows
     countx = count
   } else {
-    const { count, rows } = await SubSubjectLecturer.findAndCountAll()
+    const { count, rows } = await SubSubjectLecturer.findAndCountAll({
+      where: {program: program}
+    })
     response = rows  
     countx = count
   }
@@ -102,12 +108,14 @@ subSubjectLecturer.detailList = async (req, res) => {
 subSubjectLecturer.checkYear = async (req, res) => {
   const year = req.body.year;
   const semester = req.body.semester;
-
+  let program = req.user.role==='ADMIN' ? 0 : 1
+// check dai hoc hay sau dh
   try {
     await SubSubjectLecturer.findAll({where: {
       [Op.and]: [
         { year: year },
-        { semester: Number(semester) }
+        { semester: Number(semester) },
+        {program: program}
       ]}
     })
     .then( async (data) => {
@@ -207,7 +215,7 @@ subSubjectLecturer.creates = async (req, res) => {
                     nameSubject: rows[i][1],
                     program: program
                   }
-                  subSubjectLecturer1.hour = getHourItem(subSubjectLecturer1, (rows[i][9] === "CL" || rows[i][9]==="TA") ? 0 : 1, 'tkb', 2)
+                  subSubjectLecturer1.hour = getHourItem(subSubjectLecturer1, (rows[i][9] === "CL" || rows[i][9]==="TA") ? 0 : 1, 'tkb', res02.length)
                   tkbs.push(subSubjectLecturer1);
                 }
               })

@@ -23,28 +23,28 @@ function getHourItemLythuyet(item) {
     case "clc":
       // language: 1 => tieng anh 
       if (item.language) {
-        score = caculHour[caculIndex].clcEng * item.total_student 
+        score = caculHour[caculIndex].clcEng *  30
         // nhan voi so h cua hoc phan do
       } else {
-        score = caculHour[caculIndex].clcViet * item.total_student 
+        score = caculHour[caculIndex].clcViet * 30 
       }
       break;
 
     case "nvcl":
       if (item.language) {
-        score = caculHour[caculIndex].english * item.total_student 
+        score = caculHour[caculIndex].english * 30 
         // nhan voi so h cua hoc phan do
       } else {
-        score = caculHour[caculIndex].vietnames * item.total_student 
+        score = caculHour[caculIndex].vietnames * 30 
       }
       break;
 
     case "thuong":
       if (item.language) {
-        score = caculHour[caculIndex].english * item.total_student 
+        score = caculHour[caculIndex].english * 30 
         // nhan voi so h cua hoc phan do
       } else {
-        score = caculHour[caculIndex].vietnames * item.total_student 
+        score = caculHour[caculIndex].vietnames * 30 
       }
       break;
   
@@ -52,12 +52,12 @@ function getHourItemLythuyet(item) {
       break;
   }
 
-  return score
+  return score 
     
 }
 
 function getHourItemThuchanh(item, numberLecturer) {
-  let score = item.total_student
+  let score = 20
   if (item.total_student<=30) {
     if (numberLecturer===2) {
       score *= 0.5
@@ -76,13 +76,13 @@ function getHourItemThuchanh(item, numberLecturer) {
 }
 
 function getHourItemTuhoc(item) {
-  let score = item.total_student
+  let score = 10
  return score*0.3    
 }
 
 // get hour kltn
-function getHourItemThesis(item) {
-  let hour = 12
+function getHourItemThesis(item, numberLecturer, check = 1) {
+  let hour = 15
   if (item.language) {
     hour *= 2
   } else {
@@ -91,15 +91,69 @@ function getHourItemThesis(item) {
   if (item.nvcl) {
     hour *= 2
   }
-  return hour 
+  if ( numberLecturer == 1) {
+    return hour
+  } else  if(check == 1 ){
+    return hour*2/3
+  } else return hour*1/3
+  
 }
 
-function getHourItem(item, type, name, numberLecturer = 1) {
+// get hour datn
+function getHourItemProject(item, numberLecturer, check = 1) {
+  let hour = 18
+  if (item.language) {
+    hour *= 2
+  } else {
+    hour *= 1.5
+  }
+  if (item.nvcl) {
+    hour *= 2
+  }
+  if ( numberLecturer == 1) {
+    return hour
+  } else  if(check == 1 ){
+    return hour*2/3
+  } else return hour*1/3
+  
+}
+
+// get hour lvts
+function getHourItemPhdThesis(item, numberLecturer, check = 1) {
+  let hour = 30
+  if (item.language) {
+    hour *= 2
+  } else {
+    hour *= 1.5
+  }
+  if (item.nvcl) {
+    hour *= 2
+  }
+  if ( numberLecturer == 1) {
+    return hour
+  } else  if(check == 1 ){
+    return hour*2/3
+  } else return hour*1/3
+  
+}
+
+// get hour lats
+function getHourItemDissertation(item, numberLecturer, check = 1) {
+  let hour = 50
+  if ( numberLecturer == 1) {
+    return hour
+  } else  if(check == 1 ){
+    return hour*2/3
+  } else return hour*1/3
+  
+}
+
+function getHourItem(item, type, name, numberLecturer = 1, check = 1) {
   switch (name) {
     case 'tkb':
       switch (type) {
         case 0:
-          return getHourItemLythuyet(item)
+          return getHourItemLythuyet(item, numberLecturer)
           break;
         
         case 1:
@@ -118,8 +172,24 @@ function getHourItem(item, type, name, numberLecturer = 1) {
       break;
 
       case 'kltn':
-        return getHourItemThesis(item)
+        return getHourItemThesis(item, numberLecturer, check)
         break;
+      case 'datn':
+        return getHourItemProject(item, numberLecturer)
+        break;
+      case 'lvts':
+        return getHourItemPhdThesis(item, numberLecturer)
+        break;
+      case 'lats':
+        return getHourItemDissertation(item, numberLecturer)
+        break;
+      case 'cvht':
+        return 0.75
+        break;
+
+      case 'tttd':
+      return 2.5
+    break;
     default:
       break;
   }

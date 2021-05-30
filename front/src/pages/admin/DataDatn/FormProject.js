@@ -39,7 +39,7 @@ export default function FormProject({handleOkAddYear, handleCancel}) {
             </Space>
           </Row>
           <Row>
-          <input type="file" name="thesis" onChange={e => setFileKltn(e.target.files[0])}/>
+          <input type="file" name="project" onChange={e => setFileKltn(e.target.files[0])}/>
           </Row>
         <Row>
         <Space>

@@ -4,7 +4,7 @@ import { Select , Space, Row, Button, Input} from 'antd';
 
 const { Option } = Select;
 
-export default function FormThesis({handleOkAddYear, handleCancel}) {
+export default function FormPractice({handleOkAddYear, handleCancel}) {
   const { handleSubmit, control, register } = useForm();
   const [fileKltn, setFileKltn] = useState()
   return (
@@ -39,7 +39,7 @@ export default function FormThesis({handleOkAddYear, handleCancel}) {
             </Space>
           </Row>
           <Row>
-          <input type="file" name="thesis" onChange={e => setFileKltn(e.target.files[0])}/>
+          <input type="file" name="practice" onChange={e => setFileKltn(e.target.files[0])}/>
           </Row>
         <Row>
         <Space>

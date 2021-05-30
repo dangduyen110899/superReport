@@ -17,7 +17,6 @@ let db = {}
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.lecturer = require('../models/Lecturer')(sequelize, Sequelize);
 db.reportHour = require('../models/ReportHour')(sequelize, Sequelize);
 db.subSubjectLecturer = require('../models/SubSubjectLecturer')(sequelize, Sequelize);
 
@@ -34,13 +33,13 @@ db.consultant = require('../models/Consultant')(sequelize, Sequelize);
 db.practice = require('../models/Practice')(sequelize, Sequelize);
 
 db.student = require('../models/Student')(sequelize, Sequelize);
+db.lecturer = require('../models/Lecturer')(sequelize, Sequelize);
 
 
 // authenti
 db.user = require('../models/User')(sequelize, Sequelize);
 db.quota = require('../models/Quota')(sequelize, Sequelize);
 
-db.lecturer.hasMany(db.thesis);
 db.thesis.belongsTo(db.lecturer);
 db.thesis.belongsTo(db.student);
 
@@ -52,7 +51,21 @@ db.subSubjectLecturer.belongsTo(db.lecturer);
 
 db.subject.hasMany(db.subSubjectLecturer);
 db.subSubjectLecturer.belongsTo(db.subject);
+db.lecturer.hasMany(db.thesis);
 
+db.project.belongsTo(db.lecturer);
+db.project.belongsTo(db.student);
+
+db.phdThesis.belongsTo(db.lecturer);
+db.phdThesis.belongsTo(db.student);
+
+db.dissertation.belongsTo(db.lecturer);
+db.dissertation.belongsTo(db.student);
+
+db.consultant.belongsTo(db.lecturer);
+db.consultant.belongsTo(db.student);
+
+db.practice.belongsTo(db.lecturer);
 // db.quota.hasMany(db.lecturer);
 // db.lecturer.belongsTo(db.quota);
 

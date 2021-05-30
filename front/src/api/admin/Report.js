@@ -28,8 +28,8 @@ const tkb=(year, semester)=>{
   return http.get(`tkb?year=&&semester=`, { headers: authHeader() })
 }
 
-const download=(data)=>{
-  return http.post(`report/export`, data, { headers: authHeader(), responseType: "blob" })
+const download=({year, semester, page, size,type, sortField='', sort='',valuefilter1='', valuefilter2='', keyword=''})=>{
+  return http.get(`report?year=${year}&&semester=${semester}&&page=${page}&&size=${size}&&type=${type}&&sortField=${sortField}&&sort=${sort}&&valuefilter1=${valuefilter1}&&valuefilter2=${valuefilter2}&&keyword=${keyword}&&check=${'export'}`,  { headers: authHeader(), responseType: "blob" })
 }
 
 

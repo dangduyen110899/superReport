@@ -4,7 +4,7 @@ import { Select , Space, Row, Button, Input} from 'antd';
 
 const { Option } = Select;
 
-export default function FormCunsultant({handleOkAddYear, handleCancel}) {
+export default function FormConsultant({handleOkAddYear, handleCancel}) {
   const { handleSubmit, control } = useForm();
   const [fileKltn, setFileKltn] = useState()
   return (
@@ -38,8 +38,8 @@ export default function FormCunsultant({handleOkAddYear, handleCancel}) {
             </Space>
           </Row>
           <Row>
-          <label htmlFor="actual-btn" class="upload-file" style={{ zIndex: 1}}>Chọn file thời khóa biểu</label>
-          <input type="file" name="thesis" onChange={e => setFileKltn(e.target.files[0])} id="actual-btn" style={{position: 'absolute',
+          <label htmlFor="actual-btn" class="upload-file" style={{ zIndex: 1}}>Chọn file cố vấn học tập</label>
+          <input type="file" name="consultant" onChange={e => setFileKltn(e.target.files[0])} id="actual-btn" style={{position: 'absolute',
     top: '192px',
     left: '153px'}}/>
           </Row>

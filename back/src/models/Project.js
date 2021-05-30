@@ -7,18 +7,27 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true,
       autoIncrement: true,
     },
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     nameProject: Sequelize.STRING,
     semester: Sequelize.INTEGER,
     year: Sequelize.STRING,
     classCode: Sequelize.STRING,
+    nvcl: Sequelize.INTEGER,
+    hour: Sequelize.FLOAT,
+    language: Sequelize.INTEGER,
     lecturerName: Sequelize.STRING,
     studentName: Sequelize.STRING,
     studentCode: Sequelize.STRING,
-    note: { type: Sequelize.STRING, defaultValue: ''},
-    teacherNumber: { type: Sequelize.INTEGER, defaultValue: 1},
-    hour: Sequelize.FLOAT,
+    birthday: Sequelize.STRING,
+    note: Sequelize.STRING,
+    teacherNumber: Sequelize.INTEGER,
   },{
     timestamps: false
   });
   return Project;
 }
+

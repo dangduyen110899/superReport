@@ -24,6 +24,8 @@ module.exports = (sequelize, Sequelize) => {
     total: { type: Sequelize.FLOAT, defaultValue: 0},
     rate: { type: Sequelize.FLOAT, defaultValue: 0},
     quota: { type: Sequelize.FLOAT, defaultValue: 0},
+    đh: { type: Sequelize.FLOAT, defaultValue: 0},
+    sđh: { type: Sequelize.FLOAT, defaultValue: 0},
   },{
     timestamps: false
   });

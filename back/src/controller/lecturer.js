@@ -31,17 +31,23 @@ lecturer.list = async (req, res) => {
 
 lecturer.create = async ( req, res) =>{
   let program
+  const request1 = req.body
   if(req.user.role === 'ADMIN') {
     program = {đh : 1}
   } else {
     program = {sđh: 1}
   }
   try {
-    const request = req.body
-    const response = await Lecturer.create({...request, ...program})
+    let response1
+    if (req.user.role === 'ADMIN') {
+      response1 = await Lecturer.findAll({ where: {name: request1.name}})
+    }
+    console.log(response1)
+    const response = response1.length > 0 ? await Lecturer.update({...response1[0],...request1, ...program}, {where: {name: request1.name}}) : await Lecturer.create({...request1, ...program})
     res.json(response);
+
   } catch (er) {
-    res.json(er)
+    console.log(er)
   }
 }
 
@@ -67,13 +73,7 @@ lecturer.creates = async (req, res) => {
         const res1 = await Lecturer.findAll({
           where: {
             name: rows[i][0],
-            email: rows[i][1],
-            programs: rows[i][4],
-            status: 1,
-            department: rows[i][2],
-            subject: rows[i][3],
-            mode: req.body.mode,
-            ...condition
+            // ...condition
           }
         })
 

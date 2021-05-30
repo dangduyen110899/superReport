@@ -10,6 +10,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     namePhdThesis: Sequelize.STRING,
     semester: Sequelize.INTEGER,
+    language: Sequelize.INTEGER,
     year: Sequelize.STRING,
     classCode: Sequelize.STRING,
     lecturerName: Sequelize.STRING,

@@ -8,13 +8,12 @@ const FormStudent = ({handleOk, handleCancel, itemEdit}) => {
   let defaultValues = {
     code: itemEdit?.code,
     name: itemEdit?.name,
-    birthday: itemEdit?.birthday,
     address: itemEdit?.address,
     gender:  itemEdit?.gender,
     classCode:  itemEdit?.classCode,
   };
   const { handleSubmit, register, errors } = useForm({ defaultValues });
-
+  const [date, setDate] = useState(new Date('2021-01-01'))
   return (
   <div className="form-login addLecturer" style={{padding: "0px"}}>
   <div className="row justify-content-center">
@@ -22,7 +21,10 @@ const FormStudent = ({handleOk, handleCancel, itemEdit}) => {
       <div className="form-login__content">
 
         <div className="form-login__form login d-flex flex-column justify-content-center mb-2">
-          <form className="login-form" onSubmit={handleSubmit(data => handleOk(data, itemEdit?.id))}>
+          <form className="login-form" onSubmit={handleSubmit(data => {
+            data.birthday = date
+            handleOk(data, itemEdit?.id)
+          })}>
             <div className="form-login__form-group">
               <div className="d-flex justify-content-between">
                 <label className="form-label">Mã sinh viên:</label>
@@ -55,9 +57,11 @@ const FormStudent = ({handleOk, handleCancel, itemEdit}) => {
               type="date"
                 name="birthday"
                 className="form-input"
-                ref={register({ required: "This is required message" })}
+                defaultValue={itemEdit?.birthday.slice(0,10) || "2021-01-01"}
+                onChange={e => setDate(e.target.value)}
+                // ref={register({ required: "This is required message" })}
               />
-              <ErrorMessage errors={errors} name="birthday" as="p" className="form_email-validate"/>
+              {/* <ErrorMessage errors={errors} name="birthday" as="p" className="form_email-validate"/> */}
             </div>
 
             <div className="form-login__form-group">

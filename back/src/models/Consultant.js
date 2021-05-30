@@ -1,12 +1,12 @@
+// luận văn
 module.exports = (sequelize, Sequelize) => {
 
-  const Consultant = sequelize.define('consultant', {
+  var Consultant = sequelize.define('consultant', {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    nameConsultant: Sequelize.STRING,
     semester: Sequelize.INTEGER,
     year: Sequelize.STRING,
     classCode: Sequelize.STRING,
@@ -15,11 +15,10 @@ module.exports = (sequelize, Sequelize) => {
     studentCode: Sequelize.STRING,
     note: { type: Sequelize.STRING, defaultValue: ''},
     teacherNumber: { type: Sequelize.INTEGER, defaultValue: 1},
-    hour: Sequelize.FLOAT
+    hour: Sequelize.FLOAT,
+    birthday: Sequelize.STRING
   },{
     timestamps: false
   });
-
   return Consultant;
 }
-

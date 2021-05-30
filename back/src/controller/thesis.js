@@ -138,7 +138,7 @@ thesis.creates = async (req, res) => {
                 year: year,
                 semester: semester
               }
-              thesis.hour = getHourItem(thesis, null , 'kltn')
+              thesis.hour = getHourItem(thesis, null , 'kltn',1,1)
               theses.push(thesis);
             } else {
 
@@ -173,7 +173,7 @@ thesis.creates = async (req, res) => {
                     semester: semester,
                     teacherNumber: res3.length
                   }
-                  thesis1.hour = getHourItem(thesis1, null , 'kltn')
+                  thesis1.hour = getHourItem(thesis1, null , 'kltn', res3.length, j+1)
                   theses.push(thesis1);
                 }
               })

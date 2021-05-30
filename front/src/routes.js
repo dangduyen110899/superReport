@@ -1,10 +1,15 @@
 import Err from "pages/403";
 import SignIn from "pages/account/SignIn";
+import TableConsultant from "pages/admin/DataCvht/TableConsultant";
+import TableProject from "pages/admin/DataDatn/TableProject";
 import TableThesic from "pages/admin/DataKltn/TableThesis";
+import TableDissertation from "pages/admin/DataLats/TableDissertation";
 import TableLecturer from "pages/admin/DataLecturer/TableLecturer";
+import TablePhdThesis from "pages/admin/DataLvts/TablePhdThesis";
 import TableQuota from "pages/admin/DataQuota/TableQuota";
 import TableStudent from "pages/admin/DataStudent/TableStudent";
 import TableTkb from "pages/admin/DataTkb/TableTkb";
+import TablePractice from "pages/admin/DataTtth/TablePractice";
 import ReportDetailThesis from "pages/admin/detail/ReportDetailThesis";
 import ReportDetailTkb from "pages/admin/detail/ReportDetailTkb";
 import TableReport from "pages/admin/Report/TableReport";
@@ -49,7 +54,37 @@ export const routes = [
     path: "/admin/kltn",
     exact: true,
     components: match => <TableThesic match={match}/>,
-    role: ['ADMIN', 'ADMIN1']
+    role: ['ADMIN']
+  },
+  {
+    path: "/admin/datn",
+    exact: true,
+    components: match => <TableProject match={match}/>,
+    role: ['ADMIN']
+  },
+  {
+    path: "/admin/lvts",
+    exact: true,
+    components: match => <TablePhdThesis match={match}/>,
+    role: ['ADMIN']
+  },
+  {
+    path: "/admin/lats",
+    exact: true,
+    components: match => <TableDissertation match={match}/>,
+    role: ['ADMIN']
+  },
+  {
+    path: "/admin/cvht",
+    exact: true,
+    components: match => <TableConsultant match={match}/>,
+    role: ['ADMIN']
+  },
+  {
+    path: "/admin/tttd",
+    exact: true,
+    components: match => <TablePractice match={match}/>,
+    role: ['ADMIN']
   },
   {
     path: "/report",

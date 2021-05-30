@@ -12,18 +12,17 @@ import {
   Modal,
   Space, Pagination
 } from 'antd';
-import callAdmin from 'api/admin/Thesis';
+import callAdmin from 'api/admin/PhdThesis';
 import { toast } from "react-toastify";
-import FormAddYear from '../component/FormAddYear';
 import Select from '../component/Select';
 import { useHistory } from "react-router-dom";
 import queryString from 'query-string'
 import { useDispatch } from 'store/index';
 import { LOADING_FULL_SCREEN } from 'store/action-types';
 import LoadingFullScreen from '../component/LoadingFullScreen';
-import FormThesis from './FormThesis';
+import FormPhdThesis from './FormPhdThesis';
 
-export default function TableThesic({match}) {
+export default function TablePhdThesis({match}) {
     const dispatch = useDispatch()
   const value=queryString.parse(match.location.search);
   const history = useHistory()
@@ -48,7 +47,7 @@ export default function TableThesic({match}) {
     const add = async () => {
       try {
         await callAdmin.checkYear({year: yearItem, semester: semesterItem}).then(() => {
-          handleAddThesiss(fileItem, yearItem, semesterItem)
+          handleAddPhdThesiss(fileItem, yearItem, semesterItem)
         })
       } catch (error) {
         dispatch({
@@ -66,33 +65,6 @@ export default function TableThesic({match}) {
     setItemEdit(null)
     setIsModalVisible(false);
   };
-
-  const handleDelete = (itemEdit) => {
-    itemEdit.status = 0;
-    dispatch({
-      type: LOADING_FULL_SCREEN,
-      payload: true,
-    })
-    const remove = async () => {
-      try {
-        await callAdmin.editThesis(itemEdit)
-        const res = await callAdmin.thesis(year,semester)
-        setData(res.data)
-        dispatch({
-          type: LOADING_FULL_SCREEN,
-          payload: false,
-        })
-        toast.success("Delete thesic success")
-      } catch (error) {
-        dispatch({
-          type: LOADING_FULL_SCREEN,
-          payload: false,
-        })
-        console.log("failed to request API: ", error)
-      }
-    };
-    remove();
-  }
 
   let  columns = [
     {
@@ -123,8 +95,8 @@ export default function TableThesic({match}) {
     },
     {
       title: 'Tên đề tài',
-      dataIndex: 'nameThesis',
-      key: 'nameThesis',
+      dataIndex: 'namephdThesis',
+      key: 'namephdThesis',
     },
     {
       title: 'Giảng viên',
@@ -139,39 +111,12 @@ export default function TableThesic({match}) {
       align: 'center'
     },
     {
-      title: 'Nhiệm vụ chiến lược',
-      dataIndex: 'nvcl',
-      key: 'nvcl',
-      render: (text) => <span>{text===0 ? 'Không' : 'Có'}</span>,
-      align: 'center'
-    },
-    {
       title: 'Ghi chú',
       dataIndex: 'note',
       key: 'note',
       align: 'center'
     }
   ];
-
-  if(user && (user.roles === 'ADMIN')) { 
-    columns.push({
-      title: 'Action',
-      dataIndex: 'operation',
-      width: 100,
-        align: 'center',
-      render: (_, record) =>
-        data.length >= 1 ? (
-          <Space>
-          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-            <span><DeleteOutlined /></span>
-          </Popconfirm>
-          <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
-          <EditOutlined />
-          </span>
-          </Space>
-        ) : null,
-    })
-  }
 
   useEffect(() => {
     const getData = async () => {
@@ -180,7 +125,7 @@ export default function TableThesic({match}) {
         payload: true,
       })
       try {
-        const res = await callAdmin.thesis(year,semester, pageCurren,pagesize)
+        const res = await callAdmin.phdThesis(year,semester, pageCurren,pagesize)
         setData(res.data.data)
         setTotalData(res.data.total)
         dispatch({
@@ -205,7 +150,7 @@ export default function TableThesic({match}) {
         payload: true,
       })
       try {
-        return await callAdmin.thesis('','', 0,0)
+        return await callAdmin.phdThesis('','', 0,0)
       } catch (error) {
         console.log("failed to request API: ", error)
       }
@@ -216,20 +161,20 @@ export default function TableThesic({match}) {
           type: LOADING_FULL_SCREEN,
           payload: false,
         })
-        let arrString = res.data.data.map((item, index) => {
+        let arrString = res?.data?.data?.map((item, index) => {
           if (index===0) {
             setYear(item.year)
             setSemester(item.semester)
           }
           return item.semester + ' ' + item.year
         })
-        const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
-        setYearShow([...arr])      
+        const arr = arrString?.filter((item, index) => arrString.indexOf(item) === index);
+        arr && setYearShow([...arr])      
       }
     )
   }, [load]);
 
-  const handleAddThesiss = (file,year, semester) => {
+  const handleAddPhdThesiss = (file,year, semester) => {
     setIsModalVisible(false)
     const formData = new FormData()
     formData.append("file", file)
@@ -237,7 +182,7 @@ export default function TableThesic({match}) {
     formData.append('semester', semester)
     const adds = async () => {
       try {
-        const res = await callAdmin.addThesiss(formData)
+        const res = await callAdmin.addPhdThesiss(formData)
         if(!res.data.length) {
           toast.error(res.data.message);
         }
@@ -274,7 +219,7 @@ export default function TableThesic({match}) {
 
   return (
     <LayoutAdmin match={match}>
-      <h2 className="title">Quản lý khóa luận tốt nghiệp</h2>
+      <h2 className="title">Quản lý luận văn thạc sĩ</h2>
       <Row justify="space-between select_all">
         <Col>
           {
@@ -290,7 +235,7 @@ export default function TableThesic({match}) {
          <Col>
          <Space>
            <Button className="button-all" onClick={() => setIsModalVisible(true)}>
-             Thêm quản lý khóa luận tốt nghiệp
+             Thêm quản lý luận văn thạc sĩ
            </Button>
          </Space>
          <Modal
@@ -300,7 +245,7 @@ export default function TableThesic({match}) {
            onCancel={handleCancel}
            visible={isModalVisible}
          >
-           <FormThesis handleOkAddYear={handleOkAddYear} handleCancel={handleCancel} />
+           <FormPhdThesis handleOkAddYear={handleOkAddYear} handleCancel={handleCancel} />
          </Modal>
        </Col>
        }
