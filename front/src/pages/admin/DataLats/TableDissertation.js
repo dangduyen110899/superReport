@@ -187,7 +187,7 @@ export default function TableDissertation({match}) {
           toast.error(res.data.message);
         }
         setLoad(!load)
-        toast.success("Add Kltn success!");
+        toast.success("Thêm luận án tiến sĩ thành công!");
         dispatch({
           type: LOADING_FULL_SCREEN,
           payload: false,

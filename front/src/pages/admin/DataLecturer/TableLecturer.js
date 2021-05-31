@@ -45,19 +45,28 @@ export default function TableLecturer({match}) {
       try {
        if (itemId) {
         item.id = itemId;
-        await callAdmin.editLecturer(item).then(async() => {
-          const res = await callAdmin.lecturer(pageCurren,pagesize, mode)
-          setData(res.data.data)
-          setIsModalVisible(false);
-          dispatch({
-            type: LOADING_FULL_SCREEN,
-            payload: false,
-          })
-          toast.success("Edit lecturer success!");
+        const rest = await callAdmin.editLecturer(item)
+        console.log(rest)
+        if(!rest.data.length) {
+          toast.error(rest.data.message);
+        } else {
+          toast.success("Thay đổi thông tin giảng viên thành công!");
+        }
+        const res = await callAdmin.lecturer(pageCurren,pagesize, mode)
+        setData(res.data.data)
+        setIsModalVisible(false);
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
         })
        } else {
           item.mode = mode
-          await callAdmin.addLecturer(item)
+          const rest = await callAdmin.addLecturer(item)
+          if(!rest.data.length) {
+            toast.error(rest.data.message);
+          } else {
+            toast.success("Thêm giảng viên thành công!");
+          }
           const res = await callAdmin.lecturer(pageCurren, pagesize, mode)
           setData(res.data.data)
           setTotalData(res.data.total)
@@ -66,11 +75,11 @@ export default function TableLecturer({match}) {
             type: LOADING_FULL_SCREEN,
             payload: false,
           })
-          toast.success("Add lecturer success!");
        }
       } catch (error) {
         toast.warning(error?.response?.data?.message);
       }
+      setItemEdit(null)
     };
     add();
   };

@@ -71,13 +71,7 @@ export default function TablePractice({match}) {
       key: 'lecturerName',
     },
     {
-      title: 'Lớp',
-      dataIndex: 'classCode',
-      key: 'classCode',
-      align: 'center'
-    },
-    {
-      title: 'Ngayf',
+      title: 'Ngày thực tập thực địa',
       dataIndex: 'date',
       key: 'date',
       align: 'center'
@@ -159,7 +153,7 @@ export default function TablePractice({match}) {
           toast.error(res.data.message);
         }
         setLoad(!load)
-        toast.success("Add practice success!");
+        toast.success("Thêm thực tập thực địa thành công!");
         dispatch({
           type: LOADING_FULL_SCREEN,
           payload: false,

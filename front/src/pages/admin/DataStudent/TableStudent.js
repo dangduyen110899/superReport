@@ -51,7 +51,7 @@ export default function TableStudent({match}) {
             type: LOADING_FULL_SCREEN,
             payload: false,
           })
-          toast.success("Edit student success!");
+          toast.success("Thay đổi sinh viên thành công!");
         } else {
           await callAdmin.addStudent(item)
           const res = await callAdmin.student(pageCurren,pagesize)
@@ -62,11 +62,12 @@ export default function TableStudent({match}) {
             type: LOADING_FULL_SCREEN,
             payload: false,
           })
-          toast.success("Add student success!");
+          toast.success("Thêm sinh viên thành công!");
         }
       } catch (error) {
         toast.warning(error?.response?.data?.message);
       }
+      setItemEdit(null)
     };
     add();
   };
@@ -226,8 +227,8 @@ export default function TableStudent({match}) {
       <Row justify="space-between">
         { user && (user.roles === 'ADMIN') && 
           <Col>
-          <input type="file" onChange={e => handleAddStudents(e.target.files[0])} id="actual-btn" hidden/>
-          <label htmlFor="actual-btn" class="upload-file">Chọn file</label>
+          {/* <input type="file" onChange={e => handleAddStudents(e.target.files[0])} id="actual-btn" hidden/>
+          <label htmlFor="actual-btn" class="upload-file">Chọn file</label> */}
           <Button className="button-all" onClick={() => setIsModalVisible(true)}>
             + Thêm sinh viên
           </Button>

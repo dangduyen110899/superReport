@@ -93,7 +93,7 @@ export default function TableConsultant({match}) {
       align: 'center'
     },
     {
-      title: 'Giảng viên co van hoc tap',
+      title: 'Giảng viên cố vấn học tập',
       dataIndex: 'lecturerName',
       key: 'lecturerName',
     },
@@ -124,7 +124,7 @@ export default function TableConsultant({match}) {
           type: LOADING_FULL_SCREEN,
           payload: false,
         })
-        console.log("failed to request API: ", error)
+        toast.error("failed to request API: ", error)
       }
     };
     getData();
@@ -139,7 +139,7 @@ export default function TableConsultant({match}) {
       try {
         return await callAdmin.consultant('','', 0,0)
       } catch (error) {
-        console.log("failed to request API: ", error)
+        toast.error("failed to request API: ", error)
       }
     };
     getData().then(res =>
@@ -174,7 +174,7 @@ export default function TableConsultant({match}) {
           toast.error(res.data.message);
         }
         setLoad(!load)
-        toast.success("Add consultant success!");
+        toast.success("Thêm cố vấn học tập thành công!");
         dispatch({
           type: LOADING_FULL_SCREEN,
           payload: false,

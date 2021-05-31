@@ -32,23 +32,38 @@ lecturer.list = async (req, res) => {
 lecturer.create = async ( req, res) =>{
   let program
   const request1 = req.body
-  if(req.user.role === 'ADMIN') {
-    program = {đh : 1}
-  } else {
-    program = {sđh: 1}
-  }
-  try {
-    let response1
-    if (req.user.role === 'ADMIN') {
-      response1 = await Lecturer.findAll({ where: {name: request1.name}})
+  let response1 = await Lecturer.findAll({ where: {
+    [Op.or]: [
+      {name: request1.name, đh : 1},
+      {email: request1.email, đh : 1}
+    ]
+  }})
+  let response2
+  let response3
+  if(req.user.role === 'ADMIN1') {
+    response2 = await Lecturer.findAll({ where: {
+      [Op.or]: [
+        {name: request1.name, sđh : 1},
+        {email: request1.email, sđh : 1}
+      ]
+    }})
+    if (response2) {
+      res.json({message: `Giảng viên có tên hoặc email đã tồn tại.`});
+    } 
+    if (response1) {
+      response3 = await Lecturer.update({...response1[0].dataValues, sđh: 1},{ where: {name: request1.name}})
+    } else {
+      response3 = await Lecturer.create({...request1, sđh: 1},{ where: {name: request1.name}})
     }
-    console.log(response1)
-    const response = response1.length > 0 ? await Lecturer.update({...response1[0],...request1, ...program}, {where: {name: request1.name}}) : await Lecturer.create({...request1, ...program})
-    res.json(response);
-
-  } catch (er) {
-    console.log(er)
+  } else {
+    if (response1) {
+      // trung name hoac email
+      res.json({message: `Giảng viên có tên hoặc email đã tồn tại.`});
+    } else {
+      response3 = await Lecturer.create({...request1, đh: 1},{ where: {name: request1.name}})
+    }
   }
+  res.json(response3)
 }
 
 lecturer.creates = async (req, res) => {
@@ -135,7 +150,7 @@ lecturer.update = async ( req, res) =>{
     res.json(response);
 
   } catch (er) {
-    res.json(er)
+    res.json({message: `Giảng viên có tên hoặc email đã tồn tại.`});
   }
 }
 

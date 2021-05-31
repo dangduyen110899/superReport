@@ -196,7 +196,7 @@ export default function TableThesic({match}) {
           toast.error(res.data.message);
         }
         setLoad(!load)
-        toast.success("Add Kltn success!");
+        toast.success("Thêm khóa luận tốt nghiệp thành công!");
         dispatch({
           type: LOADING_FULL_SCREEN,
           payload: false,

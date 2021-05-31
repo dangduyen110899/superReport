@@ -65,6 +65,7 @@ const FormLecturer = ({handleOk, handleCancel, itemEdit, dataLecturer}) => {
                 <label className="form-label">Email:</label>
               </div> 
               <input
+                type="email"
                 name="email"
                 className="form-input"
                 ref={register({ required: "This is required message" })}

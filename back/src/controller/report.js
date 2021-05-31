@@ -116,7 +116,7 @@ report.updateHour = async ( year, semester, name, gvId) => {
       if (response20.length>0) {
         // update report hour
         const total = response20[0].dataValues.total + response10[0].dataValues.hourScheduleAfter - response20[0].dataValues.hourScheduleAfter
-        await ReportHour.update({...response20[0].dataValues, ...response10[0].dataValues, total: total, rate: Math.round(total*10000/rate0), quota: response40[0].dataValues.rate},{
+        await ReportHour.update({...response20[0].dataValues, ...response10[0].dataValues, total: total, rate: Math.round(total*10000/rate0), quota: response40[0].dataValues.rate, sđh: 1},{
           where: { id: response20[0].dataValues.id}
           })
       } else {
@@ -129,7 +129,7 @@ report.updateHour = async ( year, semester, name, gvId) => {
           status: response30[0].dataValues.status,
           subject: response30[0].dataValues.subject,
           đh : response30[0].dataValues.đh,
-          sđh :  response30[0].dataValues.sđh
+          sđh :  1
         }
         try {
           const total = response10[0].dataValues.hourScheduleAfter

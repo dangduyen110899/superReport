@@ -189,7 +189,7 @@ export default function TableProject({match}) {
           toast.error(res.data.message);
         }
         setLoad(!load)
-        toast.success("Add project success!");
+        toast.success("Thêm đồ án tốt nghiệp thành công!");
         dispatch({
           type: LOADING_FULL_SCREEN,
           payload: false,

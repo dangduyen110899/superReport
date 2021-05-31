@@ -187,7 +187,7 @@ export default function TablePhdThesis({match}) {
           toast.error(res.data.message);
         }
         setLoad(!load)
-        toast.success("Add Kltn success!");
+        toast.success("Thêm luận văn thạc sĩ thành công!");
         dispatch({
           type: LOADING_FULL_SCREEN,
           payload: false,
@@ -205,14 +205,14 @@ export default function TablePhdThesis({match}) {
   }
 
   const onChangeYear = (item1, item2) => {
-    history.push(`/admin/kltn?year=${item1}&&semester=${item2}&&page=${1}&&size=${pagesize}&&keyword=${'ddd'}`)
+    history.push(`/admin/lvts?year=${item1}&&semester=${item2}&&page=${1}&&size=${pagesize}&&keyword=${'ddd'}`)
     setPageCurren(1)
     setYear(item1);
     setSemester(item2);
   }
 
   function onChange(page, pageSize) {
-    history.push(`/admin/kltn?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
+    history.push(`/admin/lvts?year=${year}&&semester=${semester}&&page=${page}&&size=${pageSize}&&keyword=${'ddd'}`)
     setPageCurren(page)
     setPagesize(pageSize)
   }

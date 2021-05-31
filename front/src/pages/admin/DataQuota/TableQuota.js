@@ -52,7 +52,7 @@ export default function TableQuota({match}) {
             type: LOADING_FULL_SCREEN,
             payload: false,
           })
-          toast.success("Edit quota success!");
+          toast.success("Thay đổi đinh mức thành công!");
         })
        } else {
           await callAdmin.addQuota(item)
@@ -64,11 +64,12 @@ export default function TableQuota({match}) {
             type: LOADING_FULL_SCREEN,
             payload: false,
           })
-          toast.success("Add quota success!");
+          toast.success("Thêm định mức thành công!");
        }
       } catch (error) {
         toast.warning(error?.response?.data?.message);
       }
+      setItemEdit(null)
     };
     add();
   };
