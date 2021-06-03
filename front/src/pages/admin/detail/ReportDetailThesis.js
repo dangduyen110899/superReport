@@ -29,9 +29,6 @@ export default function ReportDetailThesis({match}) {
   const [totalData, setTotalData] = useState(0)
   const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
 
-  const handleDelete = (itemEdit) => {
-  }
-
   let  columns = [
     {
       title: "Số thứ tự",
@@ -113,27 +110,6 @@ export default function ReportDetailThesis({match}) {
     )
   }
 
-  if(user && (user.roles === 'ADMIN')) { 
-    columns.push(
-      {
-        title: 'Action',
-        dataIndex: 'operation',
-        width: 100,
-        align: 'center',
-        render: (_, record) =>
-          data.length >= 1 ? (
-            <Space>
-            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-              <span><DeleteOutlined /></span>
-            </Popconfirm>
-            {/* <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}> */}
-            {/* <EditOutlined />
-            </span> */}
-            </Space>
-          ) : null,
-      }
-    )
-  }
   useEffect(() => {
     const getData = async () => {
       try {

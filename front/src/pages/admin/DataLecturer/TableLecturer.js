@@ -46,9 +46,8 @@ export default function TableLecturer({match}) {
        if (itemId) {
         item.id = itemId;
         const rest = await callAdmin.editLecturer(item)
-        console.log(rest)
         if(!rest.data.length) {
-          toast.error(rest.data.message);
+          toast.error('Giảng viên có tên hoặc email đã tồn tại.');
         } else {
           toast.success("Thay đổi thông tin giảng viên thành công!");
         }
@@ -62,8 +61,9 @@ export default function TableLecturer({match}) {
        } else {
           item.mode = mode
           const rest = await callAdmin.addLecturer(item)
-          if(!rest.data.length) {
-            toast.error(rest.data.message);
+          console.log(rest.data.length, rest, Boolean(rest.data.length))
+          if(!rest.data.email) {
+            toast.error('Giảng viên có tên hoặc email đã tồn tại.');
           } else {
             toast.success("Thêm giảng viên thành công!");
           }

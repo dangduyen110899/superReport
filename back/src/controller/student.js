@@ -31,6 +31,7 @@ student.create = async ( req, res) =>{
     res.json(response);
   } catch (e) {
     console.log(e);
+    res.json('faild')
   }
 }
 
@@ -105,6 +106,7 @@ student.update = async ( req, res) =>{
     res.json(response);
   } catch (e) {
     console.log(e);
+    res.json('faild')
   }
 }
 

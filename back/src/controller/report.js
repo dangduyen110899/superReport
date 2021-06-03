@@ -507,14 +507,20 @@ report.updateHour = async ( year, semester, name, gvId) => {
     }
 }
 
+ // get year next 
+ function nextYear(year) {
+  const temp = year.slice(0,4)
+  const ntYear = Number(temp) + 1
+  return `${ntYear}-${ntYear+1}` 
+}
+
 
 report.list = async (req, res) => {
-
+    let infor = await Lecturer.findAll({
+      where: { email:  req.user.email}
+    })
     // get department or Subject user
-    async function getDepartmentUser(name) {
-      const infor = await Lecturer.findAll({
-        where: { email:  req.user.email}
-      })
+    const getDepartmentUser = (name) => {
       if(name==='LĐK') {
         return infor[0].dataValues.department
       } else if (name==='LĐBM') {
@@ -522,13 +528,6 @@ report.list = async (req, res) => {
       } else {
         return infor[0].dataValues.name
       }
-    }
-
-    // get year next 
-    function nextYear(year) {
-      const temp = year.slice(0,4)
-      const ntYear = Number(temp) + 1
-      return `${ntYear}-${ntYear+1}` 
     }
 
     // some proper
@@ -540,9 +539,9 @@ report.list = async (req, res) => {
   
     const bomon = req.query.valuefilter2
     const khoa= req.query.valuefilter1
-    const arrBomon = bomon && bomon.split(',') || []
-    const  arrKhoa = khoa && khoa.split(',') || []
-    const keyword = req.query.keyword || '';
+    let arrBomon = bomon && bomon.split(',') || []
+    let  arrKhoa = khoa && khoa.split(',') || []
+    let keyword = req.query.keyword || '';
     let sort = req.query.sort=='tang' ? 'ASC' : 'DESC';
     const sortField = req.query.sortField ? req.query.sortField : 'id' ;
     if (sortField==='id') {
@@ -599,6 +598,8 @@ report.list = async (req, res) => {
         })
       })
     }
+
+    console.log(condition)
   
     // check hoc ky trong nam hoc
     if (Boolean(year) && Boolean(semester) && type===0) {
@@ -608,7 +609,6 @@ report.list = async (req, res) => {
       }
 
       const conditions = condition.length>0 ?  { [Op.and]: conbo, [Op.or] : condition} : {[Op.and]: conbo}
-      console.log("xX", conditions)
       const { count, rows } = await ReportHour.findAndCountAll({
         where: conditions,
         offset: Number((page-1)*size), 
@@ -634,7 +634,7 @@ report.list = async (req, res) => {
         where: conditions,
         offset: Number((page-1)*size), 
         limit: Number(size),
-        attributes: ['year', 'lecturerId', 
+        attributes: [ 'lecturerName','department','subject',
         [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
         [sequelize.fn('sum', sequelize.col('hourScheduleAfter')), 'hourScheduleAfter'],
         [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
@@ -643,22 +643,24 @@ report.list = async (req, res) => {
         [sequelize.fn('sum', sequelize.col('hourDissertation')), 'hourDissertation'],
         [sequelize.fn('sum', sequelize.col('hourConsultant')), 'hourConsultant'],
         [sequelize.fn('sum', sequelize.col('hourPractice')), 'hourPractice'],
-        [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
-        [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject','quota'],
-        group : ['year', 'lecturerId']
+        [sequelize.fn('sum', sequelize.col('total')), 'total'],'quota',
+        [sequelize.fn('sum', sequelize.col('rate')), 'rate'],'lecturerId', 'year', 'programs'],
+        group : ['year', 'lecturerId'],
+        order: [
+          [sortField, sort]
+        ],
       })
       response1 = rows
       count1 = count
     } else if (Boolean(year) && Boolean(semester) && type===2) {
       const conbo = [{ year: year, semester: 2},
       { year: nextYear(year), semester: 1 }]
-
-      const conditions = condition.length>0 ? {[Op.or] : condition, [Op.or] : conbo} : {[Op.or]: conbo}
+      const conditions = condition.length>0 ? {[Op.and]: [{[Op.or] : condition}, {[Op.or] : conbo}]} : {[Op.or]: conbo}
       const { count, rows } = await ReportHour.findAndCountAll({
-        where:  { lecturerName: {[Op.like]: `%${keyword}%`}, conditions } ,
+        where:  { [Op.and]: [{lecturerName: {[Op.like]: `%${keyword}%`}}, conditions] } ,
         offset: Number((page-1)*size), 
         limit: Number(size),
-        attributes: ['year', 'lecturerId', 
+        attributes: [ 'lecturerName','department','subject',
         [sequelize.fn('sum', sequelize.col('hourSchedule')), 'hourSchedule'],
         [sequelize.fn('sum', sequelize.col('hourScheduleAfter')), 'hourScheduleAfter'],
         [sequelize.fn('sum', sequelize.col('hourThesis')), 'hourThesis'],
@@ -667,14 +669,17 @@ report.list = async (req, res) => {
         [sequelize.fn('sum', sequelize.col('hourDissertation')), 'hourDissertation'],
         [sequelize.fn('sum', sequelize.col('hourConsultant')), 'hourConsultant'],
         [sequelize.fn('sum', sequelize.col('hourPractice')), 'hourPractice'],
-        [sequelize.fn('sum', sequelize.col('rate')), 'rate'],
-        [sequelize.fn('sum', sequelize.col('total')), 'total'],'lecturerId','lecturerName','department','programs','subject','quota'],
-        group : ['lecturerId']
+        [sequelize.fn('sum', sequelize.col('total')), 'total'], 'quota',
+        [sequelize.fn('sum', sequelize.col('rate')), 'rate'] ,'programs','year', 'lecturerId'],
+        group : ['lecturerId'],
+        order: [
+          [sortField, sort]
+      ]
       })
       response1 = rows
       count1 = count
-    } else {
-      console.log(checkAdmin)
+    } 
+    else {
       const { count, rows } = await ReportHour.findAndCountAll({
         where: {...checkAdmin[0]},
         attributes: { exclude: ['đt', 'sđt'] },
@@ -683,14 +688,13 @@ report.list = async (req, res) => {
       count1 = count
     }
     if (req.query.check == 'export') {
-      console.log("Fff")
-      exportFile(response1, res)
+      exportFile(response1, res, type)
     } else {
       res.json({data: response1, total: count1})
     }
   }
   
-function exportFile(response1, res) {
+function exportFile(response1, res, type) {
   let tutorials = []
   let header = []
 
@@ -701,15 +705,27 @@ function exportFile(response1, res) {
   function getTitle(key) {
     switch (key) {
       case 'id':
-        return 'ID'
+        return ''
+        break;
+      
+        case 'lecturerId':
+        return ''
+        break;
+      
+        case 'đh':
+        return ''
+        break;
+
+        case 'sđh':
+        return ''
         break;
       
       case 'year':
-        return 'Năm học'
+        return ''
         break;
 
       case 'semester':
-        return ' Học kỳ'
+        return ''
         break;
 
       case 'lecturerName':
@@ -780,7 +796,13 @@ function exportFile(response1, res) {
   let workbook = new excel.Workbook();
   let worksheet = workbook.addWorksheet("Report");
 
-
+  tutorials = tutorials.map(item => {
+    if (type===0) {
+      return {...item, sđh: '', đh: '', programs: '', lecturerId: '', year: '', semester: '', id: '', quota: '', rate: ''}
+    } else {
+      return {...item, sđh: '', đh: '', programs: '', lecturerId: '', year: '', semester: '', id: ''}
+    }
+  })
   worksheet.columns = header
   // Add Array Rows
   worksheet.addRows(tutorials);
@@ -880,5 +902,36 @@ report.listIdlecturer = async (req, res) => {
 
 }
 
+report.detail = async (req, res) => {
+  const year = req.query.year;
+  const semester = Number(req.query.semester)
+  const gvId = req.query.lecturerId
+  const type = Number(req.query.type)
+  let condition
+  if (type==0) {
+    condition = { year: year, semester: semester, lecturerId: gvId  }
+  } else if (type===1) {
+    condition = { year: year, lecturerId: gvId }
+  } else {
+    condition = { [Op.or]: [
+      { year: year, semester: 2, lecturerId: gvId},
+      { year: nextYear(year), semester: 1, lecturerId: gvId}
+    ]
+   }
+  }
+  console.log(condition)
+
+  const data = await SubSubjectLecturer.findAll({where: { ...condition, program: 0}})
+  const data1 = await SubSubjectLecturer.findAll({where: { ...condition, program: 1}})
+  const data2 = await Thesis.findAll({where: {...condition}})
+  const data3 = await Project.findAll({where: {...condition}})
+  const data4 = await PhdThesis.findAll({where: {...condition}})
+  const data5 = await Dissertation.findAll({where: {...condition}})
+  const data6 = await Consultant.findAll({where: {...condition}})
+  const data7 = await Practice.findAll({where: {...condition}})
+  res.json({
+    data, data1, data2, data3, data4, data5, data6, data7
+  })
+}
 
 module.exports = report;

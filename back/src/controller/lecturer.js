@@ -47,16 +47,17 @@ lecturer.create = async ( req, res) =>{
         {email: request1.email, sđh : 1}
       ]
     }})
-    if (response2) {
+    if (response2[0]) {
       res.json({message: `Giảng viên có tên hoặc email đã tồn tại.`});
     } 
-    if (response1) {
+    if (response1[0]) {
+      console.log(response1)
       response3 = await Lecturer.update({...response1[0].dataValues, sđh: 1},{ where: {name: request1.name}})
     } else {
-      response3 = await Lecturer.create({...request1, sđh: 1},{ where: {name: request1.name}})
+      response3 = await Lecturer.create({...request1, sđh: 1, đh: 0},{ where: {name: request1.name}})
     }
   } else {
-    if (response1) {
+    if (response1[0]) {
       // trung name hoac email
       res.json({message: `Giảng viên có tên hoặc email đã tồn tại.`});
     } else {
@@ -105,7 +106,7 @@ lecturer.creates = async (req, res) => {
         }
         if (res1 && res1[0] && res1[0].dataValues) {
           // update
-          Lecturer.update( {...res1.dataValues, ...program},{
+          await Lecturer.update( {...res1.dataValues, ...program},{
             where: { id: res1[0].dataValues.id}
           })
         } else  {
@@ -144,9 +145,10 @@ lecturer.update = async ( req, res) =>{
     ...program
   }
   try {
-    const response = Lecturer.update( request,{
+    const response =  await Lecturer.update( request,{
       where: { id: req.body.id}
     })
+    console.log(response)
     res.json(response);
 
   } catch (er) {

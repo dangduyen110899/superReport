@@ -110,12 +110,9 @@ export default function LayoutAdmin({children, match}) {
           </Menu.Item>
          </>
         }
-        {
-          (user?.roles === 'ADMIN' || user?.roles === 'ADMIN1' || user?.roles === 'LEADER' || user?.roles === 'USER') && 
-          <Menu.Item key="11" icon={<DatabaseOutlined />}>
+        <Menu.Item key="11" icon={<DatabaseOutlined />}>
           <Link to="/report">Báo cáo thống kê</Link>
         </Menu.Item>
-        }
       </Menu>
       <span onClick={toggle} style={{color: "#222b45", float: "right", margin: "30px", fontSize: '24px'}}>{
         collapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>

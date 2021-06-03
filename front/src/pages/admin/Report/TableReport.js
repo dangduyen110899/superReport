@@ -27,7 +27,7 @@ export default function TableReport({match}) {
   const [data, setData] = useState([])
   const [yearShow, setYearShow] = useState([])
   const [year, setYear] = useState(value?.year ||'');
-  const [semester, setSemester] = useState(value?.semester || '')
+  const [semester, setSemester] = useState(value?.semester || 1)
   const [pageCurren, setPageCurren] = useState(value?.page || 1)
   const [pagesize, setPagesize] = useState(value?.size || 20)
   const [totalData, setTotalData] = useState(0)
@@ -36,6 +36,7 @@ export default function TableReport({match}) {
   const [yearShow2, setYearShow2] = useState([])
   const [sort, setSort] = useState(value?.sort ||'')
   const [sortField, setSortField] = useState(value?.sortField || '')
+
   // filter 
   const [valuefilter1, setvaluefilter1] = useState(value?.valuefilter1?.split(',') || [])
   const [valuefilter2, setvaluefilter2] = useState(value?.valuefilter2?.split(',') || [])
@@ -63,11 +64,14 @@ export default function TableReport({match}) {
     else if (sort=='giam') {
       setSort("tang")
       x='tang'
+      setSortField(field)
     }
     else if (sort=='tang') {
       setSort('giam')
       x='giam'
+      setSortField(field)
     }
+    
     history.push(`/report?year=${year}&&semester=${semester}&&page=${1}&&size=${pagesize}&&keyword=${keyword}&&valuefilter2=${valuefilter2}&&valuefilter1=${valuefilter1}&&type=${type}&&sortField=${y}&&sort=${x}`)
     setPageCurren(1)
   }
@@ -133,6 +137,7 @@ export default function TableReport({match}) {
       title: 'Giảng viên',
       dataIndex: 'lecturerName',
       key: 'lecturerName',
+      render: (value, item) => <Link to={`/report/detail?lecturerId=${item.lecturerId}&&year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
     {
       title: () => {
@@ -141,7 +146,7 @@ export default function TableReport({match}) {
             <div className="d-flex justify-content-between">
               <div>Khoa</div> 
               {
-                (user.role!=='LĐK' || user.role!=='LĐBM') && <div style={{cursor: 'pointer', color: `${valuefilter1.length>0 ? 'blue' : ''}`}} 
+                (user.roles!=='LĐK' && user.roles!=='LĐBM') && <div style={{cursor: 'pointer', color: `${valuefilter1.length>0 ? 'blue' : ''}`}} 
                 onClick={() => onFilter1()}><FilterOutlined /></div>
               }
             </div>
@@ -194,7 +199,7 @@ export default function TableReport({match}) {
             <div className="d-flex justify-content-between">
               <div>Bộ môn</div>
               {
-                user.role!=='LĐBM' &&  <div style={{cursor: 'pointer', color: `${valuefilter2.length>0 ? 'blue' : ''}`}} 
+                user.roles!=='LĐBM' &&  <div style={{cursor: 'pointer', color: `${valuefilter2.length>0 ? 'blue' : ''}`}} 
               onClick={() => onFilter2()}><FilterOutlined />
               </div>
               }
@@ -247,11 +252,11 @@ export default function TableReport({match}) {
       key: 'hourScheduleAfter',
       width: 90,
       align: 'center',
-      render: (value, item) => <Link to={`/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
+      render: (value, item) => <Link to={`/report/detail?lecturerId=${item.lecturerId}&&year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
     },
   ];
 
-  if (user.role!=='ADMIN1') {
+  if (user.roles!=='ADMIN1') {
     columns.push(
       {
         title: () => { return <div onClick={() => sortHour('hourSchedule')}>Giờ dạy trong đh<i className="fas fa-sort"></i></div>},
@@ -259,7 +264,7 @@ export default function TableReport({match}) {
         key: 'hourSchedule',
         width: 90,
         align: 'center',
-        render: (value, item) => <Link to={`/report/schedules/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
+        render: (value, item) => <Link to={`/report/detail?lecturerId=${item.lecturerId}&&year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
       },
       {
         title: () => { return <div onClick={() => sortHour('hourThesis')}>Giờ hướng dẫn khóa luận tốt nghiệp<i className="fas fa-sort"></i></div>},
@@ -267,54 +272,60 @@ export default function TableReport({match}) {
         key: 'hourThesis',
         width: 90,
         align: 'center',
-        render: (value, item) => <Link to={`/report/thesis/${item.lecturerId}?year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
+        render: (value, item) => <Link to={`/report/detail?lecturerId=${item.lecturerId}&&year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
       },
       {
         title: () => { return <div onClick={() => sortHour('hourProject')}>Giờ hướng dẫn đồ án tốt nghiệp<i className="fas fa-sort"></i></div>},
         dataIndex: 'hourProject',
         key: 'hourProject',
         width: 90,
-        align: 'center'
+        align: 'center',
+        render: (value, item) => <Link to={`/report/detail?lecturerId=${item.lecturerId}&&year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
       },
       {
         title: () => { return <div onClick={() => sortHour('hourPhdThesis')}>Giờ hướng dẫn luận văn thạc sĩ<i className="fas fa-sort"></i></div>},
         dataIndex: 'hourPhdThesis',
         key: 'hourPhdThesis',
         width: 90,
-        align: 'center'
+        align: 'center',
+        render: (value, item) => <Link to={`/report/detail?lecturerId=${item.lecturerId}&&year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
       },
       {
         title: () => { return <div onClick={() => sortHour('hourDissertation')}>Giờ hướng dẫn luận án tiến sĩ<i className="fas fa-sort"></i></div>},
         dataIndex: 'hourDissertation',
         key: 'hourDissertation',
         width: 90,
-        align: 'center'
+        align: 'center',
+        render: (value, item) => <Link to={`/report/detail?lecturerId=${item.lecturerId}&&year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
       },
       {
         title: () => { return <div onClick={() => sortHour('hourConsultant')}>Giờ hướng dẫn cố vấn học tập<i className="fas fa-sort"></i></div>},
         dataIndex: 'hourConsultant',
         key: 'hourConsultant',
         width: 90,
-        align: 'center'
+        align: 'center',
+        render: (value, item) => <Link to={`/report/detail?lecturerId=${item.lecturerId}&&year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
       },
       {
         title: () => { return <div onClick={() => sortHour('hourPractice')}>Giờ hướng dẫn thực tập thực địa<i className="fas fa-sort"></i></div>},
         dataIndex: 'hourPractice',
         key: 'hourPractice',
         width: 90,
-        align: 'center'
+        align: 'center',
+        render: (value, item) => <Link to={`/report/detail?lecturerId=${item.lecturerId}&&year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
       },
       {
         title: () => { return <div onClick={() => sortHour('total')}>Tổng số giờ <i className="fas fa-sort"></i></div>},
         dataIndex: 'total',
         key: 'total',
         width: 90,
-        align: 'center'
+        align: 'center',
+        render: (value, item) => <Link to={`/report/detail?lecturerId=${item.lecturerId}&&year=${item.year}&&semester=${item.semester}&&type=${type}`}>{value}</Link>
       }
     )
   }
 
-  if(type && user.role!=='ADMIN1') {
+  if(type && user.roles!=='ADMIN1') {
     columns.push(
       {
         title: () => { return <div onClick={() => sortHour('quota')}>Định mức<i className="fas fa-sort"></i></div>},
@@ -340,32 +351,6 @@ export default function TableReport({match}) {
     setYear(item1);
     setSemester(item2);
   }
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        dispatch({
-          type: LOADING_FULL_SCREEN,
-          payload: true,
-        })
-        await callAdmin.report(year,semester, pageCurren,pagesize,type, sortField, sort ,valuefilter1, valuefilter2,keyword).then(res =>{
-          setData(res.data.data)
-          setTotalData(res.data.total)
-          dispatch({
-            type: LOADING_FULL_SCREEN,
-            payload: false,
-          })
-        })
-      } catch (error) {
-        dispatch({
-          type: LOADING_FULL_SCREEN,
-          payload: false,
-        })
-        console.log("failed to request API: ", error)
-      }
-    };
-    getData();
-  }, [year, semester,pageCurren, pagesize,type,sort, sortField, valuefilter1, valuefilter2,keyword]);
 
   useEffect(() => {
     const getData = async () => {
@@ -431,6 +416,34 @@ export default function TableReport({match}) {
       }
     )
   }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: true,
+        })
+        await callAdmin.report(year,semester, pageCurren,pagesize,type, sortField, sort ,valuefilter1, valuefilter2,keyword).then(res =>{
+          console.log(year, semester, res.data.data)
+          setData(res.data.data)
+          setTotalData(res.data.total)
+          dispatch({
+            type: LOADING_FULL_SCREEN,
+            payload: false,
+          })
+        })
+      } catch (error) {
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
+        })
+        console.log("failed to request API: ", error)
+      }
+    };
+    getData();
+  }, [year, semester,pageCurren, pagesize,type,sort, sortField, valuefilter1, valuefilter2,keyword]);
+
 
   function onChange(page, pageSize) {
     setPageCurren(page)

@@ -76,6 +76,8 @@ app.post('/api/admin/practice/checkYear', [authJwt.verifyToken, authJwt.isAdmino
 app.get('/api/detailThesis', [authJwt.verifyToken, authJwt.isLeaderOrAdminorUser], thesis.detailList);
 app.get('/api/detailTkb', [authJwt.verifyToken, authJwt.isLeaderOrAdminorUser],  subSubjectLecturer.detailList );
 app.get('/api/report', [authJwt.verifyToken, authJwt.isLeaderOrAdminorUser],report.list);
+app.get('/api/report/detail', [authJwt.verifyToken, authJwt.isLeaderOrAdminorUser],report.detail);
+
 // app.post('/api/report', [authJwt.verifyToken, authJwt.isLeaderOrAdminorUser],report.list);
 
 app.post('/api/auth/signup', [verifySignUp.checkDuplicateUserNameOrEmail, verifySignUp.checkRolesExisted], controller.signup);

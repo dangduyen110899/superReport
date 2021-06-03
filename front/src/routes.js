@@ -12,6 +12,7 @@ import TableTkb from "pages/admin/DataTkb/TableTkb";
 import TablePractice from "pages/admin/DataTtth/TablePractice";
 import ReportDetailThesis from "pages/admin/detail/ReportDetailThesis";
 import ReportDetailTkb from "pages/admin/detail/ReportDetailTkb";
+import DetailReportLecturer from "pages/admin/Report/DetailReportLecturer";
 import TableReport from "pages/admin/Report/TableReport";
 
 export const routes = [
@@ -102,6 +103,12 @@ export const routes = [
     path: "/report/schedules/:lecturerId",
     exact: true,
     components: match => <ReportDetailTkb match={match}/>,
+    role: ['ADMIN', 'ADMIN1','LĐK','LĐBM', 'LĐCC','USER']
+  },
+  {
+    path: "/report/detail",
+    exact: true,
+    components: match => <DetailReportLecturer match={match}/>,
     role: ['ADMIN', 'ADMIN1','LĐK','LĐBM', 'LĐCC','USER']
   },
   {

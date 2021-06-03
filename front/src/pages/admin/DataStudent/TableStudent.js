@@ -43,7 +43,13 @@ export default function TableStudent({match}) {
         })
         if (itemId) {
           item.id = itemId;
-          await callAdmin.editStudent(item)
+          const rest = await callAdmin.editStudent(item)
+          console.log("rest", rest)
+          if(rest.data === 'faild') {
+            toast.error('Sinh viên có mã đã tồn tại.');
+          } else {
+            toast.success("Thay đổi thông tin sinh viên thành công!");
+          }
           const res = await callAdmin.student(pageCurren,pagesize)
           setData(res.data.data)
           setIsModalVisible(false);
@@ -51,9 +57,14 @@ export default function TableStudent({match}) {
             type: LOADING_FULL_SCREEN,
             payload: false,
           })
-          toast.success("Thay đổi sinh viên thành công!");
         } else {
-          await callAdmin.addStudent(item)
+          const rest = await callAdmin.addStudent(item)
+          console.log("rest", rest)
+          if(rest.data === 'faild') {
+            toast.error('Sinh viên có mã đã tồn tại.');
+          } else {
+            toast.success("Thêm thông tin sinh viên thành công!");
+          }
           const res = await callAdmin.student(pageCurren,pagesize)
           setData(res.data.data)
           setTotalData(res.data.total)
@@ -62,7 +73,6 @@ export default function TableStudent({match}) {
             type: LOADING_FULL_SCREEN,
             payload: false,
           })
-          toast.success("Thêm sinh viên thành công!");
         }
       } catch (error) {
         toast.warning(error?.response?.data?.message);

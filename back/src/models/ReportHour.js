@@ -1,17 +1,8 @@
 module.exports = (sequelize, Sequelize) => {
 
   var ReportHour = sequelize.define('reportHour', {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    year: Sequelize.STRING,
-    semester: Sequelize.INTEGER,
-    lecturerId: Sequelize.INTEGER,
     lecturerName: Sequelize.STRING,
     department: Sequelize.STRING,
-    programs: Sequelize.STRING,
     subject: Sequelize.STRING,
     hourSchedule: { type: Sequelize.FLOAT, defaultValue: 0},
     hourScheduleAfter: { type: Sequelize.FLOAT, defaultValue: 0},
@@ -26,6 +17,15 @@ module.exports = (sequelize, Sequelize) => {
     quota: { type: Sequelize.FLOAT, defaultValue: 0},
     đh: { type: Sequelize.FLOAT, defaultValue: 0},
     sđh: { type: Sequelize.FLOAT, defaultValue: 0},
+    programs: Sequelize.STRING,
+    lecturerId: Sequelize.INTEGER,
+    year: Sequelize.STRING,
+    semester: Sequelize.INTEGER,
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    }
   },{
     timestamps: false
   });
