@@ -20,7 +20,6 @@ report.updateHour = async ( year, semester, name, gvId) => {
   switch (name) {
     // tkb đh
     case "tkb trong đh":
-
       const response1 = await SubSubjectLecturer.findAll({
         where: {
           [Op.and]: [
@@ -52,7 +51,7 @@ report.updateHour = async ( year, semester, name, gvId) => {
 
       const rate = 270*(response4[0].dataValues.rate || 1)
 
-      if (response2.length>0) {
+      if (response2 && response2[0]) {
         // update report hour
         const total = response2[0].dataValues.total + response1[0].dataValues.hourSchedule - response2[0].dataValues.hourSchedule
         await ReportHour.update({...response2[0].dataValues, ...response1[0].dataValues, total: total, rate: Math.round(total*10000/rate), quota: response4[0].dataValues.rate},{

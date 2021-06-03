@@ -1,8 +1,10 @@
 const dcm = require("./doccumentHour");
 const  caculHour= dcm.caculHourLT 
+const  caculHourAfter= dcm.caculHourLTAfter 
 
-// get hour tkb
-function getHourItemLythuyet(item) {
+
+// get hour tkb tron dh
+function getHourItemLythuyet(item, numberLecturer) {
   let caculIndex 
   let score = 0
   if (item.total_student>120) {
@@ -150,7 +152,7 @@ function getHourItemDissertation(item, numberLecturer, check = 1) {
 
 function getHourItem(item, type, name, numberLecturer = 1, check = 1) {
   switch (name) {
-    case 'tkb':
+    case 'tkb trong dh':
       switch (type) {
         case 0:
           return getHourItemLythuyet(item, numberLecturer)
@@ -160,16 +162,27 @@ function getHourItem(item, type, name, numberLecturer = 1, check = 1) {
           // thuc hanh
           return getHourItemThuchanh(item, numberLecturer)
           break;
-    
-        case 2:
-          // tu hoc
-          return getHourItemTuhoc(item)
-          break;
       
         default:
           break;
       }
       break;
+
+      case 'tkb sau dh':
+        switch (type) {
+          case 0:
+            return getHourItemLythuyetAfter(item,numberLecturer)
+            break;
+          
+          case 1:
+            // thuc hanh
+            return getHourItemThuchanh(item, numberLecturer)
+            break;
+        
+          default:
+            break;
+        }
+        break;
 
       case 'kltn':
         return getHourItemThesis(item, numberLecturer, check)

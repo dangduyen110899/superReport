@@ -111,7 +111,11 @@ lecturer.creates = async (req, res) => {
           })
         } else  {
           //create
-          await Lecturer.create(request)
+          try {
+            await Lecturer.create(request)
+          } catch (error) {
+            console.log(error)
+          }
         }
       }
       res.json()

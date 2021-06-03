@@ -133,7 +133,8 @@ subSubjectLecturer.checkYear = async (req, res) => {
   }
 
 subSubjectLecturer.creates = async (req, res) => {
-  console.log(req.user)
+  
+  // trong ddh: 0, sau dh: 1
   let program = req.user.role==='ADMIN' ? 0 : 1
   const year = req.body.year;
   const semester = req.body.semester;
@@ -177,7 +178,7 @@ subSubjectLecturer.creates = async (req, res) => {
                 nameSubject: rows[i][1],
                 program: program
               }
-              subSubjectLecturer.hour = getHourItem(subSubjectLecturer, (rows[i][9] === "CL" || rows[i][9]==="TA") ? 0 : 1, 'tkb',1)
+              subSubjectLecturer.hour = Math.round(getHourItem(subSubjectLecturer, (rows[i][9] === "CL" || rows[i][9]==="TA") ? 0 : 1, 'tkb trong dh',1))
               tkbs.push(subSubjectLecturer);
             } else {
               await Promise.all(
@@ -224,10 +225,7 @@ subSubjectLecturer.creates = async (req, res) => {
         }
       }
       fetchApi().then( async() => {
-
-        await SubSubjectLecturer.bulkCreate(tkbs).then( () =>{
-          // res.json(tkbs);
-        })
+        await SubSubjectLecturer.bulkCreate(tkbs)
         const lecturerIdTkb = Array.from(new Set(tkbs.map(item => item.lecturerId)))
 
         for (let i = 0; i < lecturerIdTkb.length; i++) {
