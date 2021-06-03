@@ -67,32 +67,6 @@ export default function TableThesic({match}) {
     setIsModalVisible(false);
   };
 
-  const handleDelete = (itemEdit) => {
-    itemEdit.status = 0;
-    dispatch({
-      type: LOADING_FULL_SCREEN,
-      payload: true,
-    })
-    const remove = async () => {
-      try {
-        await callAdmin.editThesis(itemEdit)
-        const res = await callAdmin.thesis(year,semester)
-        setData(res.data)
-        dispatch({
-          type: LOADING_FULL_SCREEN,
-          payload: false,
-        })
-        toast.success("Delete thesic success")
-      } catch (error) {
-        dispatch({
-          type: LOADING_FULL_SCREEN,
-          payload: false,
-        })
-        console.log("failed to request API: ", error)
-      }
-    };
-    remove();
-  }
 
   let  columns = [
     {
@@ -153,26 +127,6 @@ export default function TableThesic({match}) {
     }
   ];
 
-  if(user && (user.roles === 'ADMIN')) { 
-    columns.push({
-      title: 'Action',
-      dataIndex: 'operation',
-      width: 100,
-        align: 'center',
-      render: (_, record) =>
-        data.length >= 1 ? (
-          <Space>
-          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-            <span><DeleteOutlined /></span>
-          </Popconfirm>
-          <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
-          <EditOutlined />
-          </span>
-          </Space>
-        ) : null,
-    })
-  }
-
   useEffect(() => {
     const getData = async () => {
       dispatch({
@@ -216,15 +170,15 @@ export default function TableThesic({match}) {
           type: LOADING_FULL_SCREEN,
           payload: false,
         })
-        let arrString = res.data.data.map((item, index) => {
+        let arrString = res?.data?.data?.map((item, index) => {
           if (index===0) {
             setYear(item.year)
             setSemester(item.semester)
           }
           return item.semester + ' ' + item.year
         })
-        const arr = arrString.filter((item, index) => arrString.indexOf(item) === index);
-        setYearShow([...arr])      
+        const arr = arrString?.filter((item, index) => arrString.indexOf(item) === index);
+        arr && setYearShow([...arr])      
       }
     )
   }, [load]);
@@ -242,7 +196,7 @@ export default function TableThesic({match}) {
           toast.error(res.data.message);
         }
         setLoad(!load)
-        toast.success("Add Kltn success!");
+        toast.success("Thêm khóa luận tốt nghiệp thành công!");
         dispatch({
           type: LOADING_FULL_SCREEN,
           payload: false,
@@ -290,11 +244,11 @@ export default function TableThesic({match}) {
          <Col>
          <Space>
            <Button className="button-all" onClick={() => setIsModalVisible(true)}>
-             Thêm quản lý khóa luận tốt nghiệp
+             Thêm khóa luận tốt nghiệp
            </Button>
          </Space>
          <Modal
-           title="Select time"
+           title="Thêm khóa luận tốt nghiệp"
            footer={null}
            destroyOnClose
            onCancel={handleCancel}

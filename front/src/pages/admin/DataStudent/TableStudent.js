@@ -43,7 +43,13 @@ export default function TableStudent({match}) {
         })
         if (itemId) {
           item.id = itemId;
-          await callAdmin.editStudent(item)
+          const rest = await callAdmin.editStudent(item)
+          console.log("rest", rest)
+          if(rest.data === 'faild') {
+            toast.error('Sinh viên có mã đã tồn tại.');
+          } else {
+            toast.success("Thay đổi thông tin sinh viên thành công!");
+          }
           const res = await callAdmin.student(pageCurren,pagesize)
           setData(res.data.data)
           setIsModalVisible(false);
@@ -51,9 +57,14 @@ export default function TableStudent({match}) {
             type: LOADING_FULL_SCREEN,
             payload: false,
           })
-          toast.success("Edit student success!");
         } else {
-          await callAdmin.addStudent(item)
+          const rest = await callAdmin.addStudent(item)
+          console.log("rest", rest)
+          if(rest.data === 'faild') {
+            toast.error('Sinh viên có mã đã tồn tại.');
+          } else {
+            toast.success("Thêm thông tin sinh viên thành công!");
+          }
           const res = await callAdmin.student(pageCurren,pagesize)
           setData(res.data.data)
           setTotalData(res.data.total)
@@ -62,11 +73,11 @@ export default function TableStudent({match}) {
             type: LOADING_FULL_SCREEN,
             payload: false,
           })
-          toast.success("Add student success!");
         }
       } catch (error) {
         toast.warning(error?.response?.data?.message);
       }
+      setItemEdit(null)
     };
     add();
   };
@@ -131,7 +142,8 @@ export default function TableStudent({match}) {
       dataIndex: 'birthday',
       key: 'birthday',
       width: 200,
-      align: 'center'
+      align: 'center',
+      render: (text) => <span>{text.slice(0,10)}</span>
     },
     {
       title: 'Quê quán',
@@ -223,15 +235,15 @@ export default function TableStudent({match}) {
     <LayoutAdmin match={match}>
       <h2 className="title">Quản lý danh sách sinh viên</h2>
       <Row justify="space-between">
-        <Col>
-          {/* <Search onSearch={onSearch}/> */}
-          <span style={{fontSize: '14px', textTransform: 'capitalize'}}>search</span>
-        </Col>
         { user && (user.roles === 'ADMIN') && 
           <Col>
-          <input type="file" onChange={e => handleAddStudents(e.target.files[0])}/>
+          {/* <input type="file" onChange={e => handleAddStudents(e.target.files[0])} id="actual-btn" hidden/>
+          <label htmlFor="actual-btn" class="upload-file">Chọn file</label> */}
+          <Button className="button-all" onClick={() => setIsModalVisible(true)}>
+            + Thêm sinh viên
+          </Button>
           <Modal
-            title="Select time"
+            title={itemEdit ? "Thay đổi sinh viên" : "Thêm sinh viên"}
             footer={null}
             destroyOnClose
             onCancel={handleCancel}

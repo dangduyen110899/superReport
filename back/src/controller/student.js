@@ -5,6 +5,13 @@ const readXlsxFile = require('read-excel-file/node');
 
 const student = {}
 
+function reverDate(date) {
+  var splitString = date.split("/"); // var splitString = "hello".split("");
+  var reverseArray = splitString.reverse(); // var reverseArray = ["h", "e", "l", "l", "o"].reverse();
+  var joinArray = reverseArray.join("-"); // var joinArray = ["o", "l", "l", "e", "h"].join("");
+  return joinArray; // "olleh"
+}
+
 student.list = async (req, res) => {
   const page = Number(req.query.page)
   const size = Number(req.query.size)
@@ -19,10 +26,12 @@ student.list = async (req, res) => {
 student.create = async ( req, res) =>{
   try {
     const request = req.body
+    request.birthday = new Date(req.body.birthday)
     const response = await Student.create(request)
     res.json(response);
   } catch (e) {
     console.log(e);
+    res.json('faild')
   }
 }
 
@@ -35,12 +44,13 @@ student.creates = async (req, res) => {
       const classes = [];
       let length = rows.length;
       for(let i=0; i<length; i++){
+        console.log(rows[i][2])
         let student = {
           code: rows[i][0],
           name: rows[i][1],
           classCode: rows[i][5],
           gender: rows[i][3],
-          birthday: rows[i][2],
+          birthday:  new Date(reverDate(rows[i][2])),
           address: rows[i][4],
           status: 1
         }
@@ -83,7 +93,11 @@ student.update = async ( req, res) =>{
     code: req.body.code,
     name: req.body.name,
     classCode: req.body.classCode,
-    status: req.body.status
+    status: req.body.status || 1,
+    gender: req.body.gender,
+    birthday:  new Date(req.body.birthday),
+    address: req.body.address,
+
   }
   try {
     const response = await Student.update( request ,{
@@ -92,6 +106,7 @@ student.update = async ( req, res) =>{
     res.json(response);
   } catch (e) {
     console.log(e);
+    res.json('faild')
   }
 }
 

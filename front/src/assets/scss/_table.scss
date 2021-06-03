@@ -80,3 +80,32 @@ thead[class*="ant-table-thead"] th{
     padding: 8px;
     border-radius: 6px;
 }
+
+.button_ok, .button_cancel, .button_reset {
+    // padding: 11px 20px 10px !important;
+    // border-radius: 6px !important;
+    background-color: #1890ff;
+    color: #fff;
+    font-size: 14px;
+    border: 1px solid #1890ff;
+}
+
+.button_ok, .button_cancel {
+    margin-right: 5px;
+}
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+.p-10 {
+    input {
+        padding: 10px;
+    }
+
+    button {
+        height: 44px;
+        width: 50px;
+    }
+
+}

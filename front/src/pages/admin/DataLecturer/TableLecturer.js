@@ -45,19 +45,28 @@ export default function TableLecturer({match}) {
       try {
        if (itemId) {
         item.id = itemId;
-        await callAdmin.editLecturer(item).then(async() => {
-          const res = await callAdmin.lecturer(pageCurren,pagesize, mode)
-          setData(res.data.data)
-          setIsModalVisible(false);
-          dispatch({
-            type: LOADING_FULL_SCREEN,
-            payload: false,
-          })
-          toast.success("Edit lecturer success!");
+        const rest = await callAdmin.editLecturer(item)
+        if(!rest.data.length) {
+          toast.error('Giảng viên có tên hoặc email đã tồn tại.');
+        } else {
+          toast.success("Thay đổi thông tin giảng viên thành công!");
+        }
+        const res = await callAdmin.lecturer(pageCurren,pagesize, mode)
+        setData(res.data.data)
+        setIsModalVisible(false);
+        dispatch({
+          type: LOADING_FULL_SCREEN,
+          payload: false,
         })
        } else {
           item.mode = mode
-          await callAdmin.addLecturer(item)
+          const rest = await callAdmin.addLecturer(item)
+          console.log(rest.data.length, rest, Boolean(rest.data.length))
+          if(!rest.data.email) {
+            toast.error('Giảng viên có tên hoặc email đã tồn tại.');
+          } else {
+            toast.success("Thêm giảng viên thành công!");
+          }
           const res = await callAdmin.lecturer(pageCurren, pagesize, mode)
           setData(res.data.data)
           setTotalData(res.data.total)
@@ -66,11 +75,11 @@ export default function TableLecturer({match}) {
             type: LOADING_FULL_SCREEN,
             payload: false,
           })
-          toast.success("Add lecturer success!");
        }
       } catch (error) {
         toast.warning(error?.response?.data?.message);
       }
+      setItemEdit(null)
     };
     add();
   };
@@ -250,12 +259,13 @@ export default function TableLecturer({match}) {
         {
           user && (user.roles === 'ADMIN' || user.roles === 'ADMIN1') &&
           <Col>
-          <input type="file" onChange={e => handleAddLecturers(e.target.files[0])}/>
+          <input id="actual-btn" type="file" onChange={e => handleAddLecturers(e.target.files[0])} hidden/>
+          <label htmlFor="actual-btn" class="upload-file">Chọn file</label>
           <Button className="button-all" onClick={() => setIsModalVisible(true)}>
             + Thêm giảng viên
           </Button>
           <Modal
-            title="THÊM GIẢNG VIÊN"
+            title={itemEdit ? "THAY ĐỔI THÔNG TIN GIẢNG VIÊN" : "THÊM GIẢNG VIÊN"}
             footer={null}
             destroyOnClose
             onCancel={handleCancel}

@@ -49,46 +49,70 @@ export default function LayoutAdmin({children, match}) {
           {collapsed ? '' : 'SUPER-REPORT'}
         </span>
       </div>
-      <Menu mode="inline" defaultSelectedKeys={[match.match.path==="/admin/tkb" ? "1" : match.match.path==="/admin/kltn" ? "2" : match.match.path==="/admin/lecturer" ? "3" : match.match.path==="/admin/student" ? "4" :  match.match.path==="/admin/quota" ? "10" : "5" ]}>
+      <Menu mode="inline" defaultSelectedKeys={[
+        match.match.path==="/admin/lecturer" ? "1" :
+        match.match.path==="/admin/student" ? "2" : 
+        match.match.path==="/admin/quota" ? "3" : 
+        match.match.path==="/admin/tkb" ? "4" :  
+        match.match.path==="/admin/kltn" ? "5" : 
+        match.match.path==="/admin/datn" ? "6" :
+        match.match.path==="/admin/lvts" ? "7" :
+        match.match.path==="/admin/lats" ? "8" :
+        match.match.path==="/admin/cvht" ? "9" :
+        match.match.path==="/admin/tttd" ? "10" : "11" ]}>
         {
           (user?.roles === 'ADMIN' || user?.roles === 'ADMIN1') 
           && 
-          <Menu.Item key="3" icon={<DatabaseOutlined />}>
-          <Link to="/admin/lecturer">Quản lý giảng viên</Link>
+          <Menu.Item key="1" icon={<DatabaseOutlined />}>
+          <Link to="/admin/lecturer">Quản lý danh sách giảng viên</Link>
         </Menu.Item>
         }
         {
           (user?.roles === 'ADMIN') 
           && 
           <>
-            <Menu.Item key="4" icon={<DatabaseOutlined />}>
-              <Link to="/admin/student">Quản lý sinh viên</Link>
+            <Menu.Item key="2" icon={<DatabaseOutlined />}>
+              <Link to="/admin/student">Quản lý danh sách sinh viên</Link>
             </Menu.Item>
-            <Menu.Item key="10" icon={<DatabaseOutlined />}>
-              <Link to="/admin/quota">Quản lý định mức</Link>
+            <Menu.Item key="3" icon={<DatabaseOutlined />}>
+              <Link to="/admin/quota">Quản lý danh sách định mức</Link>
             </Menu.Item>
           </>
         }
         {
           (user?.roles === 'ADMIN' || user?.roles === 'ADMIN1') 
           && 
-            <Menu.Item key="1" icon={<DatabaseOutlined />}>
-            <Link to="/admin/tkb">Quản lý TKB</Link>
+            <Menu.Item key="4" icon={<DatabaseOutlined />}>
+            <Link to="/admin/tkb">Quản lý thời khóa biểu</Link>
             </Menu.Item>
         }
          {
           (user?.roles === 'ADMIN') 
           && 
-          <Menu.Item key="2" icon={<DatabaseOutlined />}>
-          <Link to="/admin/kltn">Quản lý KLTN</Link>
-        </Menu.Item>
-        }
-        {
-          (user?.roles === 'ADMIN' || user?.roles === 'ADMIN1' || user?.roles === 'LEADER' || user?.roles === 'USER') && 
+         <>
           <Menu.Item key="5" icon={<DatabaseOutlined />}>
-          <Link to="/report">Báo cáo</Link>
-        </Menu.Item>
+            <Link to="/admin/kltn">Quản lý danh sách khóa luận tốt nghiệp</Link>
+          </Menu.Item>
+           <Menu.Item key="6" icon={<DatabaseOutlined />}>
+            <Link to="/admin/datn">Quản lý danh sách đồ án tốt nghiệp</Link>
+          </Menu.Item>
+          <Menu.Item key="7" icon={<DatabaseOutlined />}>
+            <Link to="/admin/lvts">Quản lý danh sách luận văn thạc sỹ</Link>
+          </Menu.Item>
+          <Menu.Item key="8" icon={<DatabaseOutlined />}>
+            <Link to="/admin/lats">Quản lý danh sách luận án tiến sĩ</Link>
+          </Menu.Item>
+          <Menu.Item key="9" icon={<DatabaseOutlined />}>
+            <Link to="/admin/cvht">Quản lý danh sách cố vấn học tập</Link>
+          </Menu.Item>
+          <Menu.Item key="10" icon={<DatabaseOutlined />}>
+            <Link to="/admin/tttd">Quản lý danh sách thực tập thực địa</Link>
+          </Menu.Item>
+         </>
         }
+        <Menu.Item key="11" icon={<DatabaseOutlined />}>
+          <Link to="/report">Báo cáo thống kê</Link>
+        </Menu.Item>
       </Menu>
       <span onClick={toggle} style={{color: "#222b45", float: "right", margin: "30px", fontSize: '24px'}}>{
         collapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>

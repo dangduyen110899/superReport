@@ -138,7 +138,7 @@ thesis.creates = async (req, res) => {
                 year: year,
                 semester: semester
               }
-              thesis.hour = getHourItem(thesis, null , 'kltn')
+              thesis.hour = getHourItem(thesis, null , 'kltn',1,1)
               theses.push(thesis);
             } else {
 
@@ -173,7 +173,7 @@ thesis.creates = async (req, res) => {
                     semester: semester,
                     teacherNumber: res3.length
                   }
-                  thesis1.hour = getHourItem(thesis1, null , 'kltn')
+                  thesis1.hour = getHourItem(thesis1, null , 'kltn', res3.length, j+1)
                   theses.push(thesis1);
                 }
               })
@@ -208,27 +208,6 @@ thesis.creates = async (req, res) => {
   }
 }
 
-thesis.update = async ( req, res) =>{
-  const request = {
-    studentId: req.body.studentId,
-    name: req.body.name,
-    lecturerId: req.body.lecturerId,
-    nvcl: req.body.nvcl,
-    year: req.body.year,
-    semester: req.body.semester,
-    classCode: req.body.classCode,
-    type: req.body.type
-  }
-  try {
-    const response = await Thesis.update( request ,{
-      where: { id: req.body.id}
-    })
-    res.json(response);
-  } catch (e) {
-    console.log(e);
-  }
-}
-
 thesis.checkYear = async (req, res) => {
   const year = req.body.year;
   const semester = req.body.semester;
@@ -251,6 +230,6 @@ thesis.checkYear = async (req, res) => {
   } catch (e) {
       console.log(e);
     }
-  }
+}
 
 module.exports = thesis;

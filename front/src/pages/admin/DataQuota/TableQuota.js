@@ -52,7 +52,7 @@ export default function TableQuota({match}) {
             type: LOADING_FULL_SCREEN,
             payload: false,
           })
-          toast.success("Edit quota success!");
+          toast.success("Thay đổi đinh mức thành công!");
         })
        } else {
           await callAdmin.addQuota(item)
@@ -64,11 +64,12 @@ export default function TableQuota({match}) {
             type: LOADING_FULL_SCREEN,
             payload: false,
           })
-          toast.success("Add quota success!");
+          toast.success("Thêm định mức thành công!");
        }
       } catch (error) {
         toast.warning(error?.response?.data?.message);
       }
+      setItemEdit(null)
     };
     add();
   };
@@ -219,12 +220,13 @@ export default function TableQuota({match}) {
         {
           user && (user.roles === 'ADMIN') &&
           <Col>
-          <input type="file" onChange={e => handleAddquotas(e.target.files[0])}/>
+          <input type="file" onChange={e => handleAddquotas(e.target.files[0])}  id="actual-btn" hidden/>
+          <label htmlFor="actual-btn" class="upload-file">Chọn file</label>
           <Button className="button-all" onClick={() => setIsModalVisible(true)}>
             + Thêm định mức
           </Button>
           <Modal
-            title="THÊM ĐỊNH MỨC"
+            title={itemEdit ? "THAY ĐỔI ĐỊNH MỨC" : "THÊM ĐỊNH MỨC"}
             footer={null}
             destroyOnClose
             onCancel={handleCancel}

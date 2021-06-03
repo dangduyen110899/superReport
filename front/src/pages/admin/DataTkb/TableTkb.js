@@ -150,27 +150,6 @@ export default function TableTkb({match}) {
     }
   ];
 
-  if(user && (user.roles === 'ADMIN' || user.roles === 'ADMIN1')) { 
-    columns.push(
-      {
-        title: 'Action',
-        dataIndex: 'operation',
-        width: 100,
-        align: 'center',
-        render: (_, record) =>
-          data.length >= 1 ? (
-            <Space>
-            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-              <span><DeleteOutlined /></span>
-            </Popconfirm>
-            <span onClick={() => { setItemEdit(record); setIsModalVisible(true)}}>
-            <EditOutlined />
-            </span>
-            </Space>
-          ) : null,
-      }
-    )
-  }
   useEffect(() => {
     const getData = async () => {
       try {
@@ -278,7 +257,7 @@ export default function TableTkb({match}) {
   return (
     <LayoutAdmin match={match}>
       <h2 className="title">Quản lý thời khóa biểu</h2>
-      <Row justify="space-between">
+      <Row justify="space-between select_all">
         <Col>
           <Select options={yearShow} defaultVl={''} onChangeYear={onChangeYear}></Select>
         </Col>
@@ -291,7 +270,7 @@ export default function TableTkb({match}) {
             </Button>
           </Space>
           <Modal
-            title="Select time"
+            title="Thêm thời khóa biểu"
             footer={null}
             destroyOnClose
             onCancel={handleCancel}

@@ -5,6 +5,7 @@ import { ErrorMessage } from "@hookform/error-message";
 import Autocomplete from 'react-autocomplete';
 
 const FormLecturer = ({handleOk, handleCancel, itemEdit, dataLecturer}) => {
+  // call api lay data department and subject
   function unique(text) {
     var newArr = dataLecturer.map(item => item[text])
     const arrNew = Array.from(new Set(newArr))
@@ -21,6 +22,7 @@ const FormLecturer = ({handleOk, handleCancel, itemEdit, dataLecturer}) => {
     name: itemEdit?.name,
     email: itemEdit?.email,
     programs: itemEdit?.programs,
+    position: itemEdit?.position
   };
   const { handleSubmit, register, errors } = useForm({ defaultValues });
   const [department, setDepartment] = useState(itemEdit?.department);
@@ -34,7 +36,7 @@ const FormLecturer = ({handleOk, handleCancel, itemEdit, dataLecturer}) => {
 
   const renderMovieTitle1 = (arrSubjects, subject) => {
     return (
-      arrSubjects?.title?.toLowerCase().indexOf(subject?.toLowerCase()) !== -1
+      arrSubjects?.title ? arrSubjects?.title?.toLowerCase().indexOf(subject?.toLowerCase()) !== -1 : []
     );
   }
 
@@ -63,6 +65,7 @@ const FormLecturer = ({handleOk, handleCancel, itemEdit, dataLecturer}) => {
                 <label className="form-label">Email:</label>
               </div> 
               <input
+                type="email"
                 name="email"
                 className="form-input"
                 ref={register({ required: "This is required message" })}
@@ -104,7 +107,7 @@ const FormLecturer = ({handleOk, handleCancel, itemEdit, dataLecturer}) => {
                 <Autocomplete
                   value={subject}
                   items={arrSubjects}
-                  getItemValue={item => item.title}
+                  getItemValue={item => item.title || 'Khong'}
                   shouldItemRender={renderMovieTitle1}
                   renderMenu={item => (
                     <div className="dropdown">
@@ -133,20 +136,10 @@ const FormLecturer = ({handleOk, handleCancel, itemEdit, dataLecturer}) => {
               />
             </div>
   
-            <div className="form-login__form-group">
-              <div className="d-flex justify-content-between">
-                <label className="form-label">Chương trình:</label>
-                <select name="programs" className="programs" ref={register()}>
-                <option value={1}>Đại học</option>
-                <option value={0}>Sau đại học</option>
-              </select>
-              </div> 
-            </div>
-
             <br/>
             <div className="d-flex justify-content-between">
-                <Button type="primary" htmlType="submit">Save</Button>
-              <Button onClick={() => handleCancel()}>Cancel</Button>
+                <Button type="primary" htmlType="submit">Lưu</Button>
+              <Button onClick={() => handleCancel()}>Hủy</Button>
             </div>
           </form>
         </div>
